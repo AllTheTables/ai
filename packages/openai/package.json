@@ -1,6 +1,6 @@
 {
-  "name": "@ai-sdk/openai",
-  "version": "2.1.0-beta.11",
+  "name": "@zenning/openai",
+  "version": "2.1.0",
   "license": "Apache-2.0",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -39,8 +39,8 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/provider": "workspace:*",
-    "@ai-sdk/provider-utils": "workspace:*"
+    "@ai-sdk/provider": "latest",
+    "@ai-sdk/provider-utils": "latest"
   },
   "devDependencies": {
     "@ai-sdk/test-server": "workspace:*",
