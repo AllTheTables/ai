@@ -49,7 +49,7 @@ export const fileSearch = createProviderDefinedToolFactoryWithOutputSchema<
   {},
   {
     /**
-     * The search query to execute.
+     * The search query to execute. If not provided, the tool will use the conversation context to determine the query.
      */
     queries: string[];
 
