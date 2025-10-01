@@ -1,4 +1,4 @@
-import { LanguageModelV3, LanguageModelV3CallOptions } from '@ai-sdk/provider';
+import { LanguageModelV3, LanguageModelV3CallOptions } from '@zenning/provider';
 import { LanguageModelMiddleware } from '../types';
 import { asArray } from '../util/as-array';
 

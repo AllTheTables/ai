@@ -400,6 +400,9 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                 mediaType: chunk.mediaType,
                 title: chunk.title,
                 filename: chunk.filename,
+                fileId: chunk.fileId,
+                startIndex: chunk.startIndex,
+                endIndex: chunk.endIndex,
                 providerMetadata: chunk.providerMetadata,
               });
 

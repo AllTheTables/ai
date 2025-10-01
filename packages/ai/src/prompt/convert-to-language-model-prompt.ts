@@ -3,7 +3,7 @@ import {
   LanguageModelV3Message,
   LanguageModelV3Prompt,
   LanguageModelV3TextPart,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   DataContent,
   FilePart,

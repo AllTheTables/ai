@@ -150,6 +150,9 @@ export type SourceDocumentUIPart = {
   mediaType: string;
   title: string;
   filename?: string;
+  fileId?: string;
+  startIndex?: number;
+  endIndex?: number;
   providerMetadata?: ProviderMetadata;
 };
 

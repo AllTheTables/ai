@@ -1,4 +1,4 @@
-import { AISDKError } from '@ai-sdk/provider';
+import { AISDKError } from '@zenning/provider';
 import { UIMessage } from '../ui/ui-messages';
 
 const name = 'AI_MessageConversionError';

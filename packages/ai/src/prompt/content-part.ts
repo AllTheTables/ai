@@ -1,4 +1,4 @@
-import { LanguageModelV3ToolResultOutput } from '@ai-sdk/provider';
+import { LanguageModelV3ToolResultOutput } from '@zenning/provider';
 import {
   FilePart,
   ImagePart,

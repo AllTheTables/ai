@@ -1,4 +1,4 @@
-import { AISDKError, getErrorMessage } from '@ai-sdk/provider';
+import { AISDKError, getErrorMessage } from '@zenning/provider';
 import { InvalidToolInputError } from './invalid-tool-input-error';
 import { NoSuchToolError } from './no-such-tool-error';
 

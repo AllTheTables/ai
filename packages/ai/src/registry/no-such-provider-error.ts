@@ -1,4 +1,4 @@
-import { AISDKError, NoSuchModelError } from '@ai-sdk/provider';
+import { AISDKError, NoSuchModelError } from '@zenning/provider';
 
 const name = 'AI_NoSuchProviderError';
 const marker = `vercel.ai.error.${name}`;

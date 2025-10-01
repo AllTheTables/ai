@@ -1,7 +1,7 @@
 import { delay as originalDelay } from '@ai-sdk/provider-utils';
 import { TextStreamPart } from './stream-text-result';
 import { ToolSet } from './tool-set';
-import { InvalidArgumentError } from '@ai-sdk/provider';
+import { InvalidArgumentError } from '@zenning/provider';
 
 const CHUNKING_REGEXPS = {
   word: /\S+\s+/m,

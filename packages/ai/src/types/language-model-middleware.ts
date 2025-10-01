@@ -1,3 +1,3 @@
-import { LanguageModelV3Middleware } from '@ai-sdk/provider';
+import { LanguageModelV3Middleware } from '@zenning/provider';
 
 export type LanguageModelMiddleware = LanguageModelV3Middleware;

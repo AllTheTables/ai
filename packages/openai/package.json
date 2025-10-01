@@ -39,13 +39,14 @@
     }
   },
   "dependencies": {
+    "@zenning/provider": "latest",
     "@ai-sdk/provider": "latest",
     "@ai-sdk/provider-utils": "latest"
   },
   "devDependencies": {
-    "@ai-sdk/test-server": "workspace:*",
+    "@ai-sdk/test-server": "latest",
     "@types/node": "20.17.24",
-    "@vercel/ai-tsconfig": "workspace:*",
+    "@vercel/ai-tsconfig": "latest",
     "tsup": "^8",
     "typescript": "5.8.3",
     "zod": "3.25.76"

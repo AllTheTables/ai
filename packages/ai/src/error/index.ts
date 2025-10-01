@@ -11,7 +11,7 @@ export {
   TooManyEmbeddingValuesForCallError,
   TypeValidationError,
   UnsupportedFunctionalityError,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 export { InvalidArgumentError } from './invalid-argument-error';
 export { InvalidStreamPartError } from './invalid-stream-part-error';

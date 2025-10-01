@@ -1,4 +1,4 @@
-import { AISDKError, getErrorMessage } from '@ai-sdk/provider';
+import { AISDKError, getErrorMessage } from '@zenning/provider';
 
 const name = 'AI_InvalidToolInputError';
 const marker = `vercel.ai.error.${name}`;

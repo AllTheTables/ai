@@ -105,6 +105,9 @@ export const uiMessageChunkSchema = z.union([
     type: z.literal('source-document'),
     sourceId: z.string(),
     mediaType: z.string(),
+    fileId: z.string().optional(),
+    startIndex: z.number().optional(),
+    endIndex: z.number().optional(),
     title: z.string(),
     filename: z.string().optional(),
     providerMetadata: providerMetadataSchema.optional(),
@@ -257,6 +260,9 @@ export type UIMessageChunk<
       mediaType: string;
       title: string;
       filename?: string;
+      fileId?: string;
+      startIndex?: number;
+      endIndex?: number;
       providerMetadata?: ProviderMetadata;
     }
   | {

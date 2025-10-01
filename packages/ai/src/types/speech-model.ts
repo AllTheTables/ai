@@ -1,4 +1,4 @@
-import { SpeechModelV2, SpeechModelV2CallWarning } from '@ai-sdk/provider';
+import { SpeechModelV2, SpeechModelV2CallWarning } from '@zenning/provider';
 
 /**
 Speech model that is used by the AI SDK Core functions.

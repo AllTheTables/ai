@@ -10,7 +10,7 @@ import {
   LanguageModelV3StreamPart,
   LanguageModelV3Usage,
   UnsupportedFunctionalityError,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   FetchFunction,
   ParseResult,

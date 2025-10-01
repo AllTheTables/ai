@@ -5,7 +5,7 @@ import {
   LanguageModelV2,
   LanguageModelV3,
   ProviderV3,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { UnsupportedModelVersionError } from '../error';
 import { EmbeddingModel } from '../types/embedding-model';
 import { LanguageModel } from '../types/language-model';

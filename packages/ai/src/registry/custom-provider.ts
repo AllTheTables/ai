@@ -6,7 +6,7 @@ import {
   ProviderV3,
   SpeechModelV2,
   TranscriptionModelV2,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 /**
  * Creates a custom provider with specified language models, text embedding models, image models, transcription models, speech models, and an optional fallback provider.

@@ -1,4 +1,4 @@
-import { JSONValue as OriginalJSONValue } from '@ai-sdk/provider';
+import { JSONValue as OriginalJSONValue } from '@zenning/provider';
 import { z } from 'zod/v4';
 
 export const jsonValueSchema: z.ZodType<JSONValue> = z.lazy(() =>

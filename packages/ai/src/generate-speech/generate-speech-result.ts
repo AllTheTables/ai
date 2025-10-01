@@ -1,4 +1,4 @@
-import { JSONValue } from '@ai-sdk/provider';
+import { JSONValue } from '@zenning/provider';
 import { SpeechModelResponseMetadata } from '../types/speech-model-response-metadata';
 import { SpeechWarning } from '../types';
 import { GeneratedAudioFile } from './generated-audio-file';

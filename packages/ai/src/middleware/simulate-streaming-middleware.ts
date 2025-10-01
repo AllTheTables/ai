@@ -1,4 +1,4 @@
-import type { LanguageModelV3StreamPart } from '@ai-sdk/provider';
+import type { LanguageModelV3StreamPart } from '@zenning/provider';
 import { LanguageModelMiddleware } from '../types';
 
 /**

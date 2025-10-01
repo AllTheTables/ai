@@ -1,4 +1,4 @@
-import { AISDKError, LanguageModelV3DataContent } from '@ai-sdk/provider';
+import { AISDKError, LanguageModelV3DataContent } from '@zenning/provider';
 import {
   convertBase64ToUint8Array,
   convertUint8ArrayToBase64,

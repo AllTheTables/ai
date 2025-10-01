@@ -1,7 +1,7 @@
 import {
   LanguageModelV3CallWarning,
   LanguageModelV3StreamPart,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   executeTool,
   generateId,

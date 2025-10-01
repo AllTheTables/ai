@@ -1,4 +1,4 @@
-import type { ProviderV3 } from '@ai-sdk/provider';
+import type { ProviderV3 } from '@zenning/provider';
 import { LanguageModelMiddleware } from '../types/language-model-middleware';
 import { wrapLanguageModel } from './wrap-language-model';
 

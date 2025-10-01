@@ -1,4 +1,4 @@
-import { SharedV3ProviderMetadata } from '@ai-sdk/provider';
+import { SharedV3ProviderMetadata } from '@zenning/provider';
 import { z } from 'zod/v4';
 import { jsonValueSchema } from './json-value';
 

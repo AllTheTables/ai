@@ -1,4 +1,4 @@
-import { LanguageModelV3Usage } from '@ai-sdk/provider';
+import { LanguageModelV3Usage } from '@zenning/provider';
 
 /**
 Represents the number of tokens used in a prompt and completion.

@@ -1,4 +1,4 @@
-import { JSONSchema7, LanguageModelV3ToolCall } from '@ai-sdk/provider';
+import { JSONSchema7, LanguageModelV3ToolCall } from '@zenning/provider';
 import { InvalidToolInputError } from '../error/invalid-tool-input-error';
 import { NoSuchToolError } from '../error/no-such-tool-error';
 import { ModelMessage } from '../prompt';

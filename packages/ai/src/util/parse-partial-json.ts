@@ -1,4 +1,4 @@
-import { JSONValue } from '@ai-sdk/provider';
+import { JSONValue } from '@zenning/provider';
 import { safeParseJSON } from '@ai-sdk/provider-utils';
 import { fixJson } from './fix-json';
 

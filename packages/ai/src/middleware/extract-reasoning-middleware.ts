@@ -1,7 +1,7 @@
 import type {
   LanguageModelV3Content,
   LanguageModelV3StreamPart,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { LanguageModelMiddleware } from '../types/language-model-middleware';
 import { getPotentialStartIndex } from '../util/get-potential-start-index';
 

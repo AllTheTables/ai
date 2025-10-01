@@ -1,7 +1,7 @@
 import {
   EmbeddingModelV3,
   TooManyEmbeddingValuesForCallError,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   combineHeaders,
   createJsonResponseHandler,

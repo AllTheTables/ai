@@ -2,7 +2,7 @@ import {
   ImageModelV3,
   ImageModelV3CallWarning,
   ImageModelV3ProviderMetadata,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 /**
 Image model that is used by the AI SDK Core functions.

@@ -2,7 +2,7 @@ import {
   LanguageModelV3FunctionTool,
   LanguageModelV3ProviderDefinedTool,
   LanguageModelV3ToolChoice,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { asSchema } from '@ai-sdk/provider-utils';
 import { isNonEmptyObject } from '../util/is-non-empty-object';
 import { ToolSet } from '../generate-text';

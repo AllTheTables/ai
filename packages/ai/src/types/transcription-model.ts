@@ -1,7 +1,7 @@
 import {
   TranscriptionModelV2,
   TranscriptionModelV2CallWarning,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 /**
 Transcription model that is used by the AI SDK Core functions.

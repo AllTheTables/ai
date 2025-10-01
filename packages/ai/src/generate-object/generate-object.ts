@@ -1,4 +1,4 @@
-import { JSONValue } from '@ai-sdk/provider';
+import { JSONValue } from '@zenning/provider';
 import {
   createIdGenerator,
   InferSchema,

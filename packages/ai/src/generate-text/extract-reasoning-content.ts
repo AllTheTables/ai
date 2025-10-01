@@ -1,7 +1,7 @@
 import {
   LanguageModelV3Content,
   LanguageModelV3Reasoning,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 export function extractReasoningContent(
   content: LanguageModelV3Content[],

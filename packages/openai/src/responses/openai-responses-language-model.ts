@@ -8,7 +8,7 @@ import {
   LanguageModelV3StreamPart,
   LanguageModelV3Usage,
   SharedV3ProviderMetadata,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   combineHeaders,
   createEventSourceResponseHandler,
@@ -638,6 +638,9 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                   mediaType: 'text/plain',
                   title: annotation.quote ?? annotation.filename ?? 'Document',
                   filename: annotation.filename ?? annotation.file_id,
+                  fileId: annotation.file_id,
+                  startIndex: annotation.start_index ?? undefined,
+                  endIndex: annotation.end_index ?? undefined,
                 });
               }
             }
@@ -1290,6 +1293,9 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                     'Document',
                   filename:
                     value.annotation.filename ?? value.annotation.file_id,
+                  fileId: value.annotation.file_id,
+                  startIndex: value.annotation.start_index ?? undefined,
+                  endIndex: value.annotation.end_index ?? undefined,
                 });
               }
             } else if (isErrorChunk(value)) {

@@ -1,4 +1,4 @@
-import { TranscriptionModelV2 } from '@ai-sdk/provider';
+import { TranscriptionModelV2 } from '@zenning/provider';
 import { notImplemented } from './not-implemented';
 
 export class MockTranscriptionModelV2 implements TranscriptionModelV2 {

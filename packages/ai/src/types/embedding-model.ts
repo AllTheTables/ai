@@ -2,7 +2,7 @@ import {
   EmbeddingModelV2,
   EmbeddingModelV3,
   EmbeddingModelV3Embedding,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 /**
 Embedding model that is used by the AI SDK Core functions.

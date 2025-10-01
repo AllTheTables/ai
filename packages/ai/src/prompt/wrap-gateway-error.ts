@@ -2,7 +2,7 @@ import {
   GatewayAuthenticationError,
   GatewayModelNotFoundError,
 } from '@ai-sdk/gateway';
-import { AISDKError } from '@ai-sdk/provider';
+import { AISDKError } from '@zenning/provider';
 
 export function wrapGatewayError(error: unknown): unknown {
   if (

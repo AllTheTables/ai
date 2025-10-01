@@ -6,7 +6,7 @@ import {
   JSONValue,
   TypeValidationError,
   UnsupportedFunctionalityError,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   asSchema,
   safeValidateTypes,

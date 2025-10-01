@@ -61,6 +61,21 @@ export type LanguageModelV2Source =
       filename?: string;
 
       /**
+       * The ID of the document.
+       */
+      fileId?: string;
+
+      /**
+       * The start index of the document.
+       */
+      startIndex?: number;
+
+      /**
+       * The end index of the document.
+       */
+      endIndex?: number;
+
+      /**
        * Additional provider metadata for the source.
        */
       providerMetadata?: SharedV2ProviderMetadata;

@@ -1,4 +1,4 @@
-import { AISDKError } from '@ai-sdk/provider';
+import { AISDKError } from '@zenning/provider';
 
 /**
 Error that is thrown when a model with an unsupported version is used.

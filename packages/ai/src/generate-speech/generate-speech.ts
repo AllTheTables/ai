@@ -1,4 +1,4 @@
-import { JSONValue, SpeechModelV2 } from '@ai-sdk/provider';
+import { JSONValue, SpeechModelV2 } from '@zenning/provider';
 import { ProviderOptions, withUserAgentSuffix } from '@ai-sdk/provider-utils';
 import { NoSpeechGeneratedError } from '../error/no-speech-generated-error';
 import { UnsupportedModelVersionError } from '../error/unsupported-model-version-error';

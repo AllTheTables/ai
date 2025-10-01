@@ -2,7 +2,7 @@ import {
   LanguageModelV3,
   LanguageModelV3Content,
   LanguageModelV3ToolCall,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   createIdGenerator,
   executeTool,

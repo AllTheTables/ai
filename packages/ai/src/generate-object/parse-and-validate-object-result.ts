@@ -1,4 +1,4 @@
-import { JSONParseError, TypeValidationError } from '@ai-sdk/provider';
+import { JSONParseError, TypeValidationError } from '@zenning/provider';
 import { safeParseJSON } from '@ai-sdk/provider-utils';
 import { NoObjectGeneratedError } from '../error/no-object-generated-error';
 import type {

@@ -1,4 +1,4 @@
-import { JSONParseError, TypeValidationError } from '@ai-sdk/provider';
+import { JSONParseError, TypeValidationError } from '@zenning/provider';
 
 /**
 A function that attempts to repair the raw output of the model

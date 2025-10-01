@@ -1,7 +1,7 @@
 import {
   LanguageModelV3Message,
   LanguageModelV3Prompt,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { convertDataContentToBase64String } from '../prompt/data-content';
 
 /**

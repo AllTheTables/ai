@@ -1,4 +1,4 @@
-import { TypeValidationError } from '@ai-sdk/provider';
+import { TypeValidationError } from '@zenning/provider';
 import {
   StandardSchemaV1,
   Tool,
@@ -44,6 +44,9 @@ const sourceDocumentUIPartSchema = z.object({
   mediaType: z.string(),
   title: z.string(),
   filename: z.string().optional(),
+  fileId: z.string().optional(),
+  startIndex: z.number().optional(),
+  endIndex: z.number().optional(),
   providerMetadata: providerMetadataSchema.optional(),
 });
 

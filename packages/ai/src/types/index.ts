@@ -1,4 +1,4 @@
-export type { JSONSchema7 } from '@ai-sdk/provider';
+export type { JSONSchema7 } from '@zenning/provider';
 export type { Embedding, EmbeddingModel } from './embedding-model';
 export type {
   ImageModel,

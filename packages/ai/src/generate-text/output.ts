@@ -1,4 +1,4 @@
-import { LanguageModelV3CallOptions } from '@ai-sdk/provider';
+import { LanguageModelV3CallOptions } from '@zenning/provider';
 import {
   asSchema,
   safeParseJSON,

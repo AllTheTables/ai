@@ -1,4 +1,4 @@
-import { LanguageModelV3ToolCall } from '@ai-sdk/provider';
+import { LanguageModelV3ToolCall } from '@zenning/provider';
 import {
   asSchema,
   ModelMessage,

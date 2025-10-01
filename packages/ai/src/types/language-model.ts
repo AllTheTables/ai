@@ -4,7 +4,7 @@ import {
   LanguageModelV3CallWarning,
   LanguageModelV3FinishReason,
   LanguageModelV3Source,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 /**
 Language model that is used by the AI SDK Core functions.

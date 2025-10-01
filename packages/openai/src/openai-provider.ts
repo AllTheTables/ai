@@ -5,7 +5,7 @@ import {
   ProviderV3,
   SpeechModelV2,
   TranscriptionModelV2,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   FetchFunction,
   loadApiKey,

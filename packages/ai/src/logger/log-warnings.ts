@@ -3,7 +3,7 @@ import {
   LanguageModelV3CallWarning,
   SpeechModelV2CallWarning,
   TranscriptionModelV2CallWarning,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 export type Warning =
   | LanguageModelV3CallWarning

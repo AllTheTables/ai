@@ -1,4 +1,4 @@
-import { AISDKError } from '@ai-sdk/provider';
+import { AISDKError } from '@zenning/provider';
 
 const name = 'AI_InvalidMessageRoleError';
 const marker = `vercel.ai.error.${name}`;

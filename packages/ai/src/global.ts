@@ -1,4 +1,4 @@
-import { ProviderV3 } from '@ai-sdk/provider';
+import { ProviderV3 } from '@zenning/provider';
 import { LogWarningsFunction } from './logger/log-warnings';
 
 // add AI SDK default provider to the globalThis object

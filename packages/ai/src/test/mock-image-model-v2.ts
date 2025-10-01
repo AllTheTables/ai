@@ -1,4 +1,4 @@
-import { ImageModelV2 } from '@ai-sdk/provider';
+import { ImageModelV2 } from '@zenning/provider';
 import { notImplemented } from './not-implemented';
 
 export class MockImageModelV2 implements ImageModelV2 {

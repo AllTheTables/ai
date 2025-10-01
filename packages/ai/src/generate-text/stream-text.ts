@@ -2,7 +2,7 @@ import {
   getErrorMessage,
   LanguageModelV3,
   LanguageModelV3CallWarning,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   createIdGenerator,
   IdGenerator,
@@ -1868,6 +1868,9 @@ However, the LLM results are expected to be small enough to not cause issues.
                   mediaType: part.mediaType,
                   title: part.title,
                   filename: part.filename,
+                  fileId: part.fileId,
+                  startIndex: part.startIndex,
+                  endIndex: part.endIndex,
                   ...(part.providerMetadata != null
                     ? { providerMetadata: part.providerMetadata }
                     : {}),

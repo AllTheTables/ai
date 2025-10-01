@@ -2,7 +2,7 @@ import {
   getErrorMessage,
   JSONValue,
   LanguageModelV3ToolResultOutput,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { Tool } from '@ai-sdk/provider-utils';
 
 export function createToolModelOutput({

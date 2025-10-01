@@ -1,4 +1,4 @@
-import { AISDKError } from '@ai-sdk/provider';
+import { AISDKError } from '@zenning/provider';
 
 const name = 'AI_NoOutputSpecifiedError';
 const marker = `vercel.ai.error.${name}`;

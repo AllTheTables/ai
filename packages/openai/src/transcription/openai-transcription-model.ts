@@ -2,7 +2,7 @@ import {
   TranscriptionModelV2,
   TranscriptionModelV2CallOptions,
   TranscriptionModelV2CallWarning,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   combineHeaders,
   convertBase64ToUint8Array,

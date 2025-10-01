@@ -1,4 +1,4 @@
-import { JSONValue, TranscriptionModelV2 } from '@ai-sdk/provider';
+import { JSONValue, TranscriptionModelV2 } from '@zenning/provider';
 import { ProviderOptions, withUserAgentSuffix } from '@ai-sdk/provider-utils';
 import { NoTranscriptGeneratedError } from '../error/no-transcript-generated-error';
 import { UnsupportedModelVersionError } from '../error/unsupported-model-version-error';

@@ -1,4 +1,4 @@
-import { AISDKError } from '@ai-sdk/provider';
+import { AISDKError } from '@zenning/provider';
 import { SpeechModelResponseMetadata } from '../types/speech-model-response-metadata';
 
 /**

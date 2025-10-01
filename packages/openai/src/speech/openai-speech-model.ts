@@ -1,4 +1,4 @@
-import { SpeechModelV2, SpeechModelV2CallWarning } from '@ai-sdk/provider';
+import { SpeechModelV2, SpeechModelV2CallWarning } from '@zenning/provider';
 import {
   combineHeaders,
   createBinaryResponseHandler,

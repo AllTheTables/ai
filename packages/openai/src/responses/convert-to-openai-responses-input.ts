@@ -3,7 +3,7 @@ import {
   LanguageModelV3Prompt,
   LanguageModelV3ToolCallPart,
   UnsupportedFunctionalityError,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { convertToBase64, parseProviderOptions } from '@ai-sdk/provider-utils';
 import { z } from 'zod/v4';
 import {

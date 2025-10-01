@@ -6,7 +6,7 @@ import {
   ProviderV3,
   SpeechModelV2,
   TranscriptionModelV2,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { wrapLanguageModel } from '../middleware/wrap-language-model';
 import { LanguageModelMiddleware } from '../types';
 import { NoSuchProviderError } from './no-such-provider-error';

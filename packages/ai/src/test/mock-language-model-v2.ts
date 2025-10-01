@@ -1,4 +1,4 @@
-import { LanguageModelV2 } from '@ai-sdk/provider';
+import { LanguageModelV2 } from '@zenning/provider';
 import { notImplemented } from './not-implemented';
 
 export class MockLanguageModelV2 implements LanguageModelV2 {
