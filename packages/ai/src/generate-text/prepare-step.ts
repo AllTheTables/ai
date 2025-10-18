@@ -1,4 +1,4 @@
-import { ModelMessage, Tool } from '@ai-sdk/provider-utils';
+import { ModelMessage, Tool } from '@zenning/provider-utils';
 import { LanguageModel, ToolChoice } from '../types/language-model';
 import { StepResult } from './step-result';
 

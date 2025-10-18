@@ -1,4 +1,4 @@
-import { IdGenerator } from '@ai-sdk/provider-utils';
+import { IdGenerator } from '@zenning/provider-utils';
 import { UIMessage } from '../ui/ui-messages';
 
 export function getResponseUIMessageId({

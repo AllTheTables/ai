@@ -16,7 +16,7 @@ export {
   type Tool,
   type ToolCallOptions,
   type ToolExecuteFunction,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 
 // directory exports
 export * from './agent';

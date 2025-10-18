@@ -1,7 +1,7 @@
 import { z } from 'zod/v4';
-import { createJsonErrorResponseHandler } from '@ai-sdk/provider-utils';
-import type { ResponseHandler } from '@ai-sdk/provider-utils';
-import type { APICallError } from '@ai-sdk/provider';
+import { createJsonErrorResponseHandler } from '@zenning/provider-utils';
+import type { ResponseHandler } from '@zenning/provider-utils';
+import type { APICallError } from '@zenning/provider';
 
 export const openaiErrorDataSchema = z.object({
   error: z.object({

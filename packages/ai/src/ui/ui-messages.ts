@@ -3,7 +3,7 @@ import {
   InferToolOutput,
   Tool,
   ToolCall,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { ToolSet } from '../generate-text';
 import { ProviderMetadata } from '../types/provider-metadata';
 import { DeepPartial } from '../util/deep-partial';
@@ -83,6 +83,7 @@ export type UIMessagePart<
   | SourceUrlUIPart
   | SourceDocumentUIPart
   | FileUIPart
+  | SourceExecutionFileUIPart
   | DataUIPart<DATA_TYPES>
   | StepStartUIPart;
 
@@ -138,6 +139,12 @@ export type SourceUrlUIPart = {
   sourceId: string;
   url: string;
   title?: string;
+  providerMetadata?: ProviderMetadata;
+};
+
+export type SourceExecutionFileUIPart = {
+  type: 'source-execution-file';
+  sourceId: string;
   providerMetadata?: ProviderMetadata;
 };
 

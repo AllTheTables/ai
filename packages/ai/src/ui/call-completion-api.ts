@@ -3,7 +3,7 @@ import {
   ParseResult,
   withUserAgentSuffix,
   getRuntimeEnvironmentUserAgent,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   UIMessageChunk,
   uiMessageChunkSchema,

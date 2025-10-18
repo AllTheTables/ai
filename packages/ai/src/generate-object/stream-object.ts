@@ -11,7 +11,7 @@ import {
   ProviderOptions,
   type InferSchema,
   type Schema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { ServerResponse } from 'http';
 import * as z3 from 'zod/v3';
 import * as z4 from 'zod/v4';

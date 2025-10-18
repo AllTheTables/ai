@@ -1,7 +1,7 @@
 import {
   AssistantModelMessage,
   ToolModelMessage,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 
 /**
 A message that was generated during the generation process.

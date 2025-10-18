@@ -2,7 +2,7 @@ import { DownloadError } from './download-error';
 import {
   withUserAgentSuffix,
   getRuntimeEnvironmentUserAgent,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { VERSION } from '../../version';
 
 /**

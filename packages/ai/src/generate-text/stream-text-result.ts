@@ -1,4 +1,4 @@
-import { IdGenerator } from '@ai-sdk/provider-utils';
+import { IdGenerator } from '@zenning/provider-utils';
 import { ServerResponse } from 'node:http';
 import {
   CallWarning,

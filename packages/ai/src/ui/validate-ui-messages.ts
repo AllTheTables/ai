@@ -4,7 +4,7 @@ import {
   Tool,
   validateTypes,
   Validator,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { providerMetadataSchema } from '../types/provider-metadata';
 import {
@@ -111,6 +111,12 @@ const dynamicToolUIPartSchemas = [
   }),
 ];
 
+const sourceExecutionFileUIPartSchema = z.object({
+  type: z.literal('source-execution-file'),
+  sourceId: z.string(),
+  providerMetadata: providerMetadataSchema.optional(),
+});
+
 const toolUIPartSchemas = [
   z.object({
     type: z.string().startsWith('tool-'),
@@ -166,6 +172,7 @@ const uiMessageSchema = z.object({
       sourceDocumentUIPartSchema,
       fileUIPartSchema,
       stepStartUIPartSchema,
+      sourceExecutionFileUIPartSchema,
       dataUIPartSchema,
       ...dynamicToolUIPartSchemas,
       ...toolUIPartSchemas,

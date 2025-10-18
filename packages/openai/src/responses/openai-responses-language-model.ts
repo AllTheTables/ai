@@ -17,7 +17,7 @@ import {
   parseProviderOptions,
   ParseResult,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { OpenAIConfig } from '../openai-config';
 import { openaiFailedResponseHandler } from '../openai-error';
@@ -105,6 +105,15 @@ const localShellCallItem = z.object({
     env: z.record(z.string(), z.string()).optional(),
   }),
 });
+
+const sourceExecutionFileCodeInterpreterItem = z.object({
+  containerId: z.string(),
+  fileId: z.string(),
+  filename: z.string(),
+});
+type SourceExecutionFileCodeInterpreterItem = z.infer<
+  typeof sourceExecutionFileCodeInterpreterItem
+>;
 
 const imageGenerationCallItem = z.object({
   type: z.literal('image_generation_call'),
@@ -424,6 +433,8 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
       modelId: this.modelId,
     });
 
+    const providerKey = this.config.provider.replace('.responses', ''); // come 'openai' or 'azure'. provider is 'openai.responses' or 'azure.responses'.
+
     const {
       responseHeaders,
       value: response,
@@ -475,6 +486,11 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                         }),
                         z.object({
                           type: z.literal('container_file_citation'),
+                          container_id: z.string(),
+                          end_index: z.number(),
+                          file_id: z.string(),
+                          filename: z.string(),
+                          start_index: z.number(),
                         }),
                       ]),
                     ),
@@ -617,7 +633,8 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
               providerMetadata: {
                 openai: {
                   itemId: part.id,
-                },
+                  annotations: contentPart.annotations,
+                }
               },
             });
 
@@ -641,6 +658,19 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                   fileId: annotation.file_id,
                   startIndex: annotation.start_index ?? undefined,
                   endIndex: annotation.end_index ?? undefined,
+                });
+              } else if (annotation.type === 'container_file_citation') {
+                content.push({
+                  type: 'source',
+                  sourceType: 'executionFile',
+                  id: this.config.generateId?.() ?? generateId(),
+                  providerMetadata: {
+                    [providerKey]: {
+                      containerId: annotation.container_id,
+                      fileId: annotation.file_id,
+                      filename: annotation.filename,
+                    } satisfies SourceExecutionFileCodeInterpreterItem,
+                  },
                 });
               }
             }
@@ -852,6 +882,10 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
       | undefined
     > = {};
 
+    const ongoingAnnotations: Array<
+      z.infer<typeof responseAnnotationAddedSchema>['annotation']
+    > = [];
+
     // flag that checks if there have been client-side tool calls (not executed by openai)
     let hasFunctionCall = false;
 
@@ -960,6 +994,7 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                   providerExecuted: true,
                 });
               } else if (value.item.type === 'message') {
+                ongoingAnnotations.splice(0, ongoingAnnotations.length);
                 controller.enqueue({
                   type: 'text-start',
                   id: value.item.id,
@@ -987,8 +1022,10 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                   },
                 });
               }
-            } else if (isResponseOutputItemDoneChunk(value)) {
-              if (value.item.type === 'function_call') {
+            } else if (
+              isResponseOutputItemDoneChunk(value) &&
+              value.item.type !== 'message'
+            ) {              if (value.item.type === 'function_call') {
                 ongoingToolCalls[value.output_index] = undefined;
                 hasFunctionCall = true;
 
@@ -1119,11 +1156,6 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                   providerMetadata: {
                     openai: { itemId: value.item.id },
                   },
-                });
-              } else if (value.item.type === 'message') {
-                controller.enqueue({
-                  type: 'text-end',
-                  id: value.item.id,
                 });
               } else if (isResponseOutputItemDoneReasoningChunk(value)) {
                 const activeReasoningPart = activeReasoning[value.item.id];
@@ -1273,6 +1305,7 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                 serviceTier = value.response.service_tier;
               }
             } else if (isResponseAnnotationAddedChunk(value)) {
+              ongoingAnnotations.push(value.annotation);
               if (value.annotation.type === 'url_citation') {
                 controller.enqueue({
                   type: 'source',
@@ -1297,7 +1330,34 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                   startIndex: value.annotation.start_index ?? undefined,
                   endIndex: value.annotation.end_index ?? undefined,
                 });
+              } else if (value.annotation.type === 'container_file_citation') {
+                controller.enqueue({
+                  type: 'source',
+                  sourceType: 'executionFile',
+                  id: self.config.generateId?.() ?? generateId(),
+                  providerMetadata: {
+                    openai: {
+                      containerId: value.annotation.container_id,
+                      fileId: value.annotation.file_id,
+                      filename: value.annotation.filename,
+                    } satisfies SourceExecutionFileCodeInterpreterItem,
+                  },
+                });
               }
+            } else if (
+              isResponseOutputItemDoneChunk(value) &&
+              value.item.type === 'message'
+            ) {
+              controller.enqueue({
+                type: 'text-end',
+                id: value.item.id,
+                providerMetadata: {
+                  openai: {
+                    itemId: value.item.id,
+                    annotations: ongoingAnnotations,
+                  },
+                },
+              });
             } else if (isErrorChunk(value)) {
               controller.enqueue({ type: 'error', error: value });
             }
@@ -1518,6 +1578,14 @@ const responseAnnotationAddedSchema = z.object({
       start_index: z.number().nullish(),
       end_index: z.number().nullish(),
       quote: z.string().nullish(),
+    }),
+    z.object({
+      type: z.literal('container_file_citation'),
+      container_id: z.string(),
+      end_index: z.number(),
+      file_id: z.string(),
+      filename: z.string(),
+      start_index: z.number(),
     }),
   ]),
 });
@@ -1780,3 +1848,14 @@ const openaiResponsesProviderOptionsSchema = z.object({
 export type OpenAIResponsesProviderOptions = z.infer<
   typeof openaiResponsesProviderOptionsSchema
 >;
+
+export const openaiResponsesTextUIPartProviderMetadataSchema = z.object({
+  openai: z.object({
+    itemId: z.string(),
+    annotations: z.array(responseAnnotationAddedSchema.shape.annotation),
+  }),
+});
+
+export const openaiSourceExecutionFileProviderMetadataSchema = z.object({
+  openai: sourceExecutionFileCodeInterpreterItem,
+});

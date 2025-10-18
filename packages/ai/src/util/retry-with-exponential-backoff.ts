@@ -1,5 +1,5 @@
 import { APICallError } from '@zenning/provider';
-import { delay, getErrorMessage, isAbortError } from '@ai-sdk/provider-utils';
+import { delay, getErrorMessage, isAbortError } from '@zenning/provider-utils';
 import { RetryError } from './retry-error';
 
 export type RetryFunction = <OUTPUT>(

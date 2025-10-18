@@ -1,5 +1,5 @@
 import { JSONValue } from '@zenning/provider';
-import { safeParseJSON } from '@ai-sdk/provider-utils';
+import { safeParseJSON } from '@zenning/provider-utils';
 import { fixJson } from './fix-json';
 
 export async function parsePartialJson(jsonText: string | undefined): Promise<{

@@ -2,7 +2,7 @@ import {
   AssistantContent,
   ModelMessage,
   ToolResultPart,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { ToolSet } from '../generate-text/tool-set';
 import { createToolModelOutput } from '../prompt/create-tool-model-output';
 import { MessageConversionError } from '../prompt/message-conversion-error';

@@ -5,7 +5,7 @@ import {
   Tool,
   tool,
   ToolCallOptions,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z, ZodType } from 'zod/v4';
 import { MCPClientError } from '../../error/mcp-client-error';
 import {

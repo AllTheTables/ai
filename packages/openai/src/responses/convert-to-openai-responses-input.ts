@@ -4,7 +4,7 @@ import {
   LanguageModelV3ToolCallPart,
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
-import { convertToBase64, parseProviderOptions } from '@ai-sdk/provider-utils';
+import { convertToBase64, parseProviderOptions } from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import {
   OpenAIResponsesInput,

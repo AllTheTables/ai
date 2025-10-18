@@ -11,7 +11,7 @@ import {
   isUrlSupported,
   ModelMessage,
   TextPart,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   detectMediaType,
   imageMediaTypeSignatures,

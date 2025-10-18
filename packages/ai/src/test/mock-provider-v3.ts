@@ -6,7 +6,7 @@ import {
   ProviderV3,
   SpeechModelV2,
   TranscriptionModelV2,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 export class MockProviderV3 implements ProviderV3 {
   languageModel: ProviderV3['languageModel'];

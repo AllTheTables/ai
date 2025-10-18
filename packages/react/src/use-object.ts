@@ -3,14 +3,14 @@ import {
   InferSchema,
   isAbortError,
   safeValidateTypes,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   asSchema,
   DeepPartial,
   isDeepEqualData,
   parsePartialJson,
   Schema,
-} from 'ai';
+} from '@zenning/ai';
 import { useCallback, useId, useRef, useState } from 'react';
 import useSWR from 'swr';
 import * as z3 from 'zod/v3';
@@ -218,12 +218,12 @@ function useObject<
             if (onFinish != null) {
               const validationResult = await safeValidateTypes({
                 value: latestObject,
-                schema: asSchema(schema),
+                schema: asSchema(schema) as any,
               });
 
               onFinish(
                 validationResult.success
-                  ? { object: validationResult.value, error: undefined }
+                  ? { object: validationResult.value as RESULT, error: undefined }
                   : { object: undefined, error: validationResult.error },
               );
             }

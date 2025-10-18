@@ -1,4 +1,4 @@
-import { delay as originalDelay } from '@ai-sdk/provider-utils';
+import { delay as originalDelay } from '@zenning/provider-utils';
 import { TextStreamPart } from './stream-text-result';
 import { ToolSet } from './tool-set';
 import { InvalidArgumentError } from '@zenning/provider';

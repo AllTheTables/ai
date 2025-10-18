@@ -119,6 +119,11 @@ export const uiMessageChunkSchema = z.union([
     providerMetadata: providerMetadataSchema.optional(),
   }),
   z.strictObject({
+    type: z.literal('source-execution-file'),
+    sourceId: z.string(),
+    providerMetadata: providerMetadataSchema.optional(),
+  }),
+  z.strictObject({
     type: z.custom<`data-${string}`>(
       (value): value is `data-${string}` =>
         typeof value === 'string' && value.startsWith('data-'),
@@ -263,6 +268,11 @@ export type UIMessageChunk<
       fileId?: string;
       startIndex?: number;
       endIndex?: number;
+      providerMetadata?: ProviderMetadata;
+    }
+  | {
+      type: 'source-execution-file';
+      sourceId: string;
       providerMetadata?: ProviderMetadata;
     }
   | {

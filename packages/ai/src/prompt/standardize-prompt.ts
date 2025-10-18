@@ -1,5 +1,5 @@
 import { InvalidPromptError } from '@zenning/provider';
-import { ModelMessage, safeValidateTypes } from '@ai-sdk/provider-utils';
+import { ModelMessage, safeValidateTypes } from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { modelMessageSchema } from './message';
 import { Prompt } from './prompt';

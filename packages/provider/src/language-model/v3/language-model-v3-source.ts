@@ -61,7 +61,41 @@ export type LanguageModelV3Source =
       filename?: string;
 
       /**
+       * Optional file ID of the document.
+       */
+      fileId?: string;
+
+      /**
+       * Optional start index of the document.
+       */
+      startIndex?: number;
+
+      /**
+       * Optional end index of the document.
+       */
+      endIndex?: number;
+
+      /**
        * Additional provider metadata for the source.
        */
       providerMetadata?: SharedV3ProviderMetadata;
+
+    }
+    | {
+        type: 'source';
+  
+        /**
+         * Source type for referencing a file within a container.
+         */
+        sourceType: 'executionFile';
+  
+        /**
+         * The ID of the source.
+         */
+        id: string;
+        /**
+         * Provider metadata for the source executionFile.
+         * To accommodate the different requirements of each provider, file download information is stored in providerMetadata.
+         */
+        providerMetadata?: SharedV3ProviderMetadata;
     };

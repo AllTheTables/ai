@@ -3,7 +3,7 @@ import {
   IdGenerator,
   StandardSchemaV1,
   Validator,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { UIMessageChunk } from '../ui-message-stream/ui-message-chunks';
 import { consumeStream } from '../util/consume-stream';
 import { SerialJobExecutor } from '../util/serial-job-executor';

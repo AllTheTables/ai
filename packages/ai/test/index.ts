@@ -3,7 +3,7 @@ export {
   convertArrayToReadableStream,
   convertReadableStreamToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 export { MockEmbeddingModelV3 } from '../src/test/mock-embedding-model-v3';
 export { MockImageModelV3 } from '../src/test/mock-image-model-v3';
 export { MockLanguageModelV3 } from '../src/test/mock-language-model-v3';

@@ -1,4 +1,4 @@
-import { EmbeddingModelV3 } from '@ai-sdk/provider';
+import { EmbeddingModelV3 } from '@zenning/provider';
 import { notImplemented } from './not-implemented';
 
 export class MockEmbeddingModelV3<VALUE> implements EmbeddingModelV3<VALUE> {

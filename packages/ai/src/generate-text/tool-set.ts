@@ -1,4 +1,4 @@
-import { Tool } from '@ai-sdk/provider-utils';
+import { Tool } from '@zenning/provider-utils';
 
 export type ToolSet = Record<
   string,

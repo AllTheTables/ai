@@ -1,4 +1,4 @@
-import { Schema } from '@ai-sdk/provider-utils';
+import { Schema } from '@zenning/provider-utils';
 import * as z3 from 'zod/v3';
 import * as z4 from 'zod/v4';
 import { InvalidArgumentError } from '../error/invalid-argument-error';

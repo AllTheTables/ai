@@ -1,4 +1,4 @@
-import { parseJsonEventStream, ParseResult } from '@ai-sdk/provider-utils';
+import { parseJsonEventStream, ParseResult } from '@zenning/provider-utils';
 import {
   UIMessageChunk,
   uiMessageChunkSchema,

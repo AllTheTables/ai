@@ -1,5 +1,5 @@
 import { JSONParseError, TypeValidationError } from '@zenning/provider';
-import { safeParseJSON } from '@ai-sdk/provider-utils';
+import { safeParseJSON } from '@zenning/provider-utils';
 import { NoObjectGeneratedError } from '../error/no-object-generated-error';
 import type {
   FinishReason,

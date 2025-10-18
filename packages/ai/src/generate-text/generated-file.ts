@@ -1,7 +1,7 @@
 import {
   convertBase64ToUint8Array,
   convertUint8ArrayToBase64,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 
 /**
  * A generated file.

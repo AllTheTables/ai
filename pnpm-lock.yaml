@@ -65,18 +65,18 @@ importers:
       '@ai-sdk/gateway':
         specifier: latest
         version: 1.0.23(zod@3.25.76)
-      '@ai-sdk/openai':
-        specifier: latest
-        version: 2.0.42(zod@3.25.76)
-      '@ai-sdk/provider-utils':
-        specifier: latest
-        version: 3.0.9(zod@3.25.76)
       '@opentelemetry/api':
         specifier: 1.9.0
         version: 1.9.0
+      '@zenning/openai':
+        specifier: latest
+        version: link:../openai
       '@zenning/provider':
         specifier: latest
         version: link:../provider
+      '@zenning/provider-utils':
+        specifier: latest
+        version: link:../provider-utils
     devDependencies:
       '@ai-sdk/test-server':
         specifier: latest
@@ -111,15 +111,12 @@ importers:
 
   packages/openai:
     dependencies:
-      '@ai-sdk/provider':
-        specifier: latest
-        version: 2.0.0
-      '@ai-sdk/provider-utils':
-        specifier: latest
-        version: 3.0.9(zod@3.25.76)
       '@zenning/provider':
         specifier: latest
         version: link:../provider
+      '@zenning/provider-utils':
+        specifier: latest
+        version: link:../provider-utils
     devDependencies:
       '@ai-sdk/test-server':
         specifier: latest
@@ -162,14 +159,45 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
+  packages/provider-utils:
+    dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
+      '@zenning/provider':
+        specifier: latest
+        version: link:../provider
+      eventsource-parser:
+        specifier: ^3.0.5
+        version: 3.0.6
+    devDependencies:
+      '@types/node':
+        specifier: 20.17.24
+        version: 20.17.24
+      '@vercel/ai-tsconfig':
+        specifier: workspace:*
+        version: link:../../tools/tsconfig
+      msw:
+        specifier: 2.7.0
+        version: 2.7.0(@types/node@20.17.24)(typescript@5.8.3)
+      tsup:
+        specifier: ^8
+        version: 8.5.0(jiti@2.4.0)(postcss@8.5.3)(tsx@4.19.2)(typescript@5.8.3)(yaml@2.5.0)
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      zod:
+        specifier: 3.25.76
+        version: 3.25.76
+
   packages/react:
     dependencies:
-      '@ai-sdk/provider-utils':
-        specifier: latest
-        version: 3.0.9(zod@3.25.76)
       '@zenning/ai':
         specifier: latest
         version: link:../ai
+      '@zenning/provider-utils':
+        specifier: latest
+        version: link:../provider-utils
       react:
         specifier: ^18 || ^19 || ^19.0.0-rc
         version: 19.0.0-rc-cc1ec60d0d-20240607
@@ -202,13 +230,13 @@ importers:
         specifier: ^18
         version: 18.3.7(@types/react@18.3.24)
       '@vercel/ai-tsconfig':
-        specifier: latest
+        specifier: workspace:*
         version: link:../../tools/tsconfig
       eslint:
         specifier: 8.57.1
         version: 8.57.1
       eslint-config-vercel-ai:
-        specifier: latest
+        specifier: workspace:*
         version: link:../../tools/eslint-config
       jsdom:
         specifier: ^24.0.0
@@ -274,18 +302,6 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
-
-  '@ai-sdk/openai@2.0.42':
-    resolution: {integrity: sha512-9mM6QS8k0ooH9qMC27nlrYLQmNDnO6Rk0JTmFo/yUxpABEWOcvQhMWNHbp9lFL6Ty5vkdINrujhsAQfWuEleOg==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
-
-  '@ai-sdk/provider-utils@3.0.10':
-    resolution: {integrity: sha512-T1gZ76gEIwffep6MWI0QNy9jgoybUHE7TRaHB5k54K8mF91ciGFlbtCGxDYhMH3nCRergKwYFIDeFF0hJSIQHQ==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      zod: ^3.25.76 || ^4.1.8
 
   '@ai-sdk/provider-utils@3.0.9':
     resolution: {integrity: sha512-Pm571x5efqaI4hf9yW4KsVlDBDme8++UepZRnq+kqVBWWjgvGhQlzU8glaFq0YJEB9kkxZHbRRyVeHoV2sRYaQ==}
@@ -4383,19 +4399,6 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.9(zod@3.25.76)
       zod: 3.25.76
 
-  '@ai-sdk/openai@2.0.42(zod@3.25.76)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.10(zod@3.25.76)
-      zod: 3.25.76
-
-  '@ai-sdk/provider-utils@3.0.10(zod@3.25.76)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.0
-      '@standard-schema/spec': 1.0.0
-      eventsource-parser: 3.0.6
-      zod: 3.25.76
-
   '@ai-sdk/provider-utils@3.0.9(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
@@ -5229,7 +5232,6 @@ snapshots:
       is-node-process: 1.2.0
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
-    optional: true
 
   '@next/env@15.0.0-canary.23': {}
 
@@ -7478,6 +7480,31 @@ snapshots:
       is-node-process: 1.2.0
       outvariant: 1.4.3
       path-to-regexp: 6.3.0
+      strict-event-emitter: 0.5.1
+      type-fest: 4.26.1
+      yargs: 17.7.2
+    optionalDependencies:
+      typescript: 5.8.3
+    transitivePeerDependencies:
+      - '@types/node'
+
+  msw@2.7.0(@types/node@20.17.24)(typescript@5.8.3):
+    dependencies:
+      '@bundled-es-modules/cookie': 2.0.1
+      '@bundled-es-modules/statuses': 1.0.1
+      '@bundled-es-modules/tough-cookie': 0.1.6
+      '@inquirer/confirm': 5.1.13(@types/node@20.17.24)
+      '@mswjs/interceptors': 0.37.5
+      '@open-draft/deferred-promise': 2.2.0
+      '@open-draft/until': 2.1.0
+      '@types/cookie': 0.6.0
+      '@types/statuses': 2.0.5
+      graphql: 16.9.0
+      headers-polyfill: 4.0.3
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      path-to-regexp: 6.3.0
+      picocolors: 1.1.1
       strict-event-emitter: 0.5.1
       type-fest: 4.26.1
       yargs: 17.7.2

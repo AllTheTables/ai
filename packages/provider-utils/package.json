@@ -1,6 +1,6 @@
 {
-  "name": "@ai-sdk/provider-utils",
-  "version": "3.1.0-beta.6",
+  "name": "@zenning/provider-utils",
+  "version": "3.1.0",
   "license": "Apache-2.0",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -39,7 +39,7 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/provider": "workspace:*",
+    "@zenning/provider": "latest",
     "@standard-schema/spec": "^1.0.0",
     "eventsource-parser": "^3.0.5"
   },

@@ -1,4 +1,4 @@
-import { ReasoningPart } from '@ai-sdk/provider-utils';
+import { ReasoningPart } from '@zenning/provider-utils';
 import {
   CallWarning,
   FinishReason,

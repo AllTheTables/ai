@@ -1,4 +1,4 @@
-import { IdGenerator, ProviderOptions } from '@ai-sdk/provider-utils';
+import { IdGenerator, ProviderOptions } from '@zenning/provider-utils';
 import {
   generateText,
   GenerateTextOnStepFinishCallback,

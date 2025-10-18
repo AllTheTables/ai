@@ -4,7 +4,7 @@ import {
   safeParseJSON,
   safeValidateTypes,
   Schema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import * as z3 from 'zod/v3';
 import * as z4 from 'zod/v4';
 import { NoObjectGeneratedError } from '../error/no-object-generated-error';

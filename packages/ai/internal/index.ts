@@ -1,5 +1,5 @@
 // internal re-exports
-export { convertAsyncIteratorToReadableStream } from '@ai-sdk/provider-utils';
+export { convertAsyncIteratorToReadableStream } from '@zenning/provider-utils';
 
 // internal
 export { convertToLanguageModelPrompt } from '../src/prompt/convert-to-language-model-prompt';

@@ -3,7 +3,7 @@ import {
   JSONValue,
   LanguageModelV3ToolResultOutput,
 } from '@zenning/provider';
-import { Tool } from '@ai-sdk/provider-utils';
+import { Tool } from '@zenning/provider-utils';
 
 export function createToolModelOutput({
   output,

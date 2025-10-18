@@ -8,7 +8,7 @@ import {
   IdGenerator,
   isAbortError,
   ProviderOptions,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { Span } from '@opentelemetry/api';
 import { ServerResponse } from 'node:http';
 import { NoOutputGeneratedError } from '../error';
@@ -1871,6 +1871,16 @@ However, the LLM results are expected to be small enough to not cause issues.
                   fileId: part.fileId,
                   startIndex: part.startIndex,
                   endIndex: part.endIndex,
+                  ...(part.providerMetadata != null
+                    ? { providerMetadata: part.providerMetadata }
+                    : {}),
+                });
+              }
+
+              if (sendSources && part.sourceType === 'executionFile') {
+                controller.enqueue({
+                  type: 'source-execution-file',
+                  sourceId: part.id,
                   ...(part.providerMetadata != null
                     ? { providerMetadata: part.providerMetadata }
                     : {}),

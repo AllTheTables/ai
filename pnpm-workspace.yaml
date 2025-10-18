@@ -4,4 +4,5 @@ packages:
 - 'packages/provider'
 - 'packages/react'
 - 'packages/ai'
+- 'packages/provider-utils'
 - 'tools/*'

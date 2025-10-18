@@ -3,7 +3,7 @@ import {
   LanguageModelV3ProviderDefinedTool,
   LanguageModelV3ToolChoice,
 } from '@zenning/provider';
-import { asSchema } from '@ai-sdk/provider-utils';
+import { asSchema } from '@zenning/provider-utils';
 import { isNonEmptyObject } from '../util/is-non-empty-object';
 import { ToolSet } from '../generate-text';
 import { ToolChoice } from '../types/language-model';

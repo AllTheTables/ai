@@ -1,4 +1,4 @@
-import { createProviderDefinedToolFactory } from '@ai-sdk/provider-utils';
+import { createProviderDefinedToolFactory } from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 
 // https://ai.google.dev/gemini-api/docs/google-search

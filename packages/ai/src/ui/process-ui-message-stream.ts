@@ -2,7 +2,7 @@ import {
   StandardSchemaV1,
   validateTypes,
   Validator,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { ProviderMetadata } from '../types';
 import {
   DataUIMessageChunk,
@@ -41,6 +41,8 @@ export type StreamingUIMessageState<UI_MESSAGE extends UIMessage> = {
   // Support for multiple messages in a single stream
   isFinalized?: boolean;
   messageQueue?: UI_MESSAGE[];
+  // Track annotations to prevent duplication
+  seenAnnotations?: Set<string>;
 };
 
 export function createStreamingUIMessageState<UI_MESSAGE extends UIMessage>({
@@ -68,6 +70,7 @@ export function createStreamingUIMessageState<UI_MESSAGE extends UIMessage>({
     partialToolCalls: {},
     isFinalized: false,
     messageQueue: [],
+    seenAnnotations: new Set<string>(),
   };
 }
 
@@ -303,12 +306,49 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
           }
 
+          // Helper to filter duplicate OpenAI annotations
+          function filterDuplicateAnnotations(providerMetadata: any): any {
+            if (!providerMetadata?.openai?.annotations || !state.seenAnnotations) {
+              return providerMetadata;
+            }
+            
+            const filtered = { ...providerMetadata };
+            if (filtered.openai) {
+              filtered.openai = { ...filtered.openai };
+              
+              // Filter out annotations we've already seen
+              const uniqueAnnotations = filtered.openai.annotations.filter((annotation: any) => {
+                // Create a unique key for this annotation
+                const key = JSON.stringify(annotation);
+                if (state.seenAnnotations!.has(key)) {
+                  return false; // Skip duplicate
+                }
+                state.seenAnnotations!.add(key);
+                return true; // Include new annotation
+              });
+              
+              // Only keep annotations if there are unique ones
+              if (uniqueAnnotations.length > 0) {
+                filtered.openai.annotations = uniqueAnnotations;
+              } else {
+                // Remove annotations array if all were duplicates
+                delete filtered.openai.annotations;
+                // If openai object is now empty, remove it
+                if (Object.keys(filtered.openai).length === 0) {
+                  delete filtered.openai;
+                }
+              }
+            }
+            
+            return Object.keys(filtered).length > 0 ? filtered : undefined;
+          }
+
           switch (chunk.type) {
             case 'text-start': {
               const textPart: TextUIPart = {
                 type: 'text',
                 text: '',
-                providerMetadata: chunk.providerMetadata,
+                providerMetadata: filterDuplicateAnnotations(chunk.providerMetadata),
                 state: 'streaming',
               };
               state.activeTextParts[chunk.id] = textPart;
@@ -320,8 +360,13 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             case 'text-delta': {
               const textPart = state.activeTextParts[chunk.id];
               textPart.text += chunk.delta;
-              textPart.providerMetadata =
-                chunk.providerMetadata ?? textPart.providerMetadata;
+              
+              // Filter annotations to prevent duplicates
+              const filteredMetadata = filterDuplicateAnnotations(chunk.providerMetadata);
+              if (filteredMetadata && !textPart.providerMetadata) {
+                textPart.providerMetadata = filteredMetadata;
+              }
+              
               write();
               break;
             }
@@ -329,8 +374,13 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             case 'text-end': {
               const textPart = state.activeTextParts[chunk.id];
               textPart.state = 'done';
-              textPart.providerMetadata =
-                chunk.providerMetadata ?? textPart.providerMetadata;
+              
+              // Filter annotations to prevent duplicates
+              const filteredMetadata = filterDuplicateAnnotations(chunk.providerMetadata);
+              if (filteredMetadata && !textPart.providerMetadata) {
+                textPart.providerMetadata = filteredMetadata;
+              }
+              
               delete state.activeTextParts[chunk.id];
               write();
               break;
@@ -381,32 +431,73 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'source-url': {
-              state.message.parts.push({
-                type: 'source-url',
-                sourceId: chunk.sourceId,
-                url: chunk.url,
-                title: chunk.title,
-                providerMetadata: chunk.providerMetadata,
-              });
+              // Check if this source URL already exists to prevent duplicates
+              const existingSource = state.message.parts.find(
+                part => 
+                  part.type === 'source-url' && 
+                  (part as any).sourceId === chunk.sourceId
+              );
 
-              write();
+              // Only add if it doesn't already exist
+              if (!existingSource) {
+                state.message.parts.push({
+                  type: 'source-url',
+                  sourceId: chunk.sourceId,
+                  url: chunk.url,
+                  title: chunk.title,
+                  providerMetadata: chunk.providerMetadata,
+                });
+
+                write();
+              }
               break;
             }
 
-            case 'source-document': {
-              state.message.parts.push({
-                type: 'source-document',
-                sourceId: chunk.sourceId,
-                mediaType: chunk.mediaType,
-                title: chunk.title,
-                filename: chunk.filename,
-                fileId: chunk.fileId,
-                startIndex: chunk.startIndex,
-                endIndex: chunk.endIndex,
-                providerMetadata: chunk.providerMetadata,
-              });
+            case 'source-execution-file': {
+              // Check if this source execution file already exists to prevent duplicates
+              const existingSource = state.message.parts.find(
+                part => 
+                  part.type === 'source-execution-file' && 
+                  (part as any).sourceId === chunk.sourceId
+              );
 
-              write();
+              // Only add if it doesn't already exist  
+              if (!existingSource) {
+                state.message.parts.push({
+                  type: 'source-execution-file',
+                  sourceId: chunk.sourceId,
+                  providerMetadata: chunk.providerMetadata,
+                });
+
+                write();
+              }
+              break;
+            }
+            
+            case 'source-document': {
+              // Check if this source document already exists to prevent duplicates
+              const existingSource = state.message.parts.find(
+                part => 
+                  part.type === 'source-document' && 
+                  (part as any).sourceId === chunk.sourceId
+              );
+
+              // Only add if it doesn't already exist
+              if (!existingSource) {
+                state.message.parts.push({
+                  type: 'source-document',
+                  sourceId: chunk.sourceId,
+                  mediaType: chunk.mediaType,
+                  title: chunk.title,
+                  filename: chunk.filename,
+                  fileId: chunk.fileId,
+                  startIndex: chunk.startIndex,
+                  endIndex: chunk.endIndex,
+                  providerMetadata: chunk.providerMetadata,
+                });
+
+                write();
+              }
               break;
             }
 
@@ -635,6 +726,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   state.activeReasoningParts = {};
                   state.partialToolCalls = {};
                   state.isFinalized = false;
+                  state.seenAnnotations = new Set<string>();
                   
                   // Write to trigger UI update with the new message
                   write();

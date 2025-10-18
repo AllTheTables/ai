@@ -1,5 +1,5 @@
 import { z } from 'zod/v4';
-import { tool } from '@ai-sdk/provider-utils';
+import { tool } from '@zenning/provider-utils';
 import { ChatInit } from './chat';
 import { ToolSet } from '../generate-text/tool-set';
 import { InferUITools, UIDataTypes, UIMessage, UITools } from './ui-messages';

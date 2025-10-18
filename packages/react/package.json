@@ -1,6 +1,6 @@
 {
   "name": "@zenning/react",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "license": "Apache-2.0",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -31,7 +31,7 @@
   ],
   "dependencies": {
     "@zenning/ai": "latest",
-    "@ai-sdk/provider-utils": "latest",
+    "@zenning/provider-utils": "latest",
     "swr": "^2.2.5",
     "throttleit": "2.1.0"
   },
@@ -43,9 +43,9 @@
     "@types/node": "20.17.24",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@vercel/ai-tsconfig": "latest",
+    "@vercel/ai-tsconfig": "workspace:*",
     "eslint": "8.57.1",
-    "eslint-config-vercel-ai": "latest",
+    "eslint-config-vercel-ai": "workspace:*",
     "jsdom": "^24.0.0",
     "msw": "2.6.4",
     "react-dom": "^18 || ^19 || ^19.0.0-rc",
