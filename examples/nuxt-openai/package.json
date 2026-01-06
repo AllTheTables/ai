@@ -12,7 +12,7 @@
   "dependencies": {
     "@zenning/vue": "3.0.12",
     "@zenning/openai": "3.0.5",
-    "ai": "6.0.12",
+    "@zenning/ai": "workspace:*",
     "zod": "3.25.76"
   },
   "devDependencies": {

@@ -12,7 +12,7 @@
     "@zenning/openai": "3.0.5",
     "@zenning/react": "3.0.12",
     "@vercel/functions": "^3.1.0",
-    "ai": "6.0.12",
+    "@zenning/ai": "workspace:*",
     "next": "^15.5.9",
     "react": "^18",
     "react-dom": "^18",

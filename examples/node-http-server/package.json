@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@zenning/openai": "3.0.5",
-    "ai": "6.0.12",
+    "@zenning/ai": "workspace:*",
     "dotenv": "16.4.5",
     "zod": "3.25.76"
   },
