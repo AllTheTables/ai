@@ -8,14 +8,14 @@ import {
   postJsonToApi,
   resolve,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { googleFailedResponseHandler } from './google-error';
 import {
   GoogleGenerativeAIImageModelId,
   GoogleGenerativeAIImageSettings,
 } from './google-generative-ai-image-settings';
-import { FetchFunction, Resolvable } from '@ai-sdk/provider-utils';
+import { FetchFunction, Resolvable } from '@zenning/provider-utils';
 
 interface GoogleGenerativeAIImageModelConfig {
   provider: string;
@@ -67,14 +67,14 @@ export class GoogleGenerativeAIImageModel implements ImageModelV3 {
     if (files != null && files.length > 0) {
       throw new Error(
         'Google Generative AI does not support image editing. ' +
-          'Use Google Vertex AI (@ai-sdk/google-vertex) for image editing capabilities.',
+          'Use Google Vertex AI (@zenning/google-vertex) for image editing capabilities.',
       );
     }
 
     if (mask != null) {
       throw new Error(
         'Google Generative AI does not support image editing with masks. ' +
-          'Use Google Vertex AI (@ai-sdk/google-vertex) for image editing capabilities.',
+          'Use Google Vertex AI (@zenning/google-vertex) for image editing capabilities.',
       );
     }
 

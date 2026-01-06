@@ -1,4 +1,4 @@
-import { anthropic } from '@ai-sdk/anthropic';
+import { anthropic } from '@zenning/anthropic';
 import { stepCountIs, streamText, tool } from 'ai';
 import { z } from 'zod';
 import { printFullStream } from '../lib/print-full-stream';

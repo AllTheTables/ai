@@ -1,4 +1,4 @@
-import { xai } from '@ai-sdk/xai';
+import { xai } from '@zenning/xai';
 import { streamText } from 'ai';
 import 'dotenv/config';
 import fs from 'node:fs';

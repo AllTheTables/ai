@@ -1,4 +1,4 @@
-import { executeTool, ModelMessage } from '@ai-sdk/provider-utils';
+import { executeTool, ModelMessage } from '@zenning/provider-utils';
 import { Tracer } from '@opentelemetry/api';
 import { assembleOperationName } from '../telemetry/assemble-operation-name';
 import { recordErrorOnSpan, recordSpan } from '../telemetry/record-span';

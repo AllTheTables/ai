@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/gateway",
+  "name": "@zenning/gateway",
   "private": false,
   "version": "3.0.9",
   "license": "Apache-2.0",
@@ -35,11 +35,11 @@
   },
   "dependencies": {
     "@zenning/provider": "workspace:*",
-    "@ai-sdk/provider-utils": "workspace:*",
+    "@zenning/provider-utils": "workspace:*",
     "@vercel/oidc": "3.1.0"
   },
   "devDependencies": {
-    "@ai-sdk/test-server": "latest",
+    "@zenning/test-server": "latest",
     "@types/node": "18.15.11",
     "@vercel/ai-tsconfig": "workspace:*",
     "tsup": "^8",

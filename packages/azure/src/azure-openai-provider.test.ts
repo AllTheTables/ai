@@ -8,11 +8,11 @@ import {
 import {
   convertReadableStreamToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+} from '@zenning/provider-utils/test';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import fs from 'node:fs';
 import { beforeEach, describe, it, expect, vi } from 'vitest';
-import { OpenAIResponsesLanguageModel } from '@ai-sdk/openai/internal';
+import { OpenAIResponsesLanguageModel } from '@zenning/openai/internal';
 import { createAzure } from './azure-openai-provider';
 
 vi.mock('./version', () => ({

@@ -11,8 +11,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ai-sdk/react": "3.0.12",
-    "@ai-sdk/langchain": "2.0.13",
+    "@zenning/react": "3.0.12",
+    "@zenning/langchain": "2.0.13",
     "@langchain/openai": "^1.2.0",
     "@langchain/core": "^1.1.5",
     "@langchain/langgraph": "^1.0.5",

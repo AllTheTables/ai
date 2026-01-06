@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { generateImage } from 'ai';
 
 // Allow responses up to 60 seconds

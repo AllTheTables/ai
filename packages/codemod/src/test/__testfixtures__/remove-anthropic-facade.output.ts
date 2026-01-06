@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { createAnthropic } from '@zenning/anthropic';
 
 const anthropic = createAnthropic({
   apiKey: 'key',

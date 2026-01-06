@@ -1,5 +1,5 @@
 import { weatherTool } from '@/tool/weather-tool';
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
 
 export const weatherAgent = new ToolLoopAgent({

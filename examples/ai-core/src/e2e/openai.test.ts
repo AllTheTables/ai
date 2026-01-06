@@ -1,5 +1,5 @@
-import { openai as provider } from '@ai-sdk/openai';
-import { LanguageModelV3 } from '@ai-sdk/provider';
+import { openai as provider } from '@zenning/openai';
+import { LanguageModelV3 } from '@zenning/provider';
 import { APICallError } from 'ai';
 import 'dotenv/config';
 import { expect } from 'vitest';

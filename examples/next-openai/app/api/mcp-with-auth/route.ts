@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import {
   convertToModelMessages,
   stepCountIs,
@@ -12,7 +12,7 @@ import {
   type OAuthClientInformation,
   type OAuthClientMetadata,
   type OAuthTokens,
-} from '@ai-sdk/mcp';
+} from '@zenning/mcp';
 import { createServer } from 'node:http';
 
 type AuthGlobalState = {

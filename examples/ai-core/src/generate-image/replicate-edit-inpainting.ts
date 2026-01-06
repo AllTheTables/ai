@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import {
   replicate,
   type ReplicateImageProviderOptions,
-} from '@ai-sdk/replicate';
+} from '@zenning/replicate';
 import { generateImage } from 'ai';
 import { presentImages } from '../lib/present-image';
 import { run } from '../lib/run';

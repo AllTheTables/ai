@@ -1,6 +1,6 @@
 import { LanguageModelV3Usage } from '@zenning/provider';
-import { delay } from '@ai-sdk/provider-utils';
-import { convertArrayToReadableStream } from '@ai-sdk/provider-utils/test';
+import { delay } from '@zenning/provider-utils';
+import { convertArrayToReadableStream } from '@zenning/provider-utils/test';
 import { asLanguageModelUsage } from 'ai/internal';
 import { MockLanguageModelV3 } from 'ai/test';
 import { beforeEach, describe, expect, it } from 'vitest';

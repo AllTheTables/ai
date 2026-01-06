@@ -3,10 +3,10 @@ import { createTransformer } from '../lib/create-transformer';
 export default createTransformer((fileInfo, api, options, context) => {
   const { j, root } = context;
 
-  // Track which createOpenAI identifiers are imported from @ai-sdk/openai
+  // Track which createOpenAI identifiers are imported from @zenning/openai
   const createOpenAIFromOpenAI = new Set<string>();
 
-  // Find imports from @ai-sdk/openai and track createOpenAI identifiers
+  // Find imports from @zenning/openai and track createOpenAI identifiers
   root
     .find(j.ImportDeclaration)
     .filter(path => {
@@ -31,7 +31,7 @@ export default createTransformer((fileInfo, api, options, context) => {
       }
     });
 
-  // Only process createOpenAI calls that were imported from @ai-sdk/openai
+  // Only process createOpenAI calls that were imported from @zenning/openai
   if (createOpenAIFromOpenAI.size > 0) {
     // Find createOpenAI function calls
     root

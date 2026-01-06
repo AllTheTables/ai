@@ -7,7 +7,7 @@ import {
   createJsonResponseHandler,
   FetchFunction,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { MistralEmbeddingModelId } from './mistral-embedding-options';
 import { mistralFailedResponseHandler } from './mistral-error';

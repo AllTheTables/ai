@@ -16,7 +16,7 @@ import {
   parseProviderOptions,
   ParseResult,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { openaiFailedResponseHandler } from '../openai-error';
 import {
   convertOpenAICompletionUsage,

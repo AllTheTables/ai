@@ -2,7 +2,7 @@ import {
   OpenAICompatibleChatLanguageModel,
   OpenAICompatibleEmbeddingModel,
   ProviderErrorStructure,
-} from '@ai-sdk/openai-compatible';
+} from '@zenning/openai-compatible';
 import {
   EmbeddingModelV3,
   LanguageModelV3,
@@ -14,7 +14,7 @@ import {
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { BasetenChatModelId } from './baseten-chat-options';
 import { BasetenEmbeddingModelId } from './baseten-embedding-options';

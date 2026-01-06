@@ -3,7 +3,7 @@ import {
   generateId as generateIdFunc,
   IdGenerator,
   InferSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { FinishReason } from '../types/language-model';
 import { UIMessageChunk } from '../ui-message-stream/ui-message-chunks';
 import { consumeStream } from '../util/consume-stream';

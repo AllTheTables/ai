@@ -3,7 +3,7 @@ import {
   SharedV3Warning,
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
-import { validateTypes } from '@ai-sdk/provider-utils';
+import { validateTypes } from '@zenning/provider-utils';
 import { webSearchArgsSchema } from '../tool/web-search';
 import { xSearchArgsSchema } from '../tool/x-search';
 import { XaiResponsesTool } from './xai-responses-api';

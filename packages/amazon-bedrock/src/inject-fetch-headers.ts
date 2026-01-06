@@ -3,7 +3,7 @@ import {
   getRuntimeEnvironmentUserAgent,
   normalizeHeaders,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { VERSION } from './version';
 
 /**

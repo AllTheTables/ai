@@ -2,7 +2,7 @@ import {
   createProviderToolFactory,
   lazySchema,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 
 // https://ai.google.dev/gemini-api/docs/maps-grounding

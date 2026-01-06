@@ -8,7 +8,7 @@ import {
   generateId,
   loadApiKey,
   withoutTrailingSlash,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { HuggingFaceResponsesLanguageModel } from './responses/huggingface-responses-language-model';
 import { HuggingFaceResponsesModelId } from './responses/huggingface-responses-settings';
 

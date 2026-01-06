@@ -3,8 +3,8 @@ import {
   SharedV3Warning,
   TypeValidationError,
 } from '@zenning/provider';
-import { jsonSchema } from '@ai-sdk/provider-utils';
-import { convertReadableStreamToArray } from '@ai-sdk/provider-utils/test';
+import { jsonSchema } from '@zenning/provider-utils';
+import { convertReadableStreamToArray } from '@zenning/provider-utils/test';
 import assert, { fail } from 'node:assert';
 import {
   afterEach,

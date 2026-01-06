@@ -1,4 +1,4 @@
-import { gateway } from '@ai-sdk/gateway';
+import { gateway } from '@zenning/gateway';
 import {
   EmbeddingModelV3,
   ImageModelV3,

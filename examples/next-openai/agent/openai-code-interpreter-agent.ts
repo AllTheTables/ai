@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { InferAgentUIMessage, ToolLoopAgent } from 'ai';
 
 export const openaiCodeInterpreterAgent = new ToolLoopAgent({

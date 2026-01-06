@@ -12,7 +12,7 @@ import {
   ProviderOptions,
   ToolApprovalResponse,
   ToolContent,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { Span } from '@opentelemetry/api';
 import { ServerResponse } from 'node:http';
 import { NoOutputGeneratedError } from '../error';

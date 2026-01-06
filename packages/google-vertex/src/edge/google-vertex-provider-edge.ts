@@ -1,4 +1,4 @@
-import { loadOptionalSetting, resolve } from '@ai-sdk/provider-utils';
+import { loadOptionalSetting, resolve } from '@zenning/provider-utils';
 import {
   createVertex as createVertexOriginal,
   GoogleVertexProvider,

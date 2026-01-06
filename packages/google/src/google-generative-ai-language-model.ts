@@ -24,7 +24,7 @@ import {
   Resolvable,
   resolve,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import {
   convertGoogleGenerativeAIUsage,

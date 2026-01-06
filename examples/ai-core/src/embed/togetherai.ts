@@ -1,4 +1,4 @@
-import { togetherai } from '@ai-sdk/togetherai';
+import { togetherai } from '@zenning/togetherai';
 import { embed } from 'ai';
 import 'dotenv/config';
 

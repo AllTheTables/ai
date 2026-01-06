@@ -4,7 +4,7 @@ import {
   safeValidateTypes,
   type FetchFunction,
   type InferSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { signal } from '@angular/core';
 import {
   FlexibleSchema,

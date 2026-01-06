@@ -1,4 +1,4 @@
-import { ToolNameMapping } from '@ai-sdk/provider-utils';
+import { ToolNameMapping } from '@zenning/provider-utils';
 import { prepareResponsesTools } from './openai-responses-prepare-tools';
 import { describe, it, expect } from 'vitest';
 

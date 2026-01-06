@@ -4,7 +4,7 @@ import {
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
 import { OpenAICompatibleChatPrompt } from './openai-compatible-api-types';
-import { convertToBase64 } from '@ai-sdk/provider-utils';
+import { convertToBase64 } from '@zenning/provider-utils';
 
 function getOpenAIMetadata(message: {
   providerOptions?: SharedV3ProviderMetadata;

@@ -1,5 +1,5 @@
 import { EmbeddingModelV3Embedding } from '@zenning/provider';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import { createMistral } from './mistral-provider';
 import { describe, it, expect, vi } from 'vitest';
 

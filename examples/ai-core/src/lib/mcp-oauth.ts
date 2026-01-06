@@ -1,9 +1,9 @@
-import { auth, type OAuthClientProvider } from '@ai-sdk/mcp';
+import { auth, type OAuthClientProvider } from '@zenning/mcp';
 import type {
   OAuthClientInformation,
   OAuthClientMetadata,
   OAuthTokens,
-} from '@ai-sdk/mcp';
+} from '@zenning/mcp';
 import { createServer } from 'node:http';
 
 /**

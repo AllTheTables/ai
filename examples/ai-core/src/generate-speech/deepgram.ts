@@ -1,4 +1,4 @@
-import { deepgram } from '@ai-sdk/deepgram';
+import { deepgram } from '@zenning/deepgram';
 import { experimental_generateSpeech as generateSpeech } from 'ai';
 import 'dotenv/config';
 import { saveAudioFile } from '../lib/save-audio';

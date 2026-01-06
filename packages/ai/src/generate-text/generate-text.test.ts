@@ -12,8 +12,8 @@ import {
   ModelMessage,
   tool,
   ToolExecuteFunction,
-} from '@ai-sdk/provider-utils';
-import { mockId } from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils';
+import { mockId } from '@zenning/provider-utils/test';
 import {
   afterEach,
   assert,

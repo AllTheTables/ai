@@ -1,6 +1,6 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { generateText, stepCountIs } from 'ai';
-import { createMCPClient } from '@ai-sdk/mcp';
+import { createMCPClient } from '@zenning/mcp';
 
 import 'dotenv/config';
 

@@ -9,7 +9,7 @@ import {
   DataContent,
   ProviderOptions,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { NoImageGeneratedError } from '../error/no-image-generated-error';
 import {
   DefaultGeneratedFile,

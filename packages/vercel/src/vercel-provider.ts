@@ -3,13 +3,13 @@ import {
   NoSuchModelError,
   ProviderV3,
 } from '@zenning/provider';
-import { OpenAICompatibleChatLanguageModel } from '@ai-sdk/openai-compatible';
+import { OpenAICompatibleChatLanguageModel } from '@zenning/openai-compatible';
 import {
   FetchFunction,
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { VercelChatModelId } from './vercel-chat-options';
 import { VERSION } from './version';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { experimental_useObject as useObject } from '@ai-sdk/react';
+import { experimental_useObject as useObject } from '@zenning/react';
 import { notificationSchema } from '../api/use-object-valibot/schema';
 
 export default function Page() {

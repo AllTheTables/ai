@@ -5,12 +5,12 @@ import {
   TypeValidationError,
   LanguageModelV3Usage,
 } from '@zenning/provider';
-import { jsonSchema } from '@ai-sdk/provider-utils';
+import { jsonSchema } from '@zenning/provider-utils';
 import {
   convertArrayToReadableStream,
   convertAsyncIterableToArray,
   convertReadableStreamToArray,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import assert, { fail } from 'node:assert';
 import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest';
 import { z } from 'zod/v4';

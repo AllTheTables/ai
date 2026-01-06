@@ -1,5 +1,5 @@
 import { convertToModelMessages, streamText, UIMessage } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { z } from 'zod';
 
 export async function POST(req: Request) {

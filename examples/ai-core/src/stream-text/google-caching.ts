@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { google } from '@ai-sdk/google';
+import { google } from '@zenning/google';
 import { streamText } from 'ai';
 import fs from 'node:fs';
 

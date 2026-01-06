@@ -12,7 +12,7 @@ import {
   createJsonResponseHandler,
   postJsonToApi,
   resolve,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   BedrockImageModelId,
   modelMaxImagesPerCall,

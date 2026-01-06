@@ -1,4 +1,4 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
 import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';

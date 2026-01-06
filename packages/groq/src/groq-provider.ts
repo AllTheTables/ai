@@ -9,7 +9,7 @@ import {
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { GroqChatLanguageModel } from './groq-chat-language-model';
 import { GroqChatModelId } from './groq-chat-options';
 import { GroqTranscriptionModelId } from './groq-transcription-options';

@@ -1,4 +1,4 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
 import { Output, ToolLoopAgent } from 'ai';
 import { z } from 'zod';
 import { print } from '../lib/print';

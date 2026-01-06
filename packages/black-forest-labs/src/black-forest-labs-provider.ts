@@ -1,10 +1,10 @@
 import { ImageModelV3, NoSuchModelError, ProviderV3 } from '@zenning/provider';
-import type { FetchFunction } from '@ai-sdk/provider-utils';
+import type { FetchFunction } from '@zenning/provider-utils';
 import {
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { BlackForestLabsImageModel } from './black-forest-labs-image-model';
 import { BlackForestLabsImageModelId } from './black-forest-labs-image-settings';
 import { VERSION } from './version';

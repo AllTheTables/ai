@@ -9,7 +9,7 @@ import {
   resolve,
   safeParseJSON,
   safeValidateTypes,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { NoObjectGeneratedError } from '../error/no-object-generated-error';
 import { FinishReason } from '../types/language-model';
 import { LanguageModelResponseMetadata } from '../types/language-model-response-metadata';

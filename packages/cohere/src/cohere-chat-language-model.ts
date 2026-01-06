@@ -15,7 +15,7 @@ import {
   createJsonResponseHandler,
   parseProviderOptions,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import {
   CohereChatModelId,

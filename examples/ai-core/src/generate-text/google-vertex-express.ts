@@ -1,4 +1,4 @@
-import { createVertex } from '@ai-sdk/google-vertex';
+import { createVertex } from '@zenning/google-vertex';
 import { generateText } from 'ai';
 import 'dotenv/config';
 

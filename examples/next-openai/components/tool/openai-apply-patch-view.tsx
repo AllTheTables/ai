@@ -1,6 +1,6 @@
 'use client';
 
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { UIToolInvocation } from 'ai';
 import { parseDiffForVisualization } from '@/lib/apply-diff';
 

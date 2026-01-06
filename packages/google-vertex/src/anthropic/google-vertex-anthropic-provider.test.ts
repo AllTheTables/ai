@@ -3,11 +3,11 @@ import { NoSuchModelError } from '@zenning/provider';
 import {
   AnthropicMessagesLanguageModel,
   anthropicTools,
-} from '@ai-sdk/anthropic/internal';
+} from '@zenning/anthropic/internal';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 
 // Mock the imported modules
-vi.mock('@ai-sdk/provider-utils', () => ({
+vi.mock('@zenning/provider-utils', () => ({
   loadOptionalSetting: vi
     .fn()
     .mockImplementation(({ settingValue }) => settingValue),
@@ -19,8 +19,8 @@ vi.mock('@ai-sdk/provider-utils', () => ({
   zodSchema: vi.fn(),
 }));
 
-vi.mock('@ai-sdk/anthropic/internal', async () => {
-  const originalModule = await vi.importActual('@ai-sdk/anthropic/internal');
+vi.mock('@zenning/anthropic/internal', async () => {
+  const originalModule = await vi.importActual('@zenning/anthropic/internal');
   return {
     ...originalModule,
     AnthropicMessagesLanguageModel: vi.fn(),

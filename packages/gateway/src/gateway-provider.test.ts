@@ -9,7 +9,7 @@ import { NoSuchModelError } from '@zenning/provider';
 import { GatewayEmbeddingModel } from './gateway-embedding-model';
 import { GatewayImageModel } from './gateway-image-model';
 import { getVercelOidcToken, getVercelRequestId } from './vercel-environment';
-import { resolve } from '@ai-sdk/provider-utils';
+import { resolve } from '@zenning/provider-utils';
 import { GatewayLanguageModel } from './gateway-language-model';
 import {
   GatewayAuthenticationError,

@@ -1,9 +1,9 @@
 import { LanguageModelV3Prompt } from '@zenning/provider';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import {
   convertReadableStreamToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import { createMistral } from './mistral-provider';
 import { describe, it, expect, vi } from 'vitest';
 

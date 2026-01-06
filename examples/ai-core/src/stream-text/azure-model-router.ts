@@ -1,4 +1,4 @@
-import { azure } from '@ai-sdk/azure';
+import { azure } from '@zenning/azure';
 import { streamText } from 'ai';
 import { run } from '../lib/run';
 

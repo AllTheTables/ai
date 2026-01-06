@@ -3,7 +3,7 @@ import {
   lazySchema,
   safeValidateTypes,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 
 export const GATEWAY_AUTH_METHOD_HEADER = 'ai-gateway-auth-method' as const;
 

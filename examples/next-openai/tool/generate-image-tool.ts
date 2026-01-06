@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { UIToolInvocation, tool, generateImage } from 'ai';
 import { z } from 'zod';
 

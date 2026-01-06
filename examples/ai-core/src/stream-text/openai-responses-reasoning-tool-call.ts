@@ -1,4 +1,4 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
 import { stepCountIs, streamText, tool } from 'ai';
 import 'dotenv/config';
 import { z } from 'zod';

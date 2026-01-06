@@ -12,7 +12,7 @@ import {
   validateTypes,
   isNonNullable,
   ToolNameMapping,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   AnthropicAssistantMessage,
   AnthropicMessagesPrompt,

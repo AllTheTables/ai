@@ -1,5 +1,5 @@
 import { JSONObject, RerankingModelV3CallOptions } from '@zenning/provider';
-import { ProviderOptions } from '@ai-sdk/provider-utils';
+import { ProviderOptions } from '@zenning/provider-utils';
 import { prepareRetries } from '../../src/util/prepare-retries';
 import { assembleOperationName } from '../telemetry/assemble-operation-name';
 import { getBaseTelemetryAttributes } from '../telemetry/get-base-telemetry-attributes';

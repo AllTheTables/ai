@@ -1,8 +1,8 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { generateText, stepCountIs } from 'ai';
 
 /**
- * @deprecated Use the `@ai-sdk/mcp` package instead.
+ * @deprecated Use the `@zenning/mcp` package instead.
  *
 import { experimental_createMCPClient, auth } from 'ai';
 import type {
@@ -13,14 +13,14 @@ import type {
 } from 'ai';
 */
 
-import { createMCPClient, auth } from '@ai-sdk/mcp';
+import { createMCPClient, auth } from '@zenning/mcp';
 import 'dotenv/config';
 import type {
   OAuthClientProvider,
   OAuthClientInformation,
   OAuthClientMetadata,
   OAuthTokens,
-} from '@ai-sdk/mcp';
+} from '@zenning/mcp';
 import { createServer } from 'node:http';
 import { exec } from 'node:child_process';
 

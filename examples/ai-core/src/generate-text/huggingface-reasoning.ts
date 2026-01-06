@@ -1,4 +1,4 @@
-import { huggingface } from '@ai-sdk/huggingface';
+import { huggingface } from '@zenning/huggingface';
 import {
   extractReasoningMiddleware,
   generateText,

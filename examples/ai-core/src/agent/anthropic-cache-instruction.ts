@@ -1,4 +1,4 @@
-import { anthropic, AnthropicProviderOptions } from '@ai-sdk/anthropic';
+import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
 import { ToolLoopAgent } from 'ai';
 import fs from 'node:fs';
 import { print } from '../lib/print';

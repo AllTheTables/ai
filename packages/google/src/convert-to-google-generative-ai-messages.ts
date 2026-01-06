@@ -7,7 +7,7 @@ import {
   GoogleGenerativeAIContentPart,
   GoogleGenerativeAIPrompt,
 } from './google-generative-ai-prompt';
-import { convertToBase64 } from '@ai-sdk/provider-utils';
+import { convertToBase64 } from '@zenning/provider-utils';
 
 export function convertToGoogleGenerativeAIMessages(
   prompt: LanguageModelV3Prompt,

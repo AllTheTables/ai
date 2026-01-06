@@ -6,7 +6,7 @@ import {
   OpenAIResponsesLanguageModel,
   OpenAISpeechModel,
   OpenAITranscriptionModel,
-} from '@ai-sdk/openai/internal';
+} from '@zenning/openai/internal';
 import {
   EmbeddingModelV3,
   LanguageModelV3,
@@ -20,7 +20,7 @@ import {
   loadApiKey,
   loadSetting,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { azureOpenaiTools } from './azure-openai-tools';
 import { VERSION } from './version';
 

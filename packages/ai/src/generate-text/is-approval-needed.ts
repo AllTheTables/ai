@@ -1,4 +1,4 @@
-import { ModelMessage } from '@ai-sdk/provider-utils';
+import { ModelMessage } from '@zenning/provider-utils';
 import { TypedToolCall } from './tool-call';
 import { ToolSet } from './tool-set';
 

@@ -1,4 +1,4 @@
-import { ProdiaImageProviderOptions, prodia } from '@ai-sdk/prodia';
+import { ProdiaImageProviderOptions, prodia } from '@zenning/prodia';
 import { generateImage } from 'ai';
 import { presentImages } from '../lib/present-image';
 import { run } from '../lib/run';

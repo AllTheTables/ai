@@ -1,8 +1,8 @@
 import {
   createTestServer,
   TestResponseController,
-} from '@ai-sdk/test-server/with-vitest';
-import { mockId } from '@ai-sdk/provider-utils/test';
+} from '@zenning/test-server/with-vitest';
+import { mockId } from '@zenning/provider-utils/test';
 import {
   DefaultChatTransport,
   isStaticToolUIPart,

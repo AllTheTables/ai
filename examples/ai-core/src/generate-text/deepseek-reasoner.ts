@@ -1,4 +1,4 @@
-import { deepseek, DeepSeekChatOptions } from '@ai-sdk/deepseek';
+import { deepseek, DeepSeekChatOptions } from '@zenning/deepseek';
 import { generateText } from 'ai';
 import { print } from '../lib/print';
 import { run } from '../lib/run';

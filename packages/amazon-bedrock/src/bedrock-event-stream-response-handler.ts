@@ -5,7 +5,7 @@ import {
   extractResponseHeaders,
   ResponseHandler,
   safeValidateTypes,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { EventStreamCodec } from '@smithy/eventstream-codec';
 import { toUtf8, fromUtf8 } from '@smithy/util-utf8';
 import { ZodType } from 'zod/v4';

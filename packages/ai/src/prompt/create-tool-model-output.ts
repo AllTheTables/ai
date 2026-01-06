@@ -1,5 +1,5 @@
 import { getErrorMessage, JSONValue } from '@zenning/provider';
-import { Tool, ToolResultOutput } from '@ai-sdk/provider-utils';
+import { Tool, ToolResultOutput } from '@zenning/provider-utils';
 
 export async function createToolModelOutput({
   toolCallId,

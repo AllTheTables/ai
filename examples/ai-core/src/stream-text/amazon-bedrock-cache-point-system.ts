@@ -1,4 +1,4 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
+import { bedrock } from '@zenning/amazon-bedrock';
 import { streamText } from 'ai';
 import 'dotenv/config';
 import fs from 'node:fs';

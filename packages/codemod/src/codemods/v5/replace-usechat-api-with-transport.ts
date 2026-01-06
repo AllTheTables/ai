@@ -29,7 +29,7 @@ export default createTransformer((fileInfo, api, options, context) => {
       context.hasChanges = true;
     });
 
-  // Also collect useChat names from existing @ai-sdk/react imports
+  // Also collect useChat names from existing @zenning/react imports
   root
     .find(j.ImportDeclaration, {
       source: { value: '@zenning/react' },

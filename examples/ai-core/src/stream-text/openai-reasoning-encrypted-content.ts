@@ -1,7 +1,7 @@
 import { stepCountIs, streamText, tool } from 'ai';
 import { z } from 'zod';
 import { run } from '../lib/run';
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 
 run(async () => {
   const result = streamText({

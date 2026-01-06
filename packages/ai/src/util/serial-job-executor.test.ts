@@ -1,4 +1,4 @@
-import { DelayedPromise } from '@ai-sdk/provider-utils';
+import { DelayedPromise } from '@zenning/provider-utils';
 import { describe, expect, it } from 'vitest';
 import { SerialJobExecutor } from './serial-job-executor';
 

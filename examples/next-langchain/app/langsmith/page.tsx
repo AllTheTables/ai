@@ -1,7 +1,7 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
-import { LangSmithDeploymentTransport } from '@ai-sdk/langchain';
+import { useChat } from '@zenning/react';
+import { LangSmithDeploymentTransport } from '@zenning/langchain';
 import { useState, useMemo } from 'react';
 import { ChatContainer } from '../../components/chat-container';
 import { LangsmithConfigPanel } from '../../components/langsmith-config-panel';

@@ -1,4 +1,4 @@
-import { perplexity } from '@ai-sdk/perplexity';
+import { perplexity } from '@zenning/perplexity';
 import { generateText } from 'ai';
 import 'dotenv/config';
 import fs from 'fs';

@@ -1,5 +1,5 @@
 import { JSONObject } from '@zenning/provider';
-import { lazySchema, zodSchema } from '@ai-sdk/provider-utils';
+import { lazySchema, zodSchema } from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 
 // https://docs.together.ai/reference/rerank-1

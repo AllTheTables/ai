@@ -1,4 +1,4 @@
-import { FlexibleSchema, validateTypes } from '@ai-sdk/provider-utils';
+import { FlexibleSchema, validateTypes } from '@zenning/provider-utils';
 import { ProviderMetadata } from '../types';
 import { FinishReason } from '../types/language-model';
 import {

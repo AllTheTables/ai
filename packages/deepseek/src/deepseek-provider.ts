@@ -8,7 +8,7 @@ import {
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { DeepSeekChatModelId } from './chat/deepseek-chat-options';
 import { DeepSeekChatLanguageModel } from './chat/deepseek-chat-language-model';
 import { VERSION } from './version';

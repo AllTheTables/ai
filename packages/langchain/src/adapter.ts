@@ -31,7 +31,7 @@ import { type StreamCallbacks } from './stream-callbacks';
  *
  * @example
  * ```ts
- * import { toBaseMessages } from '@ai-sdk/langchain';
+ * import { toBaseMessages } from '@zenning/langchain';
  *
  * const langchainMessages = await toBaseMessages(uiMessages);
  *

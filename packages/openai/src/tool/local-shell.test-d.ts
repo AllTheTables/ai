@@ -1,4 +1,4 @@
-import { InferSchema, Tool } from '@ai-sdk/provider-utils';
+import { InferSchema, Tool } from '@zenning/provider-utils';
 import { describe, expectTypeOf, it } from 'vitest';
 import {
   localShell,

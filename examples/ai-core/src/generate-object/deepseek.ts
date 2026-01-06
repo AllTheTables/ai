@@ -1,4 +1,4 @@
-import { deepseek } from '@ai-sdk/deepseek';
+import { deepseek } from '@zenning/deepseek';
 import { generateObject } from 'ai';
 import { z } from 'zod';
 import { run } from '../lib/run';

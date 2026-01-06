@@ -3,7 +3,7 @@ import {
   fileSearch,
   imageGeneration,
   webSearchPreview,
-} from '@ai-sdk/openai/internal';
+} from '@zenning/openai/internal';
 
 export const azureOpenaiTools: {
   codeInterpreter: typeof codeInterpreter;

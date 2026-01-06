@@ -1,4 +1,4 @@
-import { LanguageModelV3Middleware } from '@ai-sdk/provider';
+import { LanguageModelV3Middleware } from '@zenning/provider';
 
 const cache = new Map<string, any>();
 

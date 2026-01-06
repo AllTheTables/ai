@@ -1,5 +1,5 @@
 import type { ImageModelV3, SharedV3Warning } from '@zenning/provider';
-import type { Resolvable } from '@ai-sdk/provider-utils';
+import type { Resolvable } from '@zenning/provider-utils';
 import {
   combineHeaders,
   convertImageModelFileToDataUri,
@@ -13,7 +13,7 @@ import {
   postJsonToApi,
   resolve,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { replicateFailedResponseHandler } from './replicate-error';
 import { ReplicateImageModelId } from './replicate-image-settings';

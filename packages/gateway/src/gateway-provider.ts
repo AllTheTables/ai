@@ -2,7 +2,7 @@ import {
   loadOptionalSetting,
   withoutTrailingSlash,
   type FetchFunction,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { asGatewayError, GatewayAuthenticationError } from './errors';
 import {
   GATEWAY_AUTH_METHOD_HEADER,
@@ -26,7 +26,7 @@ import type {
   ImageModelV3,
   ProviderV3,
 } from '@zenning/provider';
-import { withUserAgentSuffix } from '@ai-sdk/provider-utils';
+import { withUserAgentSuffix } from '@zenning/provider-utils';
 import { VERSION } from './version';
 
 export interface GatewayProvider extends ProviderV3 {

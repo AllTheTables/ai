@@ -6,7 +6,7 @@ import {
   FetchFunction,
   parseProviderOptions,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   togetheraiErrorSchema,
   TogetherAIRerankingInput,

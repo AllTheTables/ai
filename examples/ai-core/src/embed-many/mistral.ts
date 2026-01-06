@@ -1,4 +1,4 @@
-import { mistral } from '@ai-sdk/mistral';
+import { mistral } from '@zenning/mistral';
 import { embedMany } from 'ai';
 import 'dotenv/config';
 

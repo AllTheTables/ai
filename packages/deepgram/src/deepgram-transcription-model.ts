@@ -4,7 +4,7 @@ import {
   createJsonResponseHandler,
   parseProviderOptions,
   postToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { DeepgramTranscriptionAPITypes } from './deepgram-api-types';
 import { DeepgramConfig } from './deepgram-config';

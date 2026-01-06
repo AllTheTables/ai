@@ -1,4 +1,4 @@
-import { GatewayModelId } from '@ai-sdk/gateway';
+import { GatewayModelId } from '@zenning/gateway';
 import {
   LanguageModelV2,
   LanguageModelV3,

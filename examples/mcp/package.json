@@ -27,7 +27,7 @@
     "type-check": "tsc --build"
   },
   "dependencies": {
-    "@ai-sdk/openai": "3.0.5",
+    "@zenning/openai": "3.0.5",
     "@modelcontextprotocol/sdk": "^1.24.0",
     "ai": "6.0.12",
     "dotenv": "16.4.5",
@@ -35,7 +35,7 @@
     "zod": "3.25.76"
   },
   "devDependencies": {
-    "@ai-sdk/mcp": "workspace:*",
+    "@zenning/mcp": "workspace:*",
     "@types/express": "5.0.0",
     "@types/node": "20.17.24",
     "tsx": "4.19.2",

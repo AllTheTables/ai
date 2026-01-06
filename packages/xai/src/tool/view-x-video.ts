@@ -1,4 +1,4 @@
-import { createProviderToolFactoryWithOutputSchema } from '@ai-sdk/provider-utils';
+import { createProviderToolFactoryWithOutputSchema } from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 
 const viewXVideoOutputSchema = z.object({

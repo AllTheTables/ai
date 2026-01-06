@@ -1,6 +1,6 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { convertToModelMessages, stepCountIs, streamText } from 'ai';
-import { createMCPClient } from '@ai-sdk/mcp';
+import { createMCPClient } from '@zenning/mcp';
 
 export const maxDuration = 30;
 

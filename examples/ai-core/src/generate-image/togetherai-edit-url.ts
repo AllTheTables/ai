@@ -1,7 +1,7 @@
 import {
   togetherai,
   type TogetherAIImageProviderOptions,
-} from '@ai-sdk/togetherai';
+} from '@zenning/togetherai';
 import { generateImage } from 'ai';
 import { presentImages } from '../lib/present-image';
 import { run } from '../lib/run';

@@ -1,4 +1,4 @@
-import { luma, LumaImageProviderOptions } from '@ai-sdk/luma';
+import { luma, LumaImageProviderOptions } from '@zenning/luma';
 import { generateImage } from 'ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';

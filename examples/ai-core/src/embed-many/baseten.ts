@@ -1,4 +1,4 @@
-import { createBaseten } from '@ai-sdk/baseten';
+import { createBaseten } from '@zenning/baseten';
 import { embedMany } from 'ai';
 import 'dotenv/config';
 

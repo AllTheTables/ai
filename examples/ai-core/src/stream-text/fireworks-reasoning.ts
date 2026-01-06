@@ -1,4 +1,4 @@
-import { fireworks } from '@ai-sdk/fireworks';
+import { fireworks } from '@zenning/fireworks';
 import { extractReasoningMiddleware, streamText, wrapLanguageModel } from 'ai';
 import 'dotenv/config';
 

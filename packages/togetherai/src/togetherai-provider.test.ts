@@ -2,13 +2,13 @@ import {
   OpenAICompatibleChatLanguageModel,
   OpenAICompatibleCompletionLanguageModel,
   OpenAICompatibleEmbeddingModel,
-} from '@ai-sdk/openai-compatible';
+} from '@zenning/openai-compatible';
 import {
   EmbeddingModelV3,
   LanguageModelV3,
   RerankingModelV3,
 } from '@zenning/provider';
-import { loadApiKey } from '@ai-sdk/provider-utils';
+import { loadApiKey } from '@zenning/provider-utils';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { TogetherAIRerankingModel } from './reranking/togetherai-reranking-model';
 import { TogetherAIImageModel } from './togetherai-image-model';
@@ -18,14 +18,14 @@ import { createTogetherAI } from './togetherai-provider';
 const OpenAICompatibleChatLanguageModelMock =
   OpenAICompatibleChatLanguageModel as unknown as Mock;
 
-vi.mock('@ai-sdk/openai-compatible', () => ({
+vi.mock('@zenning/openai-compatible', () => ({
   OpenAICompatibleChatLanguageModel: vi.fn(),
   OpenAICompatibleCompletionLanguageModel: vi.fn(),
   OpenAICompatibleEmbeddingModel: vi.fn(),
 }));
 
-vi.mock('@ai-sdk/provider-utils', async () => {
-  const actual = await vi.importActual('@ai-sdk/provider-utils');
+vi.mock('@zenning/provider-utils', async () => {
+  const actual = await vi.importActual('@zenning/provider-utils');
   return {
     ...actual,
     loadApiKey: vi.fn().mockReturnValue('mock-api-key'),

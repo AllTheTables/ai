@@ -5,7 +5,7 @@ import {
   safeParseJSON,
   safeValidateTypes,
   SystemModelMessage,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { InvalidToolInputError } from '../error/invalid-tool-input-error';
 import { NoSuchToolError } from '../error/no-such-tool-error';
 import { ToolCallRepairError } from '../error/tool-call-repair-error';

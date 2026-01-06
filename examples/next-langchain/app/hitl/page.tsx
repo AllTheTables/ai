@@ -1,6 +1,6 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { DefaultChatTransport } from 'ai';
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { AlertCircle, Sparkles, Shield } from 'lucide-react';

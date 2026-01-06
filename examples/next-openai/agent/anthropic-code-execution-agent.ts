@@ -1,4 +1,4 @@
-import { anthropic, AnthropicProviderOptions } from '@ai-sdk/anthropic';
+import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
 import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
 import { z } from 'zod';
 

@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { vertexAnthropic } from '@ai-sdk/google-vertex/anthropic';
+import { vertexAnthropic } from '@zenning/google-vertex/anthropic';
 import { generateObject, generateText, Output } from 'ai';
 import { z } from 'zod';
 

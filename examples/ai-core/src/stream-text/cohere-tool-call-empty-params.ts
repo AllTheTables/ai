@@ -1,4 +1,4 @@
-import { cohere } from '@ai-sdk/cohere';
+import { cohere } from '@zenning/cohere';
 import {
   streamText,
   ModelMessage,

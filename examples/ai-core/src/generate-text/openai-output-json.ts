@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { generateText, Output, stepCountIs } from 'ai';
 import { print } from '../lib/print';
 import { run } from '../lib/run';

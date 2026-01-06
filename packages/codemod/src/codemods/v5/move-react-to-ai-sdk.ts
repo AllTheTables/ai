@@ -1,7 +1,7 @@
 import { createTransformer } from '../lib/create-transformer';
 
 /**
- * Migrates from ai/react to @ai-sdk/react:
+ * Migrates from ai/react to @zenning/react:
  * - import { useChat } from 'ai/react' → import { useChat } from '@zenning/react'
  */
 export default createTransformer((fileInfo, api, options, context) => {

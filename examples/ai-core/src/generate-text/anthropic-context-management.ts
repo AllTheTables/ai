@@ -1,4 +1,4 @@
-import { anthropic, AnthropicProviderOptions } from '@ai-sdk/anthropic';
+import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
 import { generateText, tool } from 'ai';
 import { z } from 'zod';
 import { run } from '../lib/run';

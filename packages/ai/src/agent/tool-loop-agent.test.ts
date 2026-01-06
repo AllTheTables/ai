@@ -1,5 +1,5 @@
 import { LanguageModelV3CallOptions } from '@zenning/provider';
-import { convertArrayToReadableStream } from '@ai-sdk/provider-utils/test';
+import { convertArrayToReadableStream } from '@zenning/provider-utils/test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MockLanguageModelV3 } from '../test/mock-language-model-v3';
 import { ToolLoopAgent } from './tool-loop-agent';

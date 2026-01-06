@@ -30,5 +30,5 @@ export { UnsupportedModelVersionError } from './unsupported-model-version-error'
 export { InvalidDataContentError } from '../prompt/invalid-data-content-error';
 export { InvalidMessageRoleError } from '../prompt/invalid-message-role-error';
 export { MessageConversionError } from '../prompt/message-conversion-error';
-export { DownloadError } from '@ai-sdk/provider-utils';
+export { DownloadError } from '@zenning/provider-utils';
 export { RetryError } from '../util/retry-error';

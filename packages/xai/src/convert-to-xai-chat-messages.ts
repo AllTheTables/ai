@@ -3,7 +3,7 @@ import {
   LanguageModelV3Prompt,
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
-import { convertToBase64 } from '@ai-sdk/provider-utils';
+import { convertToBase64 } from '@zenning/provider-utils';
 import { XaiChatPrompt } from './xai-chat-prompt';
 
 export function convertToXaiChatMessages(prompt: LanguageModelV3Prompt): {

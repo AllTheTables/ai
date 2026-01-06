@@ -2,7 +2,7 @@ import { ImageModelV3, ImageModelV3ProviderMetadata } from '@zenning/provider';
 import {
   convertBase64ToUint8Array,
   convertUint8ArrayToBase64,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   afterEach,
   beforeEach,

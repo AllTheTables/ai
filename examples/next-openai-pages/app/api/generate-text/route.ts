@@ -1,5 +1,5 @@
 import { generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 
 export async function POST(req: Request) {
   const { prompt }: { prompt: string } = await req.json();

@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/provider-utils",
+  "name": "@zenning/provider-utils",
   "version": "4.0.4",
   "license": "Apache-2.0",
   "sideEffects": false,

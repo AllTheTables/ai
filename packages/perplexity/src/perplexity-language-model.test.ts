@@ -2,11 +2,11 @@
 
 import { describe, it, expect } from 'vitest';
 import { LanguageModelV3Prompt } from '@zenning/provider';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import {
   convertReadableStreamToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import { z } from 'zod/v4';
 import {
   perplexityImageSchema,

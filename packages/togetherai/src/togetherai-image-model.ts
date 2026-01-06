@@ -10,7 +10,7 @@ import {
   parseProviderOptions,
   postJsonToApi,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { TogetherAIImageModelId } from './togetherai-image-settings';
 import { z } from 'zod/v4';
 

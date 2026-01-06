@@ -1,4 +1,4 @@
-import { azure } from '@ai-sdk/azure';
+import { azure } from '@zenning/azure';
 import { generateText } from 'ai';
 import 'dotenv/config';
 import fs from 'node:fs';

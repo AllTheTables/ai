@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/vue",
+  "name": "@zenning/vue",
   "version": "3.0.12",
   "license": "Apache-2.0",
   "sideEffects": false,
@@ -31,12 +31,12 @@
     "README.md"
   ],
   "dependencies": {
-    "@ai-sdk/provider-utils": "workspace:*",
+    "@zenning/provider-utils": "workspace:*",
     "ai": "workspace:*",
     "swrv": "^1.0.4"
   },
   "devDependencies": {
-    "@ai-sdk/test-server": "latest",
+    "@zenning/test-server": "latest",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/user-event": "^14.5.2",
     "@testing-library/vue": "^8.1.0",

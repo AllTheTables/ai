@@ -1,9 +1,9 @@
 import { LanguageModelV3Usage } from '@zenning/provider';
-import { jsonSchema, tool } from '@ai-sdk/provider-utils';
+import { jsonSchema, tool } from '@zenning/provider-utils';
 import {
   convertAsyncIterableToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import { afterEach, beforeEach, describe, expect, it, vitest } from 'vitest';
 import { streamText } from '../generate-text';
 import * as logWarningsModule from '../logger/log-warnings';

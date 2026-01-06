@@ -1,5 +1,5 @@
 import { DelayedPromise } from './delayed-promise';
-import { delay } from '@ai-sdk/provider-utils';
+import { delay } from '@zenning/provider-utils';
 import { describe, it, expect } from 'vitest';
 
 describe('DelayedPromise', () => {

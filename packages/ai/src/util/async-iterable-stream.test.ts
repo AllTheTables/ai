@@ -2,7 +2,7 @@ import {
   convertArrayToReadableStream,
   convertAsyncIterableToArray,
   convertReadableStreamToArray,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import { createAsyncIterableStream } from './async-iterable-stream';
 import { describe, it, expect } from 'vitest';
 

@@ -1,4 +1,4 @@
-import { createMCPClient } from '@ai-sdk/mcp';
+import { createMCPClient } from '@zenning/mcp';
 
 async function main() {
   const mcpClient = await createMCPClient({

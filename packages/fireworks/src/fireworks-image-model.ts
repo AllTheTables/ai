@@ -6,7 +6,7 @@ import {
   createStatusCodeErrorResponseHandler,
   FetchFunction,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { FireworksImageModelId } from './fireworks-image-options';
 
 interface FireworksImageModelBackendConfig {

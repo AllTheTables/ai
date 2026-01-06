@@ -17,14 +17,14 @@ import {
   tool,
   Tool,
   ToolExecuteFunction,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   convertArrayToReadableStream,
   convertAsyncIterableToArray,
   convertReadableStreamToArray,
   convertResponseStreamToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import assert from 'node:assert';
 import {
   afterEach,

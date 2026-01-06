@@ -1,5 +1,5 @@
-import { delay, DelayedPromise } from '@ai-sdk/provider-utils';
-import { convertReadableStreamToArray } from '@ai-sdk/provider-utils/test';
+import { delay, DelayedPromise } from '@zenning/provider-utils';
+import { convertReadableStreamToArray } from '@zenning/provider-utils/test';
 import { describe, expect, it } from 'vitest';
 import { UIMessage } from '../ui/ui-messages';
 import { consumeStream } from '../util/consume-stream';

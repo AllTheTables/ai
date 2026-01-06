@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/amazon-bedrock",
+  "name": "@zenning/amazon-bedrock",
   "version": "4.0.9",
   "license": "Apache-2.0",
   "sideEffects": false,
@@ -33,15 +33,15 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "workspace:*",
+    "@zenning/anthropic": "workspace:*",
     "@zenning/provider": "workspace:*",
-    "@ai-sdk/provider-utils": "workspace:*",
+    "@zenning/provider-utils": "workspace:*",
     "@smithy/eventstream-codec": "^4.0.1",
     "@smithy/util-utf8": "^4.0.0",
     "aws4fetch": "^1.0.20"
   },
   "devDependencies": {
-    "@ai-sdk/test-server": "latest",
+    "@zenning/test-server": "latest",
     "@types/node": "20.17.24",
     "@vercel/ai-tsconfig": "workspace:*",
     "tsup": "^8.3.0",

@@ -1,6 +1,6 @@
 import { DeepPartial } from 'ai';
 import * as v from 'valibot';
-import { valibotSchema } from '@ai-sdk/valibot';
+import { valibotSchema } from '@zenning/valibot';
 
 // define a schema for the notifications
 export const notificationSchema = valibotSchema(

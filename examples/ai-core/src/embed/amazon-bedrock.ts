@@ -1,4 +1,4 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
+import { bedrock } from '@zenning/amazon-bedrock';
 import { embed } from 'ai';
 import 'dotenv/config';
 

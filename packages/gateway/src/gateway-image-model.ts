@@ -11,7 +11,7 @@ import {
   postJsonToApi,
   resolve,
   type Resolvable,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import type { GatewayConfig } from './gateway-config';
 import { asGatewayError } from './errors';

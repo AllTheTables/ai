@@ -1,4 +1,4 @@
-import { groq as provider } from '@ai-sdk/groq';
+import { groq as provider } from '@zenning/groq';
 import {
   createFeatureTestSuite,
   createLanguageModelWithCapabilities,

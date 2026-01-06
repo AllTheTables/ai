@@ -28,7 +28,7 @@ import {
   postJsonToApi,
   Resolvable,
   resolve,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { anthropicFailedResponseHandler } from './anthropic-error';
 import { AnthropicMessageMetadata } from './anthropic-message-metadata';
 import {

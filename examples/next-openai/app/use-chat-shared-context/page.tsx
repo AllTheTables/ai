@@ -1,6 +1,6 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { useSharedChatContext } from './chat-context';
 import ChatInput from './chat-input';
 

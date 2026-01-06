@@ -2,7 +2,7 @@ import {
   AssistantModelMessage,
   ModelMessage,
   ToolModelMessage,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 
 /**
  * Prunes model messages from a list of model messages.

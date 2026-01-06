@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/codemod",
+  "name": "@zenning/codemod",
   "version": "3.0.1",
   "license": "Apache-2.0",
   "sideEffects": false,

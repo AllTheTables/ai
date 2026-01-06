@@ -1,4 +1,4 @@
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import { describe, expect, it } from 'vitest';
 import { createBlackForestLabs } from './black-forest-labs-provider';
 

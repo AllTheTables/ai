@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { openai } from '@zenning/openai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { anthropic } from '@zenning/anthropic';
 import { embed, embedMany } from 'ai';
 
 // Using the full method name

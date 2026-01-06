@@ -1,4 +1,4 @@
-import { xai } from '@ai-sdk/xai';
+import { xai } from '@zenning/xai';
 import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
 
 export const xaiWebSearchAgent = new ToolLoopAgent({

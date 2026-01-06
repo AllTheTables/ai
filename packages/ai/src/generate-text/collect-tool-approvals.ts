@@ -2,7 +2,7 @@ import {
   ModelMessage,
   ToolApprovalRequest,
   ToolApprovalResponse,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { InvalidToolApprovalError } from '../error/invalid-tool-approval-error';
 import { ToolCallNotFoundForApprovalError } from '../error/tool-call-not-found-for-approval-error';
 import { TypedToolCall } from './tool-call';

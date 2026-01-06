@@ -1,4 +1,4 @@
-import { google, GoogleGenerativeAIProviderMetadata } from '@ai-sdk/google';
+import { google, GoogleGenerativeAIProviderMetadata } from '@zenning/google';
 import { generateText } from 'ai';
 import 'dotenv/config';
 

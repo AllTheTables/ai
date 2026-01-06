@@ -1,6 +1,6 @@
 import { UIToolInvocation, tool } from 'ai';
 import * as v from 'valibot';
-import { valibotSchema } from '@ai-sdk/valibot';
+import { valibotSchema } from '@zenning/valibot';
 
 function randomWeather() {
   const weatherOptions = ['sunny', 'cloudy', 'rainy', 'windy'];

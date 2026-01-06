@@ -3,7 +3,7 @@ import {
   MaybePromiseLike,
   ProviderOptions,
   SystemModelMessage,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { Output } from '../generate-text/output';
 import { PrepareStepFunction } from '../generate-text/prepare-step';
 import { StopCondition } from '../generate-text/stop-condition';

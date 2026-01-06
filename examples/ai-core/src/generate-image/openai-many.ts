@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { generateImage } from 'ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';

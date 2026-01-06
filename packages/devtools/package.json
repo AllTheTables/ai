@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/devtools",
+  "name": "@zenning/devtools",
   "version": "0.0.4",
   "type": "module",
   "main": "./dist/index.js",

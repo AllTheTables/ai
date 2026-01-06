@@ -1,4 +1,4 @@
-import { google } from '@ai-sdk/google';
+import { google } from '@zenning/google';
 import { generateText, stepCountIs, tool } from 'ai';
 import { z } from 'zod';
 import 'dotenv/config';

@@ -100,7 +100,7 @@ const generateRunId = (): string => {
 export const devToolsMiddleware = (): LanguageModelV3Middleware => {
   if (process.env.NODE_ENV === 'production') {
     throw new Error(
-      '@ai-sdk/devtools should not be used in production. ' +
+      '@zenning/devtools should not be used in production. ' +
         'Remove devToolsMiddleware from your model configuration for production builds.',
     );
   }

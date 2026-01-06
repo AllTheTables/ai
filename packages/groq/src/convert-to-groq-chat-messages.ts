@@ -3,7 +3,7 @@ import {
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
 import { GroqChatPrompt } from './groq-api-types';
-import { convertToBase64 } from '@ai-sdk/provider-utils';
+import { convertToBase64 } from '@zenning/provider-utils';
 
 export function convertToGroqChatMessages(
   prompt: LanguageModelV3Prompt,

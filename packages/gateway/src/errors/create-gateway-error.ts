@@ -15,7 +15,7 @@ import {
   safeValidateTypes,
   validateTypes,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 
 export async function createGatewayErrorFromResponse({
   response,

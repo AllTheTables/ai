@@ -1,4 +1,4 @@
-import { fal } from '@ai-sdk/fal';
+import { fal } from '@zenning/fal';
 import { experimental_generateSpeech as generateSpeech } from 'ai';
 import 'dotenv/config';
 import { saveAudioFile } from '../lib/save-audio';

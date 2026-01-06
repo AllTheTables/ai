@@ -1,9 +1,9 @@
 import { LanguageModelV3CallOptions } from '@zenning/provider';
-import { tool } from '@ai-sdk/provider-utils';
+import { tool } from '@zenning/provider-utils';
 import {
   convertArrayToReadableStream,
   convertReadableStreamToArray,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { z } from 'zod/v4';
 import { MockLanguageModelV3 } from '../test/mock-language-model-v3';

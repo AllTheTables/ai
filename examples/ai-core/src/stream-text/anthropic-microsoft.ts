@@ -1,4 +1,4 @@
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { createAnthropic } from '@zenning/anthropic';
 import { streamText } from 'ai';
 import { run } from '../lib/run';
 import 'dotenv/config';

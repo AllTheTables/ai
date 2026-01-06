@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { cosineSimilarity, embedMany } from 'ai';
 import 'dotenv/config';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/angular",
+  "name": "@zenning/angular",
   "version": "2.0.12",
   "description": "Angular implementation of ai-sdk.",
   "license": "Apache-2.0",
@@ -31,11 +31,11 @@
     "README.md"
   ],
   "dependencies": {
-    "@ai-sdk/provider-utils": "workspace:*",
+    "@zenning/provider-utils": "workspace:*",
     "ai": "workspace:*"
   },
   "devDependencies": {
-    "@ai-sdk/test-server": "latest",
+    "@zenning/test-server": "latest",
     "@types/node": "20.17.24",
     "@vercel/ai-tsconfig": "workspace:*",
     "eslint": "8.57.1",

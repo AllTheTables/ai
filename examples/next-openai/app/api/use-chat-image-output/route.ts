@@ -1,4 +1,4 @@
-import { google } from '@ai-sdk/google';
+import { google } from '@zenning/google';
 import { streamText, convertToModelMessages } from 'ai';
 
 export const maxDuration = 30;

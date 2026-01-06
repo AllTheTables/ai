@@ -2,7 +2,7 @@ import {
   createProviderToolFactoryWithOutputSchema,
   lazySchema,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 
 /**
@@ -81,7 +81,7 @@ const factory = createProviderToolFactoryWithOutputSchema<
  *
  * @example
  * ```ts
- * import { anthropicTools } from '@ai-sdk/anthropic';
+ * import { anthropicTools } from '@zenning/anthropic';
  *
  * const tools = {
  *   toolSearch: anthropicTools.toolSearchBm25_20251119(),

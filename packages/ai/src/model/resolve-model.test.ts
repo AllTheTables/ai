@@ -1,4 +1,4 @@
-import { gateway } from '@ai-sdk/gateway';
+import { gateway } from '@zenning/gateway';
 import { EmbeddingModelV2, LanguageModelV2 } from '@zenning/provider';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 

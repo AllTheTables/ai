@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { delay } from '@ai-sdk/provider-utils';
+import { openai } from '@zenning/openai';
+import { delay } from '@zenning/provider-utils';
 import {
   convertToModelMessages,
   createUIMessageStream,

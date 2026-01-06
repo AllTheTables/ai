@@ -1,4 +1,4 @@
-import { xai } from '@ai-sdk/xai';
+import { xai } from '@zenning/xai';
 import { generateImage } from 'ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';

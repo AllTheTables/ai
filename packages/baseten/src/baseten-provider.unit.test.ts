@@ -5,11 +5,11 @@ import {
   EmbeddingModelV3,
   NoSuchModelError,
 } from '@zenning/provider';
-import { loadApiKey } from '@ai-sdk/provider-utils';
+import { loadApiKey } from '@zenning/provider-utils';
 import {
   OpenAICompatibleChatLanguageModel,
   OpenAICompatibleEmbeddingModel,
-} from '@ai-sdk/openai-compatible';
+} from '@zenning/openai-compatible';
 
 // Mock the OpenAI-compatible classes
 const OpenAICompatibleChatLanguageModelMock =
@@ -17,7 +17,7 @@ const OpenAICompatibleChatLanguageModelMock =
 const OpenAICompatibleEmbeddingModelMock =
   OpenAICompatibleEmbeddingModel as unknown as Mock;
 
-vi.mock('@ai-sdk/openai-compatible', () => {
+vi.mock('@zenning/openai-compatible', () => {
   const createMockConstructor = (providerName: string) => {
     const mockConstructor = vi.fn().mockImplementation(function (
       this: any,
@@ -39,8 +39,8 @@ vi.mock('@ai-sdk/openai-compatible', () => {
   };
 });
 
-vi.mock('@ai-sdk/provider-utils', async () => {
-  const actual = await vi.importActual('@ai-sdk/provider-utils');
+vi.mock('@zenning/provider-utils', async () => {
+  const actual = await vi.importActual('@zenning/provider-utils');
   return {
     ...actual,
     loadApiKey: vi.fn().mockReturnValue('mock-api-key'),

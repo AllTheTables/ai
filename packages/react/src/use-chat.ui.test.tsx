@@ -3,7 +3,7 @@
 import {
   createTestServer,
   TestResponseController,
-} from '@ai-sdk/test-server/with-vitest';
+} from '@zenning/test-server/with-vitest';
 import { mockId } from '@zenning/provider-utils/test';
 import '@testing-library/jest-dom/vitest';
 import { screen, waitFor } from '@testing-library/react';

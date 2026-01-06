@@ -34,7 +34,7 @@ export type LangSmithDeploymentTransportOptions = Omit<
  *
  * @example
  * ```ts
- * import { LangSmithDeploymentTransport } from '@ai-sdk/langchain';
+ * import { LangSmithDeploymentTransport } from '@zenning/langchain';
  *
  * // Use with useChat
  * const { messages, input, handleSubmit } = useChat({

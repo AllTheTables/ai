@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 
 import { LanguageModelV3Prompt } from '@zenning/provider';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import {
   convertReadableStreamToArray,
   isNodeVersion,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import { createOpenAI } from '../openai-provider';
 import { describe, it, expect, vi } from 'vitest';
 

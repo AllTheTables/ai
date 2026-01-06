@@ -4,7 +4,7 @@ import { AnthropicProgrammaticToolCallingMessage } from '@/agent/anthropic-progr
 import { Response } from '@/components/ai-elements/response';
 import ChatInput from '@/components/chat-input';
 import AnthropicCodeExecutionView from '@/components/tool/anthropic-code-execution-view';
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { DefaultChatTransport } from 'ai';
 
 export default function ChatAnthropicProgrammaticToolCalling() {

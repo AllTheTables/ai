@@ -3,7 +3,7 @@
 import ChatInput from '@/components/chat-input';
 import DynamicToolView from '@/components/tool/dynamic-tool-view';
 import OpenAIMCPView from '@/components/tool/openai-mcp-view';
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { DefaultChatTransport } from 'ai';
 import { OpenAIResponsesMCPMessage } from '../api/chat-openai-responses-mcp/route';
 

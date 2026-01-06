@@ -1,7 +1,7 @@
 import {
   anthropic,
   forwardAnthropicContainerIdFromLastStep,
-} from '@ai-sdk/anthropic';
+} from '@zenning/anthropic';
 import { generateText, stepCountIs, tool } from 'ai';
 import { z } from 'zod';
 import { run } from '../lib/run';

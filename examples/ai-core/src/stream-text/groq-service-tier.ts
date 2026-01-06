@@ -1,4 +1,4 @@
-import { groq, GroqProviderOptions } from '@ai-sdk/groq';
+import { groq, GroqProviderOptions } from '@zenning/groq';
 import { streamText } from 'ai';
 import 'dotenv/config';
 

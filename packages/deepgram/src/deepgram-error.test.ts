@@ -1,4 +1,4 @@
-import { safeParseJSON } from '@ai-sdk/provider-utils';
+import { safeParseJSON } from '@zenning/provider-utils';
 import { deepgramErrorDataSchema } from './deepgram-error';
 import { describe, expect, it } from 'vitest';
 

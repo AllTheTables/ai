@@ -4,11 +4,11 @@ import {
   SharedV3Warning,
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
-import { asSchema } from '@ai-sdk/provider-utils';
+import { asSchema } from '@zenning/provider-utils';
 import {
   anthropicTools,
   prepareTools as prepareAnthropicTools,
-} from '@ai-sdk/anthropic/internal';
+} from '@zenning/anthropic/internal';
 import { BedrockTool, BedrockToolConfiguration } from './bedrock-api-types';
 
 export async function prepareTools({

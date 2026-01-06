@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import 'dotenv/config';
 import { weatherTool } from '../tools/weather-tool';
 import { stepCountIs, streamText, dynamicTool, ToolSet } from 'ai';

@@ -1,5 +1,5 @@
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
-import { DownloadError } from '@ai-sdk/provider-utils';
+import { createTestServer } from '@zenning/test-server/with-vitest';
+import { DownloadError } from '@zenning/provider-utils';
 import { download } from './download';
 import { describe, it, expect } from 'vitest';
 

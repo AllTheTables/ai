@@ -8,7 +8,7 @@ import {
   FetchFunction,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   OpenAICompatibleChatConfig,
   OpenAICompatibleChatLanguageModel,

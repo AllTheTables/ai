@@ -1,4 +1,4 @@
-import { ModelMessage, SystemModelMessage } from '@ai-sdk/provider-utils';
+import { ModelMessage, SystemModelMessage } from '@zenning/provider-utils';
 
 /**
 Prompt part of the AI function options.

@@ -1,5 +1,5 @@
 import { JSONObject } from '@zenning/provider';
-import { ProviderOptions, withUserAgentSuffix } from '@ai-sdk/provider-utils';
+import { ProviderOptions, withUserAgentSuffix } from '@zenning/provider-utils';
 import { NoTranscriptGeneratedError } from '../error/no-transcript-generated-error';
 import { logWarnings } from '../logger/log-warnings';
 import { DataContent } from '../prompt';

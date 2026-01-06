@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { createAzure } from '@ai-sdk/azure';
+import { createAzure } from '@zenning/azure';
 import { generateText } from 'ai';
 
 const azureDefault = createAzure({

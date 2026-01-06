@@ -5,11 +5,11 @@ import {
   SpeechModelV3,
   TranscriptionModelV3,
 } from '@zenning/provider';
-import type { FetchFunction } from '@ai-sdk/provider-utils';
+import type { FetchFunction } from '@zenning/provider-utils';
 import {
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { FalImageModel } from './fal-image-model';
 import { FalImageModelId } from './fal-image-settings';
 import { FalTranscriptionModelId } from './fal-transcription-options';

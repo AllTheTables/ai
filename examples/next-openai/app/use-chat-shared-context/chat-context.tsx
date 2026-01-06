@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, ReactNode, useState } from 'react';
-import { Chat } from '@ai-sdk/react';
+import { Chat } from '@zenning/react';
 import { DefaultChatTransport, UIMessage } from 'ai';
 
 interface ChatContextValue {

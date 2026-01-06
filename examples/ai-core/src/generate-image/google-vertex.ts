@@ -1,7 +1,7 @@
 import {
   GoogleVertexImageProviderOptions,
   vertex,
-} from '@ai-sdk/google-vertex';
+} from '@zenning/google-vertex';
 import { generateImage } from 'ai';
 import 'dotenv/config';
 import { presentImages } from '../lib/present-image';

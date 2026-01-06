@@ -1,6 +1,6 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { ChatContainer } from '../components/chat-container';
 import { type CustomDataMessage } from './types';
 

@@ -4,7 +4,7 @@ import {
   IdGenerator,
   ModelMessage,
   SystemModelMessage,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { Tracer } from '@opentelemetry/api';
 import { ToolCallNotFoundForApprovalError } from '../error/tool-call-not-found-for-approval-error';
 import { TelemetrySettings } from '../telemetry/telemetry-settings';

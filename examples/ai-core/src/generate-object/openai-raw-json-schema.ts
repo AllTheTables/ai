@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { generateObject, jsonSchema } from 'ai';
 import 'dotenv/config';
 

@@ -1,4 +1,4 @@
-import { fal } from '@ai-sdk/fal';
+import { fal } from '@zenning/fal';
 import { experimental_transcribe as transcribe } from 'ai';
 import 'dotenv/config';
 

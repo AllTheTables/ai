@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { SharedV3Warning } from '@zenning/provider';
-import { createToolNameMapping } from '@ai-sdk/provider-utils';
+import { createToolNameMapping } from '@zenning/provider-utils';
 import { convertToAnthropicMessagesPrompt } from './convert-to-anthropic-messages-prompt';
 import { CacheControlValidator } from './get-cache-control';
 

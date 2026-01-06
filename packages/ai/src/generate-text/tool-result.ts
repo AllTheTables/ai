@@ -1,4 +1,4 @@
-import { InferToolInput, InferToolOutput } from '@ai-sdk/provider-utils';
+import { InferToolInput, InferToolOutput } from '@zenning/provider-utils';
 import { ProviderMetadata } from '../types';
 import { ValueOf } from '../../src/util/value-of';
 import { ToolSet } from './tool-set';

@@ -5,7 +5,7 @@ import {
   SharedV3ProviderMetadata,
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
-import { convertToBase64, parseProviderOptions } from '@ai-sdk/provider-utils';
+import { convertToBase64, parseProviderOptions } from '@zenning/provider-utils';
 import {
   BEDROCK_CACHE_POINT,
   BEDROCK_DOCUMENT_MIME_TYPES,

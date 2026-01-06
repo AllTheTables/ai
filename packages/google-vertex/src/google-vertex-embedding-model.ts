@@ -8,7 +8,7 @@ import {
   postJsonToApi,
   resolve,
   parseProviderOptions,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { googleVertexFailedResponseHandler } from './google-vertex-error';
 import {

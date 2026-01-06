@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { createOpenAICompatible } from '@zenning/openai-compatible';
 import { embedMany } from 'ai';
 
 async function main() {

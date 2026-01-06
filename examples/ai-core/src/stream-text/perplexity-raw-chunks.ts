@@ -1,4 +1,4 @@
-import { perplexity } from '@ai-sdk/perplexity';
+import { perplexity } from '@zenning/perplexity';
 import { streamText } from 'ai';
 import 'dotenv/config';
 

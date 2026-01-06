@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { generateObject, generateText, NoSuchToolError, tool } from 'ai';
 import { MockLanguageModelV3 } from 'ai/test';
 import 'dotenv/config';

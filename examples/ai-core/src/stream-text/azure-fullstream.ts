@@ -1,4 +1,4 @@
-import { azure } from '@ai-sdk/azure';
+import { azure } from '@zenning/azure';
 import { streamText } from 'ai';
 import 'dotenv/config';
 import { z } from 'zod';

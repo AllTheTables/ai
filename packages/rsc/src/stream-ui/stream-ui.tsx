@@ -8,7 +8,7 @@ import {
   InferSchema,
   ProviderOptions,
   safeParseJSON,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   CallSettings,
   CallWarning,

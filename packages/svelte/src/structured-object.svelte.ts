@@ -3,7 +3,7 @@ import {
   isAbortError,
   safeValidateTypes,
   type FetchFunction,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   asSchema,
   isDeepEqualData,

@@ -1,4 +1,4 @@
-import { OpenAICompatibleChatLanguageModel } from '@ai-sdk/openai-compatible';
+import { OpenAICompatibleChatLanguageModel } from '@zenning/openai-compatible';
 import {
   LanguageModelV3,
   NoSuchModelError,
@@ -9,10 +9,10 @@ import {
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { CerebrasChatModelId } from './cerebras-chat-options';
 import { z } from 'zod/v4';
-import { ProviderErrorStructure } from '@ai-sdk/openai-compatible';
+import { ProviderErrorStructure } from '@zenning/openai-compatible';
 import { VERSION } from './version';
 
 // Add error schema and structure

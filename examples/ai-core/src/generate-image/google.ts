@@ -1,4 +1,4 @@
-import { google, GoogleGenerativeAIImageProviderOptions } from '@ai-sdk/google';
+import { google, GoogleGenerativeAIImageProviderOptions } from '@zenning/google';
 import { generateImage } from 'ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';

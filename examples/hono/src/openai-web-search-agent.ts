@@ -1,4 +1,4 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
 import { ToolLoopAgent } from 'ai';
 
 export const openaiWebSearchAgent = new ToolLoopAgent({

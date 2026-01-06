@@ -1,4 +1,4 @@
-import { createMistral } from '@ai-sdk/mistral';
+import { createMistral } from '@zenning/mistral';
 import { generateText } from 'ai';
 import 'dotenv/config';
 

@@ -3,7 +3,7 @@ import {
   ProviderOptions,
   SystemModelMessage,
   Tool,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { LanguageModel, ToolChoice } from '../types/language-model';
 import { StepResult } from './step-result';
 

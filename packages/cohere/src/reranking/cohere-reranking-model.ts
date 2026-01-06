@@ -5,7 +5,7 @@ import {
   FetchFunction,
   parseProviderOptions,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { cohereFailedResponseHandler } from '../cohere-error';
 import {
   CohereRerankingInput,

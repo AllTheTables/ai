@@ -1,4 +1,4 @@
-import { InferSchema, lazySchema, zodSchema } from '@ai-sdk/provider-utils';
+import { InferSchema, lazySchema, zodSchema } from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 
 export type OpenAIEmbeddingModelId =

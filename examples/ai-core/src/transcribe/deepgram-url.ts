@@ -1,4 +1,4 @@
-import { deepgram } from '@ai-sdk/deepgram';
+import { deepgram } from '@zenning/deepgram';
 import { experimental_transcribe as transcribe } from 'ai';
 import 'dotenv/config';
 

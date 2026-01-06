@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/baseten",
+  "name": "@zenning/baseten",
   "version": "1.0.5",
   "license": "Apache-2.0",
   "sideEffects": false,
@@ -33,9 +33,9 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "workspace:*",
+    "@zenning/openai-compatible": "workspace:*",
     "@zenning/provider": "workspace:*",
-    "@ai-sdk/provider-utils": "workspace:*",
+    "@zenning/provider-utils": "workspace:*",
     "@basetenlabs/performance-client": "^0.0.10"
   },
   "devDependencies": {

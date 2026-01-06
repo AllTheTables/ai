@@ -1,4 +1,4 @@
-import { anthropicTools } from '@ai-sdk/anthropic/internal';
+import { anthropicTools } from '@zenning/anthropic/internal';
 import {
   EmbeddingModelV3,
   ImageModelV3,
@@ -13,7 +13,7 @@ import {
   loadSetting,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { BedrockChatLanguageModel } from './bedrock-chat-language-model';
 import { BedrockChatModelId } from './bedrock-chat-options';
 import { BedrockEmbeddingModel } from './bedrock-embedding-model';

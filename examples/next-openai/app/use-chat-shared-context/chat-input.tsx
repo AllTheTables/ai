@@ -1,4 +1,4 @@
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { useState } from 'react';
 import { useSharedChatContext } from './chat-context';
 

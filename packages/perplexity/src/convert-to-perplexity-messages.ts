@@ -6,7 +6,7 @@ import {
   PerplexityMessageContent,
   PerplexityPrompt,
 } from './perplexity-language-model-prompt';
-import { convertUint8ArrayToBase64 } from '@ai-sdk/provider-utils';
+import { convertUint8ArrayToBase64 } from '@zenning/provider-utils';
 
 export function convertToPerplexityMessages(
   prompt: LanguageModelV3Prompt,

@@ -1,4 +1,4 @@
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import { LMNTSpeechModel } from './lmnt-speech-model';
 import { createLMNT } from './lmnt-provider';
 import { describe, it, expect, vi } from 'vitest';

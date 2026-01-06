@@ -13,7 +13,7 @@ import {
   FetchFunction,
   postFormDataToApi,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { DeepInfraImageModelId } from './deepinfra-image-settings';
 import { z } from 'zod/v4';
 

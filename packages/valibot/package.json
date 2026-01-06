@@ -1,5 +1,5 @@
 {
-  "name": "@ai-sdk/valibot",
+  "name": "@zenning/valibot",
   "version": "2.0.4",
   "license": "Apache-2.0",
   "sideEffects": false,
@@ -28,7 +28,7 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/provider-utils": "workspace:*"
+    "@zenning/provider-utils": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "20.17.24",

@@ -8,7 +8,7 @@ import {
   parseProviderOptions,
   postJsonToApi,
   resolve,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { BedrockErrorSchema } from '../bedrock-error';
 import {
   BedrockRerankingInput,

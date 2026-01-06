@@ -1,4 +1,4 @@
-import { ModelMessage } from '@ai-sdk/provider-utils';
+import { ModelMessage } from '@zenning/provider-utils';
 import { GenerateTextResult } from '../generate-text/generate-text-result';
 import { Output } from '../generate-text/output';
 import { StreamTextTransform } from '../generate-text/stream-text';

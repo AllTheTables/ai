@@ -8,7 +8,7 @@ import { CacheControlValidator } from './get-cache-control';
 import { textEditor_20250728ArgsSchema } from './tool/text-editor_20250728';
 import { webSearch_20250305ArgsSchema } from './tool/web-search_20250305';
 import { webFetch_20250910ArgsSchema } from './tool/web-fetch-20250910';
-import { validateTypes } from '@ai-sdk/provider-utils';
+import { validateTypes } from '@zenning/provider-utils';
 
 export interface AnthropicToolOptions {
   deferLoading?: boolean;

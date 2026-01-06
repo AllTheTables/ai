@@ -1,6 +1,6 @@
 import { z } from 'zod/v4';
 import { JSONObject } from '@zenning/provider';
-import { FlexibleSchema, Tool } from '@ai-sdk/provider-utils';
+import { FlexibleSchema, Tool } from '@zenning/provider-utils';
 
 export const LATEST_PROTOCOL_VERSION = '2025-06-18';
 export const SUPPORTED_PROTOCOL_VERSIONS = [

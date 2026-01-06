@@ -4,7 +4,7 @@ import {
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
 import { MistralPrompt } from './mistral-chat-prompt';
-import { convertToBase64 } from '@ai-sdk/provider-utils';
+import { convertToBase64 } from '@zenning/provider-utils';
 
 function formatFileUrl({
   data,

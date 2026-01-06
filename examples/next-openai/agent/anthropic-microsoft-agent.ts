@@ -1,5 +1,5 @@
 // anthropic-microsoft-agent.ts
-import { createAnthropic } from '@ai-sdk/anthropic';
+import { createAnthropic } from '@zenning/anthropic';
 import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
 
 export function createAnthropicMicrosoftAgent() {

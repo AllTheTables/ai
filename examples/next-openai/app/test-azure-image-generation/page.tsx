@@ -3,7 +3,7 @@
 import { AzureImageGenerationMessage } from '@/agent/azure-image-generation-agent';
 import ChatInput from '@/components/chat-input';
 import ImageGenerationView from '@/components/tool/openai-image-generation-view';
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { DefaultChatTransport } from 'ai';
 
 export default function TestOpenAIImageGeneration() {

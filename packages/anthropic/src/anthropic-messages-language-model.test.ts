@@ -10,8 +10,8 @@ import {
 import {
   convertReadableStreamToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+} from '@zenning/provider-utils/test';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import fs from 'node:fs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnthropicProviderOptions } from './anthropic-messages-options';

@@ -1,7 +1,7 @@
 import { LanguageModelV3Prompt } from '@zenning/provider';
 import { describe, it, expect, vi } from 'vitest';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
-import { convertReadableStreamToArray } from '@ai-sdk/provider-utils/test';
+import { createTestServer } from '@zenning/test-server/with-vitest';
+import { convertReadableStreamToArray } from '@zenning/provider-utils/test';
 import { XaiChatLanguageModel } from './xai-chat-language-model';
 import { createXai } from './xai-provider';
 

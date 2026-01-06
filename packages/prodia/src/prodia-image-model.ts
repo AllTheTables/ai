@@ -1,5 +1,5 @@
 import type { ImageModelV3, SharedV3Warning } from '@zenning/provider';
-import type { InferSchema, Resolvable } from '@ai-sdk/provider-utils';
+import type { InferSchema, Resolvable } from '@zenning/provider-utils';
 import {
   combineHeaders,
   createJsonErrorResponseHandler,
@@ -9,7 +9,7 @@ import {
   postToApi,
   resolve,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import type { ProdiaImageModelId } from './prodia-image-settings';
 

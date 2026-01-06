@@ -1,5 +1,5 @@
 // re-exports:
-export { createGateway, gateway, type GatewayModelId } from '@ai-sdk/gateway';
+export { createGateway, gateway, type GatewayModelId } from '@zenning/gateway';
 export {
   asSchema,
   createIdGenerator,

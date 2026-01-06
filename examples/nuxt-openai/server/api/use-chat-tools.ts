@@ -1,4 +1,4 @@
-import { createOpenAI } from '@ai-sdk/openai';
+import { createOpenAI } from '@zenning/openai';
 import { convertToModelMessages, stepCountIs, streamText } from 'ai';
 import { z } from 'zod';
 

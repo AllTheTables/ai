@@ -1,4 +1,4 @@
-import { AnthropicProviderOptions, createAnthropic } from '@ai-sdk/anthropic';
+import { AnthropicProviderOptions, createAnthropic } from '@zenning/anthropic';
 import { stepCountIs, ModelMessage, streamText, tool } from 'ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';

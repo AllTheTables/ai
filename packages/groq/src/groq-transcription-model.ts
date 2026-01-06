@@ -6,7 +6,7 @@ import {
   mediaTypeToExtension,
   parseProviderOptions,
   postFormDataToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { GroqConfig } from './groq-config';
 import { groqFailedResponseHandler } from './groq-error';

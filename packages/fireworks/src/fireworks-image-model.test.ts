@@ -1,5 +1,5 @@
-import { FetchFunction } from '@ai-sdk/provider-utils';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { FetchFunction } from '@zenning/provider-utils';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import { describe, expect, it, vi } from 'vitest';
 import { FireworksImageModel } from './fireworks-image-model';
 

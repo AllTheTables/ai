@@ -3,7 +3,7 @@ import {
   anthropic,
   AnthropicProviderOptions,
   forwardAnthropicContainerIdFromLastStep,
-} from '@ai-sdk/anthropic';
+} from '@zenning/anthropic';
 import { InferAgentUIMessage, ToolLoopAgent } from 'ai';
 import { z } from 'zod';
 

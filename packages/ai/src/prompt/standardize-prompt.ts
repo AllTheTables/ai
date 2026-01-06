@@ -3,7 +3,7 @@ import {
   ModelMessage,
   safeValidateTypes,
   SystemModelMessage,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { modelMessageSchema } from './message';
 import { Prompt } from './prompt';

@@ -1,4 +1,4 @@
-import { replicate } from '@ai-sdk/replicate';
+import { replicate } from '@zenning/replicate';
 import { generateImage } from 'ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';

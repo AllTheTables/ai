@@ -1,4 +1,4 @@
-import { createJsonErrorResponseHandler } from '@ai-sdk/provider-utils';
+import { createJsonErrorResponseHandler } from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 
 const cohereErrorDataSchema = z.object({

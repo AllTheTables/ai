@@ -1,4 +1,4 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
+import { bedrock } from '@zenning/amazon-bedrock';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
 import { run } from '../lib/run';

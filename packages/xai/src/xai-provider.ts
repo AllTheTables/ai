@@ -1,7 +1,7 @@
 import {
   OpenAICompatibleImageModel,
   ProviderErrorStructure,
-} from '@ai-sdk/openai-compatible';
+} from '@zenning/openai-compatible';
 import {
   ImageModelV3,
   LanguageModelV3,
@@ -14,7 +14,7 @@ import {
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { XaiChatLanguageModel } from './xai-chat-language-model';
 import { XaiChatModelId } from './xai-chat-options';
 import { XaiErrorData, xaiErrorDataSchema } from './xai-error';

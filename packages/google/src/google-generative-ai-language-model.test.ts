@@ -2,8 +2,8 @@ import {
   LanguageModelV3Prompt,
   LanguageModelV3ProviderTool,
 } from '@zenning/provider';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
-import { convertReadableStreamToArray } from '@ai-sdk/provider-utils/test';
+import { createTestServer } from '@zenning/test-server/with-vitest';
+import { convertReadableStreamToArray } from '@zenning/provider-utils/test';
 import {
   GoogleGenerativeAILanguageModel,
   getGroundingMetadataSchema,

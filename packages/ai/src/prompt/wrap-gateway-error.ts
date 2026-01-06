@@ -1,4 +1,4 @@
-import { GatewayAuthenticationError } from '@ai-sdk/gateway';
+import { GatewayAuthenticationError } from '@zenning/gateway';
 import { AISDKError } from '@zenning/provider';
 
 export function wrapGatewayError(error: unknown): unknown {

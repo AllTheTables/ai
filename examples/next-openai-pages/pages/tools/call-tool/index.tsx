@@ -1,4 +1,4 @@
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { DefaultChatTransport, isStaticToolUIPart } from 'ai';
 import { useState } from 'react';
 

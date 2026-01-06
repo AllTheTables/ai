@@ -1,5 +1,5 @@
 import type { ImageModelV3, SharedV3Warning } from '@zenning/provider';
-import type { Resolvable } from '@ai-sdk/provider-utils';
+import type { Resolvable } from '@zenning/provider-utils';
 import {
   combineHeaders,
   convertImageModelFileToDataUri,
@@ -12,7 +12,7 @@ import {
   parseProviderOptions,
   postJsonToApi,
   resolve,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { FalImageModelId, FalImageSize } from './fal-image-settings';
 import { falImageProviderOptionsSchema } from './fal-image-options';
@@ -101,7 +101,7 @@ export class FalImageModel implements ImageModelV3 {
       if (deprecatedKeys && deprecatedKeys.length > 0) {
         warnings.push({
           type: 'other',
-          message: `The following provider options use deprecated snake_case and will be removed in @ai-sdk/fal v2.0. Please use camelCase instead: ${deprecatedKeys
+          message: `The following provider options use deprecated snake_case and will be removed in @zenning/fal v2.0. Please use camelCase instead: ${deprecatedKeys
             .map(key => {
               const camelCase = key.replace(/_([a-z])/g, (_, letter) =>
                 letter.toUpperCase(),

@@ -1,4 +1,4 @@
-import { DownloadError } from '@ai-sdk/provider-utils';
+import { DownloadError } from '@zenning/provider-utils';
 import {
   withUserAgentSuffix,
   getRuntimeEnvironmentUserAgent,

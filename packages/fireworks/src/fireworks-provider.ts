@@ -3,7 +3,7 @@ import {
   OpenAICompatibleCompletionLanguageModel,
   OpenAICompatibleEmbeddingModel,
   ProviderErrorStructure,
-} from '@ai-sdk/openai-compatible';
+} from '@zenning/openai-compatible';
 import {
   EmbeddingModelV3,
   ImageModelV3,
@@ -15,7 +15,7 @@ import {
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { FireworksChatModelId } from './fireworks-chat-options';
 import { FireworksCompletionModelId } from './fireworks-completion-options';

@@ -8,11 +8,11 @@ import {
   Resolvable,
   loadOptionalSetting,
   withoutTrailingSlash,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   anthropicTools,
   AnthropicMessagesLanguageModel,
-} from '@ai-sdk/anthropic/internal';
+} from '@zenning/anthropic/internal';
 import { GoogleVertexAnthropicMessagesModelId } from './google-vertex-anthropic-messages-options';
 export interface GoogleVertexAnthropicProvider extends ProviderV3 {
   /**

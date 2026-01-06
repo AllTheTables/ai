@@ -13,7 +13,7 @@ import {
   safeValidateTypes,
   Schema,
   ValidationResult,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { NoObjectGeneratedError } from '../error/no-object-generated-error';
 import {
   FinishReason,

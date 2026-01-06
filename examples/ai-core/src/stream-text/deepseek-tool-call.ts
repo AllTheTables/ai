@@ -1,4 +1,4 @@
-import { deepseek } from '@ai-sdk/deepseek';
+import { deepseek } from '@zenning/deepseek';
 import { stepCountIs, streamText } from 'ai';
 import { printFullStream } from '../lib/print-full-stream';
 import { run } from '../lib/run';

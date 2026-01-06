@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { gateway as provider } from '@ai-sdk/gateway';
+import { gateway as provider } from '@zenning/gateway';
 import {
   createFeatureTestSuite,
   createLanguageModelWithCapabilities,

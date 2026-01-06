@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { generateText, stepCountIs } from 'ai';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';

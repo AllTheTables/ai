@@ -2,12 +2,12 @@ import {
   LanguageModelV3StreamPart,
   LanguageModelV3Usage,
 } from '@zenning/provider';
-import { delay, tool } from '@ai-sdk/provider-utils';
+import { delay, tool } from '@zenning/provider-utils';
 import {
   convertArrayToReadableStream,
   convertReadableStreamToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod/v4';
 import { NoSuchToolError } from '../error/no-such-tool-error';

@@ -1,4 +1,4 @@
-import { google } from '@ai-sdk/google';
+import { google } from '@zenning/google';
 import { ModelMessage, streamText } from 'ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';

@@ -3,12 +3,12 @@ import {
   NoSuchModelError,
   type ProviderV3,
 } from '@zenning/provider';
-import type { FetchFunction } from '@ai-sdk/provider-utils';
+import type { FetchFunction } from '@zenning/provider-utils';
 import {
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { ProdiaImageModel } from './prodia-image-model';
 import type { ProdiaImageModelId } from './prodia-image-settings';
 import { VERSION } from './version';

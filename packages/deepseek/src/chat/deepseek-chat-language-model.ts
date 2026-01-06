@@ -22,7 +22,7 @@ import {
   ParseResult,
   postJsonToApi,
   ResponseHandler,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { convertToDeepSeekChatMessages } from './convert-to-deepseek-chat-messages';
 import { convertDeepSeekUsage } from './convert-to-deepseek-usage';
 import {

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { convertToModelMessages, streamText } from 'ai';
 import { openai } from '@zenning/openai';
-import { azure } from '@ai-sdk/azure';
+import { azure } from '@zenning/azure';
 
 // Case 1: Inline usage in streamText
 export async function POST(req: Request) {

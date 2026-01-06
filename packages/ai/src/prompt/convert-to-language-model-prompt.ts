@@ -16,7 +16,7 @@ import {
   ToolCallPart,
   ToolResultOutput,
   ToolResultPart,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import {
   detectMediaType,
   imageMediaTypeSignatures,

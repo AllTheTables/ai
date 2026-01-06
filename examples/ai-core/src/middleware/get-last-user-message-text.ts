@@ -1,4 +1,4 @@
-import { LanguageModelV3Prompt } from '@ai-sdk/provider';
+import { LanguageModelV3Prompt } from '@zenning/provider';
 
 export function getLastUserMessageText({
   prompt,

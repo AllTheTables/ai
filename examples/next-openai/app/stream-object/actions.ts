@@ -1,8 +1,8 @@
 'use server';
 
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { streamObject } from 'ai';
-import { createStreamableValue } from '@ai-sdk/rsc';
+import { createStreamableValue } from '@zenning/rsc';
 import { PartialNotification, notificationSchema } from './schema';
 
 export async function generateNotifications(context: string) {

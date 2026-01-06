@@ -12,7 +12,7 @@ import {
   FlexibleSchema,
   ProviderOptions,
   type InferSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { ServerResponse } from 'http';
 import { logWarnings } from '../logger/log-warnings';
 import { resolveLanguageModel } from '../model/resolve-model';

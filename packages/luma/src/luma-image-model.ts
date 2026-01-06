@@ -18,7 +18,7 @@ import {
   lazySchema,
   parseProviderOptions,
   zodSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { LumaImageSettings, LumaReferenceType } from './luma-image-settings';
 import { z } from 'zod/v4';
 
