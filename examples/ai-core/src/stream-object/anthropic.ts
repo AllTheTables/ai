@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import { z } from 'zod';
 import { run } from '../lib/run';
 

@@ -5,7 +5,7 @@ import {
   appendClientMessage,
   appendResponseMessages,
   StreamData,
-} from 'ai';
+} from '@zenning/ai';
 import { openai } from '@zenning/openai';
 
 /* FIXME(@ai-sdk-upgrade-v5): The `appendClientMessage` option has been removed. Please manually migrate following https://ai-sdk.dev/docs/migration-guides/migration-guide-5-0#message-persistence-changes */

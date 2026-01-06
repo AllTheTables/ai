@@ -1,5 +1,5 @@
 import { google } from '@zenning/google';
-import { generateObject } from 'ai';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

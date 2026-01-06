@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useChat } from 'ai';
+import { useChat } from '@zenning/ai';
 import { useChat as useReactChat } from '@zenning/react';
 
 // Test 1: Destructuring from useChat hook

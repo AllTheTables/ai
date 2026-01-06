@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateText, stepCountIs, Output, tool } from 'ai';
+import { generateText, stepCountIs, Output, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

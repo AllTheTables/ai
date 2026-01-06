@@ -8,7 +8,7 @@ import {
   vertexAnthropic as vertexAnthropicEdge,
 } from '@zenning/google-vertex/anthropic/edge';
 import { LanguageModelV3 } from '@zenning/provider';
-import { APICallError, generateText, stepCountIs } from 'ai';
+import { APICallError, generateText, stepCountIs } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'fs';
 import { describe, expect, it } from 'vitest';

@@ -1,5 +1,5 @@
 import { vertex } from '@zenning/google-vertex';
-import { generateText, stepCountIs, tool } from 'ai';
+import { generateText, stepCountIs, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

@@ -9,7 +9,7 @@ import AnthropicCodeExecutionView from '@/components/tool/anthropic-code-executi
 import AnthropicWebFetchView from '@/components/tool/anthropic-web-fetch-view';
 import AnthropicWebSearchView from '@/components/tool/anthropic-web-search-view';
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 
 export default function TestAnthropicWebFetch() {
   const { error, status, sendMessage, messages, regenerate } =

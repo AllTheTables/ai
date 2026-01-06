@@ -6,7 +6,7 @@ import {
   UIMessageStreamWriter,
   getStaticToolName,
   isStaticToolUIPart,
-} from 'ai';
+} from '@zenning/ai';
 import { HumanInTheLoopUIMessage } from './types';
 
 // Approval string to be shared across frontend and backend

@@ -1,5 +1,5 @@
 import { google } from '@zenning/google';
-import { ModelMessage, generateText } from 'ai';
+import { ModelMessage, generateText } from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 import { presentImages } from '../lib/present-image';

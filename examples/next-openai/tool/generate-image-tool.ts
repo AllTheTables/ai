@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { UIToolInvocation, tool, generateImage } from 'ai';
+import { UIToolInvocation, tool, generateImage } from '@zenning/ai';
 import { z } from 'zod';
 
 export const generateImageTool = tool({

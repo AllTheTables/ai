@@ -5,7 +5,7 @@ import {
   appendClientMessage,
   appendResponseMessages,
   StreamData,
-} from 'ai';
+} from '@zenning/ai';
 import { openai } from '@zenning/openai';
 
 const updatedMessages = appendClientMessage({

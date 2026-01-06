@@ -6,7 +6,7 @@ import {
   isReasoningUIPart,
   isFileUIPart,
   isToolUIPart,
-} from 'ai';
+} from '@zenning/ai';
 import { Reasoning, Text, File, ToolInvocation } from './message-parts';
 import { DataProgress, DataStatus, DataFileStatus } from './data-parts';
 import { type CustomDataMessage } from '../app/types';

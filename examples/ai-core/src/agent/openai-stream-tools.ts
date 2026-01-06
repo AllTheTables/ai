@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { ToolLoopAgent, tool } from 'ai';
+import { ToolLoopAgent, tool } from '@zenning/ai';
 import { run } from '../lib/run';
 import { z } from 'zod';
 

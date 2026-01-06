@@ -1,5 +1,5 @@
 import { createOpenAICompatible } from '@zenning/openai-compatible';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 
 const BASETEN_MODEL_ID = '<model-id>'; // e.g. 5q3z8xcw
 const BASETEN_MODEL_URL = `https://model-${BASETEN_MODEL_ID}.api.baseten.co/environments/production/sync/v1`;

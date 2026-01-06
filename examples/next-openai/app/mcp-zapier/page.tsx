@@ -1,7 +1,7 @@
 'use client';
 
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport, isStaticToolUIPart } from 'ai';
+import { DefaultChatTransport, isStaticToolUIPart } from '@zenning/ai';
 import { useState } from 'react';
 
 export default function Page() {

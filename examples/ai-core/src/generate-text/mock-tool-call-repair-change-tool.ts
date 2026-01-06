@@ -1,5 +1,5 @@
-import { generateText, tool } from 'ai';
-import { MockLanguageModelV3 } from 'ai/test';
+import { generateText, tool } from '@zenning/ai';
+import { MockLanguageModelV3 } from '@zenning/ai/test';
 import 'dotenv/config';
 import { z } from 'zod';
 

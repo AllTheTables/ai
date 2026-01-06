@@ -7,8 +7,8 @@ import {
   tool,
   UIDataTypes,
   UIMessage,
-} from 'ai';
-import { convertArrayToReadableStream, MockLanguageModelV3 } from 'ai/test';
+} from '@zenning/ai';
+import { convertArrayToReadableStream, MockLanguageModelV3 } from '@zenning/ai/test';
 import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds

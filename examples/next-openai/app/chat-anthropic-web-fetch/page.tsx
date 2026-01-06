@@ -7,7 +7,7 @@ import { ReasoningView } from '@/components/reasoning-view';
 import SourcesView from '@/components/sources-view';
 import AnthropicWebFetchView from '@/components/tool/anthropic-web-fetch-view';
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 
 export default function TestAnthropicWebFetch() {
   const { error, status, sendMessage, messages, regenerate } =

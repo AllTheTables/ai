@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { ModelMessage, streamText } from 'ai';
+import { ModelMessage, streamText } from '@zenning/ai';
 
 // Type annotation in variable declaration
 const messages: ModelMessage[] = [];

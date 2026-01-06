@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { experimental_generateSpeech as generateSpeech } from 'ai';
+import { experimental_generateSpeech as generateSpeech } from '@zenning/ai';
 import 'dotenv/config';
 import { saveAudioFile } from '../lib/save-audio';
 

@@ -1,5 +1,5 @@
 import { cohere, CohereRerankingOptions } from '@zenning/cohere';
-import { rerank } from 'ai';
+import { rerank } from '@zenning/ai';
 import { run } from '../lib/run';
 import { print } from '../lib/print';
 

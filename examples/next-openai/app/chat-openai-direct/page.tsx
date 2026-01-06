@@ -1,7 +1,7 @@
 'use client';
 
 import { useChat } from '@zenning/react';
-import { DirectChatTransport, ToolLoopAgent } from 'ai';
+import { DirectChatTransport, ToolLoopAgent } from '@zenning/ai';
 import { createOpenAI } from '@zenning/openai';
 import ChatInput from '@/components/chat-input';
 

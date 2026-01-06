@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { streamText, wrapLanguageModel } from 'ai';
+import { streamText, wrapLanguageModel } from '@zenning/ai';
 import 'dotenv/config';
 import { yourLogMiddleware } from './your-log-middleware';
 

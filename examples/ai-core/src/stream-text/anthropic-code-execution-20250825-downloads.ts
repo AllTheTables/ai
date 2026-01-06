@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { run } from '../lib/run';
 import * as fs from 'fs';
 

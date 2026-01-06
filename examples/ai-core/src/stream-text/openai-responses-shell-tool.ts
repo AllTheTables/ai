@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { stepCountIs, streamText } from 'ai';
+import { stepCountIs, streamText } from '@zenning/ai';
 import { executeShellCommand } from '../lib/shell-executor';
 import { run } from '../lib/run';
 

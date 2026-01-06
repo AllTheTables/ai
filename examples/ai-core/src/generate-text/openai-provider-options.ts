@@ -1,5 +1,5 @@
 import { openai, type OpenAIChatLanguageModelOptions } from '@zenning/openai';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

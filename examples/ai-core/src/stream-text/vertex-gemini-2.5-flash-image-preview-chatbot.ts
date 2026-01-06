@@ -1,5 +1,5 @@
 import { vertex } from '@zenning/google-vertex';
-import { ModelMessage, streamText } from 'ai';
+import { ModelMessage, streamText } from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 import { presentImages } from '../lib/present-image';

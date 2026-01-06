@@ -1,5 +1,5 @@
 import { createAzure } from '@zenning/azure';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { presentImages } from '../lib/present-image';
 import { run } from '../lib/run';
 import { convertBase64ToUint8Array } from '../lib/convert-base64';

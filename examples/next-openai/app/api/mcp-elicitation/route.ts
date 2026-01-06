@@ -5,7 +5,7 @@ import {
   createUIMessageStream,
   convertToModelMessages,
   stepCountIs,
-} from 'ai';
+} from '@zenning/ai';
 import { createMCPClient, ElicitationRequestSchema } from '@zenning/mcp';
 import { MCPElicitationUIMessage } from './types';
 import { createPendingElicitation } from './elicitation-store';

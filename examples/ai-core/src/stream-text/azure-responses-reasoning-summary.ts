@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { azure } from '@zenning/azure';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 
 async function main() {
   const result = streamText({

@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { run } from '../lib/run';
 
 run(async () => {

@@ -1,4 +1,4 @@
-import { InferUITools, tool, Tool, UIMessage } from 'ai';
+import { InferUITools, tool, Tool, UIMessage } from '@zenning/ai';
 import { z } from 'zod';
 
 type WeatherTool = Tool<

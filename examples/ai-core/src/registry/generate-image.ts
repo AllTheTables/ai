@@ -1,4 +1,4 @@
-import { generateImage } from 'ai';
+import { generateImage } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 import { myImageModels } from './setup-registry';

@@ -1,4 +1,4 @@
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { openai } from '@zenning/openai';
 
 export async function POST(req: Request) {

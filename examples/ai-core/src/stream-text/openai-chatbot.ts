@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { stepCountIs, ModelMessage, streamText, tool, APICallError } from 'ai';
+import { stepCountIs, ModelMessage, streamText, tool, APICallError } from '@zenning/ai';
 import * as readline from 'node:readline/promises';
 import { z } from 'zod';
 import { run } from '../lib/run';

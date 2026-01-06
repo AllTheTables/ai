@@ -1,5 +1,5 @@
 import { togetherai } from '@zenning/togetherai';
-import { rerank } from 'ai';
+import { rerank } from '@zenning/ai';
 import { print } from '../lib/print';
 import { run } from '../lib/run';
 

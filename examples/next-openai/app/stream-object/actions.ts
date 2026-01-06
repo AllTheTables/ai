@@ -1,7 +1,7 @@
 'use server';
 
 import { openai } from '@zenning/openai';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import { createStreamableValue } from '@zenning/rsc';
 import { PartialNotification, notificationSchema } from './schema';
 

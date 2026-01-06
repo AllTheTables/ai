@@ -1,5 +1,5 @@
 import { togetherai } from '@zenning/togetherai';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

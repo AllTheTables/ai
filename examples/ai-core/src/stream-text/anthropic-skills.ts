@@ -3,7 +3,7 @@ import {
   AnthropicMessageMetadata,
   AnthropicProviderOptions,
 } from '@zenning/anthropic';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { print } from '../lib/print';
 import { printFullStream } from '../lib/print-full-stream';
 import { run } from '../lib/run';

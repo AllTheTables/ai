@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { ToolLoopAgent } from 'ai';
+import { ToolLoopAgent } from '@zenning/ai';
 
 export const openaiWebSearchAgent = new ToolLoopAgent({
   model: openai('gpt-5-mini'),

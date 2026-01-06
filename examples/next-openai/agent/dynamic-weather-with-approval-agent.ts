@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { ToolLoopAgent, dynamicTool, InferAgentUIMessage, ToolSet } from 'ai';
+import { ToolLoopAgent, dynamicTool, InferAgentUIMessage, ToolSet } from '@zenning/ai';
 import { z } from 'zod';
 
 function randomWeather() {

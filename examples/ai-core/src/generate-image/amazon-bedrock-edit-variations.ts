@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { bedrock } from '@zenning/amazon-bedrock';
-import { generateImage } from 'ai';
+import { generateImage } from '@zenning/ai';
 import { presentImages } from '../lib/present-image';
 import { run } from '../lib/run';
 import 'dotenv/config';

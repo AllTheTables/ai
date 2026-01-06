@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 
 async function main() {
   const result = await otherFunction({

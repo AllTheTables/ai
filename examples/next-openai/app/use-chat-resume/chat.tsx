@@ -1,7 +1,7 @@
 'use client';
 
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport, type UIMessage } from 'ai';
+import { DefaultChatTransport, type UIMessage } from '@zenning/ai';
 import Link from 'next/link';
 import ChatInput from '@/components/chat-input';
 

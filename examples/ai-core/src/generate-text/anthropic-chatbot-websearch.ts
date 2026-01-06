@@ -1,5 +1,5 @@
 import { createAnthropic } from '@zenning/anthropic';
-import { ModelMessage, generateText, stepCountIs } from 'ai';
+import { ModelMessage, generateText, stepCountIs } from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 

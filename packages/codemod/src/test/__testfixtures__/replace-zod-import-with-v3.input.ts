@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { z } from 'zod';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 const schema = z.object({
   name: z.string(),

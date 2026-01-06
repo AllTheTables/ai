@@ -1,4 +1,4 @@
-import type { ChatAddToolApproveResponseFunction, DynamicToolUIPart } from 'ai';
+import type { ChatAddToolApproveResponseFunction, DynamicToolUIPart } from '@zenning/ai';
 
 export default function WeatherWithApprovalView({
   invocation,

@@ -2,7 +2,7 @@
 
 import ChatInput from '@/components/chat-input';
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport, UIMessage } from 'ai';
+import { DefaultChatTransport, UIMessage } from '@zenning/ai';
 import { ExampleMetadata } from '@/agent/openai-metadata-agent';
 
 type MyMessage = UIMessage<ExampleMetadata>;

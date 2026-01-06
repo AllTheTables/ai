@@ -1,6 +1,6 @@
 import { anthropicProgrammaticToolCallingAgent } from '@/agent/anthropic-programmatic-tool-calling-agent';
 import { AnthropicMessageMetadata } from '@zenning/anthropic';
-import { createAgentUIStreamResponse, UIMessage, validateUIMessages } from 'ai';
+import { createAgentUIStreamResponse, UIMessage, validateUIMessages } from '@zenning/ai';
 
 export async function POST(request: Request) {
   const { messages } = await request.json();

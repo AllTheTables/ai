@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { defaultSettingsMiddleware, generateText, wrapLanguageModel } from 'ai';
+import { defaultSettingsMiddleware, generateText, wrapLanguageModel } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

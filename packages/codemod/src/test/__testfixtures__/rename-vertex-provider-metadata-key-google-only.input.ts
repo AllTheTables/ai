@@ -1,7 +1,7 @@
 // @ts-nocheck
 // This file uses @zenning/google (NOT vertex) - should NOT be transformed
 import { google } from '@zenning/google';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 const result = await generateText({
   model: google('gemini-2.5-flash'),

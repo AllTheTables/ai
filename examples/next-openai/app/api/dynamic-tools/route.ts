@@ -9,7 +9,7 @@ import {
   ToolSet,
   UIDataTypes,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds

@@ -6,7 +6,7 @@ import {
   dynamicTool,
   ToolApprovalResponse,
   ToolSet,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 import { z } from 'zod';

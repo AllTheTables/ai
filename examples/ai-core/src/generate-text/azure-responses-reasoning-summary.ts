@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { azure } from '@zenning/azure';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 async function main() {
   const result = await generateText({

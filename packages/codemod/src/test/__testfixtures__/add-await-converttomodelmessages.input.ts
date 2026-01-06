@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { convertToModelMessages, streamText } from 'ai';
+import { convertToModelMessages, streamText } from '@zenning/ai';
 import { openai } from '@zenning/openai';
 import { azure } from '@zenning/azure';
 

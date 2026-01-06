@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { convertToModelMessages as toModel } from 'ai';
+import { convertToModelMessages as toModel } from '@zenning/ai';
 
 async function processMessages(uiMessages: any[]) {
   const modelMessages = await toModel(uiMessages);

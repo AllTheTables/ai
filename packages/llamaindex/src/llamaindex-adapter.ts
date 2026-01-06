@@ -1,5 +1,5 @@
-import { UIMessageChunk } from 'ai';
-import { convertAsyncIteratorToReadableStream } from 'ai/internal';
+import { UIMessageChunk } from '@zenning/ai';
+import { convertAsyncIteratorToReadableStream } from '@zenning/ai/internal';
 import {
   createCallbacksTransformer,
   StreamCallbacks,

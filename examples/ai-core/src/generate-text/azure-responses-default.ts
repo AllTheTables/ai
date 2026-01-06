@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { createAzure } from '@zenning/azure';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 const azureDefault = createAzure({
   fetch: async (input, init) => {

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { LanguageModelUsage, EmbeddingModelUsage } from 'ai';
+import { LanguageModelUsage, EmbeddingModelUsage } from '@zenning/ai';
 
 function recordUsage(usage: LanguageModelUsage) {
   console.log(usage);

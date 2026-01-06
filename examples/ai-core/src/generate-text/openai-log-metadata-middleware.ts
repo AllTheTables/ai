@@ -1,6 +1,6 @@
 import { openai } from '@zenning/openai';
 import { LanguageModelV3Middleware } from '@zenning/provider';
-import { generateText, wrapLanguageModel } from 'ai';
+import { generateText, wrapLanguageModel } from '@zenning/ai';
 import 'dotenv/config';
 
 const logProviderMetadataMiddleware: LanguageModelV3Middleware = {

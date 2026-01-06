@@ -1,14 +1,14 @@
 'use client';
 
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 import { useState, useEffect, useRef } from 'react';
 import {
   MCPElicitationUIMessage,
   ElicitationAction,
   ElicitationDataTypes,
 } from '../api/mcp-elicitation/types';
-import { isDataUIPart } from 'ai';
+import { isDataUIPart } from '@zenning/ai';
 
 export default function MCPElicitationChat() {
   const [input, setInput] = useState('');

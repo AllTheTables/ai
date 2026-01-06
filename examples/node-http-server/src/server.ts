@@ -3,7 +3,7 @@ import {
   createUIMessageStream,
   pipeUIMessageStreamToResponse,
   streamText,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 import { createServer } from 'http';
 

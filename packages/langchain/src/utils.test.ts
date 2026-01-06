@@ -10,7 +10,7 @@ import type {
   AssistantContent,
   UserContent,
   UIMessageChunk,
-} from 'ai';
+} from '@zenning/ai';
 import {
   convertToolResultPart,
   convertAssistantContent,

@@ -1,6 +1,6 @@
 import { anthropic } from '@zenning/anthropic';
 import { valibotSchema } from '@zenning/valibot';
-import { generateText, Output } from 'ai';
+import { generateText, Output } from '@zenning/ai';
 import * as v from 'valibot';
 import { run } from '../lib/run';
 

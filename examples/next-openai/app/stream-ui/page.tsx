@@ -5,7 +5,7 @@ import type { AI } from './ai';
 import { useActions } from '@zenning/rsc';
 
 import { useAIState, useUIState } from '@zenning/rsc';
-import { generateId } from 'ai';
+import { generateId } from '@zenning/ai';
 import { Message } from './message';
 
 export default function Home() {

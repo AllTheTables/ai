@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { fal } from '@zenning/fal';
-import { generateImage } from 'ai';
+import { generateImage } from '@zenning/ai';
 
 // Test 1: Basic snake_case conversion
 const result1 = await generateImage({

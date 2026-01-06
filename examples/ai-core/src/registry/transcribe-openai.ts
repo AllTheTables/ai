@@ -1,4 +1,4 @@
-import { experimental_transcribe as transcribe } from 'ai';
+import { experimental_transcribe as transcribe } from '@zenning/ai';
 import { readFile } from 'fs/promises';
 import { registry } from './setup-registry';
 

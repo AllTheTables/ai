@@ -15,7 +15,7 @@ import {
   TextStreamChatTransport,
   UIMessage,
   UIMessageChunk,
-} from 'ai';
+} from '@zenning/ai';
 import React, { act, useRef, useState } from 'react';
 import { Chat } from './chat.react';
 import { setupTestComponent } from './setup-test-component';

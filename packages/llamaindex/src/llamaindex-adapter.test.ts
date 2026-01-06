@@ -1,7 +1,7 @@
 import {
   convertArrayToAsyncIterable,
   convertReadableStreamToArray,
-} from 'ai/test';
+} from '@zenning/ai/test';
 import { toUIMessageStream } from './llamaindex-adapter';
 import { describe, it, expect } from 'vitest';
 

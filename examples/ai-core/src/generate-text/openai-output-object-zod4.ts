@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateText, Output } from 'ai';
+import { generateText, Output } from '@zenning/ai';
 import { z as z4 } from 'zod/v4';
 import { print } from '../lib/print';
 import { run } from '../lib/run';

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { cerebras as provider } from '@zenning/cerebras';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 async function main() {
   const result = await generateText({

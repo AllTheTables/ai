@@ -6,7 +6,7 @@ The `ai/rsc` export has been extracted to a separate package `@zenning/rsc`
 Before:
 
 ```jsx
-import { createStreamableValue } from 'ai/rsc';
+import { createStreamableValue } from '@zenning/ai/rsc';
 ```
 
 After:

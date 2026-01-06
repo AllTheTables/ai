@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { smoothStream, streamText } from 'ai';
+import { smoothStream, streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

@@ -10,8 +10,8 @@ import {
   createImageModelWithCapabilities,
   defaultChatModelCapabilities,
 } from './feature-test-suite';
-import { wrapLanguageModel } from 'ai';
-import { defaultSettingsMiddleware } from 'ai';
+import { wrapLanguageModel } from '@zenning/ai';
+import { defaultSettingsMiddleware } from '@zenning/ai';
 
 const createChatModel = (
   modelId: string,

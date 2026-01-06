@@ -10,7 +10,7 @@ import {
   type DeepPartial,
   type FlexibleSchema,
   type InferSchema,
-} from 'ai';
+} from '@zenning/ai';
 import swrv from 'swrv';
 import { ref, type Ref } from 'vue';
 

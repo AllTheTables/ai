@@ -1,4 +1,4 @@
-import { ReasoningUIPart } from 'ai';
+import { ReasoningUIPart } from '@zenning/ai';
 import {
   Reasoning,
   ReasoningContent,

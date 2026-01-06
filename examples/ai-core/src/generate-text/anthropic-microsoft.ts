@@ -1,5 +1,5 @@
 import { createAnthropic } from '@zenning/anthropic';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import { run } from '../lib/run';
 import 'dotenv/config';
 

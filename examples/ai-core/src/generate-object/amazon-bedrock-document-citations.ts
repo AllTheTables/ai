@@ -1,5 +1,5 @@
 import { bedrock, BedrockProviderOptions } from '@zenning/amazon-bedrock';
-import { generateObject } from 'ai';
+import { generateObject } from '@zenning/ai';
 import { z } from 'zod';
 import fs from 'fs';
 import 'dotenv/config';

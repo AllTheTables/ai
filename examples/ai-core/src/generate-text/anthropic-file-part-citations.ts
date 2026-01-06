@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import 'dotenv/config';

@@ -1,5 +1,5 @@
 import { google } from '@zenning/google';
-import { streamText, convertToModelMessages } from 'ai';
+import { streamText, convertToModelMessages } from '@zenning/ai';
 
 export const maxDuration = 30;
 

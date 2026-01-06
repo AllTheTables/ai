@@ -1,5 +1,5 @@
 import { groq } from '@zenning/groq';
-import { stepCountIs, ModelMessage, streamText, tool } from 'ai';
+import { stepCountIs, ModelMessage, streamText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 import { z } from 'zod';

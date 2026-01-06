@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { perplexity } from '@zenning/perplexity';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 async function main() {
   const result = await generateText({

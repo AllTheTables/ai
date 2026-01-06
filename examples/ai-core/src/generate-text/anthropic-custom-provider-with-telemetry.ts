@@ -1,5 +1,5 @@
 import { createAnthropic } from '@zenning/anthropic';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 import { NodeSDK } from '@opentelemetry/sdk-node';

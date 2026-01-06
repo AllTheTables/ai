@@ -1,5 +1,5 @@
 import { google } from '@zenning/google';
-import { generateText, stepCountIs, tool } from 'ai';
+import { generateText, stepCountIs, tool } from '@zenning/ai';
 import { z } from 'zod';
 import 'dotenv/config';
 import * as fs from 'fs';

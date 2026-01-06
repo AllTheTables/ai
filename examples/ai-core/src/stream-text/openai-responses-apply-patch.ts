@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { createApplyPatchExecutor } from '../lib/apply-patch-file-editor';

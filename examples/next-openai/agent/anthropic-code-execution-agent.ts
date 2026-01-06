@@ -1,5 +1,5 @@
 import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
-import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
+import { ToolLoopAgent, InferAgentUIMessage } from '@zenning/ai';
 import { z } from 'zod';
 
 export const anthropicCodeExecutionAgent = new ToolLoopAgent({

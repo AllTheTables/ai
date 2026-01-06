@@ -2,7 +2,7 @@
 
 import ChatInput from '@/components/chat-input';
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport, UIMessage, type FinishReason } from 'ai';
+import { DefaultChatTransport, UIMessage, type FinishReason } from '@zenning/ai';
 import { useState } from 'react';
 
 type MyMessage = UIMessage<

@@ -1,6 +1,6 @@
 import { openai } from '@zenning/openai';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 import { createMCPClient } from '@zenning/mcp';
 import 'dotenv/config';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ async function main() {
 
   try {
     // Or use the AI SDK's stdio transport by importing:
-    // import { Experimental_StdioMCPTransport as StdioClientTransport } from 'ai/mcp-stdio'
+    // import { Experimental_StdioMCPTransport as StdioClientTransport } from '@zenning/ai/mcp-stdio'
     const stdioTransport = new StdioClientTransport({
       command: 'node',
       args: ['src/stdio/dist/server.js'],

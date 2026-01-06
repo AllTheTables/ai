@@ -1,5 +1,5 @@
 import { azure } from '@zenning/azure';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 

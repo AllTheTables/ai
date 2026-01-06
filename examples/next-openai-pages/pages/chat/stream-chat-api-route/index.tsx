@@ -1,5 +1,5 @@
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 import { useState } from 'react';
 
 export default function Chat() {

@@ -1,6 +1,6 @@
 export const runtime = 'edge';
 
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import { vertex } from '@zenning/google-vertex/edge';
 
 export async function GET() {

@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateImage } from 'ai';
+import { generateImage } from '@zenning/ai';
 
 // Allow responses up to 60 seconds
 export const maxDuration = 60;

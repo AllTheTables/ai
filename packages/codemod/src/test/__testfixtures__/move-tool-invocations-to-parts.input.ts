@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useChat } from 'ai/react';
+import { useChat } from '@zenning/ai/react';
 
 function ProcessMessages() {
   const { messages } = useChat();

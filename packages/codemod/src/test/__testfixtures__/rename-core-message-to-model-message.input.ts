@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { CoreMessage, streamText } from 'ai';
+import { CoreMessage, streamText } from '@zenning/ai';
 
 // Type annotation in variable declaration
 const messages: CoreMessage[] = [];

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { openai } from '@zenning/openai';
 import { anthropic } from '@zenning/anthropic';
-import { embed, embedMany } from 'ai';
+import { embed, embedMany } from '@zenning/ai';
 
 // Using the full method name
 const model1 = openai.textEmbeddingModel('text-embedding-3-small');

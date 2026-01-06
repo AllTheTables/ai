@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { vertexAnthropic } from '@zenning/google-vertex/anthropic';
-import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from 'ai';
+import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from '@zenning/ai';
 import { weatherTool } from '../tools/weather-tool';
 
 const messages: ModelMessage[] = [];

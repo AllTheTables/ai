@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { embed } from 'ai';
+import { embed } from '@zenning/ai';
 import { run } from '../lib/run';
 
 run(async () => {

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { createOpenAICompatible } from '@zenning/openai-compatible';
-import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from 'ai';
+import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from '@zenning/ai';
 import { weatherTool } from '../tools/weather-tool';
 
 const messages: ModelMessage[] = [];

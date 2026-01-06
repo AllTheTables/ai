@@ -1,5 +1,5 @@
 import { createOpenAI } from '@zenning/openai';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 const openai = createOpenAI({

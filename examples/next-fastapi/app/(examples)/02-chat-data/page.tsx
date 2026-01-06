@@ -2,7 +2,7 @@
 
 import { Card } from '@/app/components';
 import { useChat } from '@zenning/react';
-import { getStaticToolName, isStaticToolUIPart } from 'ai';
+import { getStaticToolName, isStaticToolUIPart } from '@zenning/ai';
 import { GeistMono } from 'geist/font/mono';
 import { useState } from 'react';
 

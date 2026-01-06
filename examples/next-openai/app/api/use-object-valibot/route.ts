@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import { notificationSchema } from './schema';
 
 // Allow streaming responses up to 30 seconds

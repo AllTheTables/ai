@@ -1,4 +1,4 @@
-import type { DynamicToolUIPart } from 'ai';
+import type { DynamicToolUIPart } from '@zenning/ai';
 
 export default function WeatherWithApprovalView({
   invocation,

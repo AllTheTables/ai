@@ -1,5 +1,5 @@
 import { xai } from '@zenning/xai';
-import { ToolLoopAgent } from 'ai';
+import { ToolLoopAgent } from '@zenning/ai';
 import { run } from '../lib/run';
 
 const agent = new ToolLoopAgent({

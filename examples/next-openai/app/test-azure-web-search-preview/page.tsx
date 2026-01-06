@@ -5,7 +5,7 @@ import ChatInput from '@/components/chat-input';
 import { ReasoningView } from '@/components/reasoning-view';
 import SourcesView from '@/components/sources-view';
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 import { AzureWebSearchPreviewMessage } from '@/app/api/chat-azure-web-search-preview/route';
 import AzureWebSearchPreviewView from '@/components/tool/azure-web-search-preview-view';
 

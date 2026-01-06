@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { xai } from '@zenning/xai';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 async function main() {
   const result = await generateText({

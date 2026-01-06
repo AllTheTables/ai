@@ -1,5 +1,5 @@
-import { streamText } from 'ai';
-import { convertArrayToReadableStream, MockLanguageModelV3 } from 'ai/test';
+import { streamText } from '@zenning/ai';
+import { convertArrayToReadableStream, MockLanguageModelV3 } from '@zenning/ai/test';
 import 'dotenv/config';
 
 async function main() {

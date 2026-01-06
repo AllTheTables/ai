@@ -4,7 +4,7 @@ import {
   AnthropicProviderOptions,
   forwardAnthropicContainerIdFromLastStep,
 } from '@zenning/anthropic';
-import { InferAgentUIMessage, ToolLoopAgent } from 'ai';
+import { InferAgentUIMessage, ToolLoopAgent } from '@zenning/ai';
 import { z } from 'zod';
 
 export const anthropicProgrammaticToolCallingAgent = new ToolLoopAgent({

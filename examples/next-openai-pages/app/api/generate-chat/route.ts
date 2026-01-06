@@ -1,4 +1,4 @@
-import { ModelMessage, generateText } from 'ai';
+import { ModelMessage, generateText } from '@zenning/ai';
 import { openai } from '@zenning/openai';
 
 export async function POST(req: Request) {

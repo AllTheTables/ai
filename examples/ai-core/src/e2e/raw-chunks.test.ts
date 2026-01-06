@@ -1,7 +1,7 @@
 import { openai } from '@zenning/openai';
 import { anthropic } from '@zenning/anthropic';
 import { google } from '@zenning/google';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 import { describe, expect, it, vi } from 'vitest';
 

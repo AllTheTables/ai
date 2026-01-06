@@ -4,7 +4,7 @@ import { AzureImageGenerationMessage } from '@/agent/azure-image-generation-agen
 import ChatInput from '@/components/chat-input';
 import ImageGenerationView from '@/components/tool/openai-image-generation-view';
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 
 export default function TestOpenAIImageGeneration() {
   const { status, sendMessage, messages } =

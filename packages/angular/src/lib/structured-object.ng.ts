@@ -12,7 +12,7 @@ import {
   isDeepEqualData,
   parsePartialJson,
   type DeepPartial,
-} from 'ai';
+} from '@zenning/ai';
 
 export type StructuredObjectOptions<
   SCHEMA extends FlexibleSchema,

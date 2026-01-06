@@ -5,7 +5,7 @@ import {
   streamText,
   UIDataTypes,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 const tools = {
   web_search: openai.tools.webSearch({

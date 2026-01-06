@@ -5,7 +5,7 @@ import {
   createUIMessageStream,
   convertToModelMessages,
   stepCountIs,
-} from 'ai';
+} from '@zenning/ai';
 import { processToolCalls } from './utils';
 import { tools } from './tools';
 import { HumanInTheLoopUIMessage } from './types';

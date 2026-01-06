@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { convertToModelMessages, streamText } from 'ai';
+import { convertToModelMessages, streamText } from '@zenning/ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;

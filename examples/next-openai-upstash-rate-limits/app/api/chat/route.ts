@@ -1,7 +1,7 @@
 import { openai } from '@zenning/openai';
 import { Ratelimit } from '@upstash/ratelimit';
 import { kv } from '@vercel/kv';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;

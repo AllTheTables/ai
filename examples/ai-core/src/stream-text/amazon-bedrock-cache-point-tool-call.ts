@@ -1,5 +1,5 @@
 import { bedrock } from '@zenning/amazon-bedrock';
-import { streamText, tool, ModelMessage } from 'ai';
+import { streamText, tool, ModelMessage } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

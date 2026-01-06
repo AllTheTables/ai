@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { ModelMessage, generateId } from 'ai';
+import { ModelMessage, generateId } from '@zenning/ai';
 import {
   createAI,
   createStreamableValue,

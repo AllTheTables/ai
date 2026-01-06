@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Provider, experimental_createProviderRegistry } from 'ai';
+import { Provider, experimental_createProviderRegistry } from '@zenning/ai';
 
 function createProvider(): Provider {
   return {

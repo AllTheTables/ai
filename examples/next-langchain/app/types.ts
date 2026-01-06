@@ -1,4 +1,4 @@
-import { UIMessage } from 'ai';
+import { UIMessage } from '@zenning/ai';
 
 /**
  * Progress updates during long-running operations.

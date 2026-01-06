@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { Output, stepCountIs, streamText } from 'ai';
+import { Output, stepCountIs, streamText } from '@zenning/ai';
 import z from 'zod';
 import { run } from '../lib/run';
 import { weatherTool } from '../tools/weather-tool';

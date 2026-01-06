@@ -5,7 +5,7 @@ import {
   streamText,
   UIDataTypes,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 export type SourcesChatMessage = UIMessage<
   never,

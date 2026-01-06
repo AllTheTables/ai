@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
+import { ToolLoopAgent, InferAgentUIMessage } from '@zenning/ai';
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
 import { createApplyPatchExecutor } from '@/lib/apply-patch-file-editor';

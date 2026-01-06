@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 import { setTimeout } from 'node:timers/promises';
 import { performance } from 'node:perf_hooks';

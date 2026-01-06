@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import { useChat } from '@zenning/react';
 
 async function foo() {

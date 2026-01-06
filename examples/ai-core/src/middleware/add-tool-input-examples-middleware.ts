@@ -4,7 +4,7 @@ import {
   generateText,
   tool,
   wrapLanguageModel,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

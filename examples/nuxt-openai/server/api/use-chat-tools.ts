@@ -1,5 +1,5 @@
 import { createOpenAI } from '@zenning/openai';
-import { convertToModelMessages, stepCountIs, streamText } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText } from '@zenning/ai';
 import { z } from 'zod';
 
 export default defineLazyEventHandler(async () => {

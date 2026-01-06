@@ -1,4 +1,4 @@
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import { anthropic } from '@zenning/anthropic';
 import 'dotenv/config';
 

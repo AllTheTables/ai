@@ -1,4 +1,4 @@
-import { DeepPartial } from 'ai';
+import { DeepPartial } from '@zenning/ai';
 import * as v from 'valibot';
 import { valibotSchema } from '@zenning/valibot';
 

@@ -13,7 +13,7 @@ import {
   type ToolResultPart,
   type AssistantContent,
   type UserContent,
-} from 'ai';
+} from '@zenning/ai';
 
 import {
   type LangGraphEventState,

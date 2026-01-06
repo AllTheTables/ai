@@ -1,5 +1,5 @@
 import { vertex } from '@zenning/google-vertex';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

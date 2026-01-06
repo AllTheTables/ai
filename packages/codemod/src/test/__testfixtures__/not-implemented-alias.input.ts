@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { StreamData as SData, appendClientMessage as ACM } from 'ai';
+import { StreamData as SData, appendClientMessage as ACM } from '@zenning/ai';
 import { appendClientMessage } from 'some-other-package';
 
 const streamData = new SData();

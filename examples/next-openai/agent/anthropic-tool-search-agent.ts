@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { InferAgentUIMessage, tool, ToolLoopAgent, UIToolInvocation } from 'ai';
+import { InferAgentUIMessage, tool, ToolLoopAgent, UIToolInvocation } from '@zenning/ai';
 import { z } from 'zod';
 
 const weatherTool = tool({

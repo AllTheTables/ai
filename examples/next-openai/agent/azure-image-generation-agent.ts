@@ -1,5 +1,5 @@
 import { createAzure, azure } from '@zenning/azure';
-import { InferAgentUIMessage, ToolLoopAgent } from 'ai';
+import { InferAgentUIMessage, ToolLoopAgent } from '@zenning/ai';
 
 export const azureImageGenerationAgent = new ToolLoopAgent({
   model: createAzure({

@@ -1,5 +1,5 @@
 import { cohere } from '@zenning/cohere';
-import { convertToModelMessages, streamText, UIMessage } from 'ai';
+import { convertToModelMessages, streamText, UIMessage } from '@zenning/ai';
 
 export const maxDuration = 30;
 

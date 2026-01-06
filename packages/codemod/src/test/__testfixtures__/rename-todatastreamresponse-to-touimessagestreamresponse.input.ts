@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 
 export async function POST(req: Request) {
   const { messages } = await req.json();

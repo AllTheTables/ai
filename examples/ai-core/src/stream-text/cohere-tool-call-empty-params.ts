@@ -5,7 +5,7 @@ import {
   ToolCallPart,
   ToolResultPart,
   tool,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

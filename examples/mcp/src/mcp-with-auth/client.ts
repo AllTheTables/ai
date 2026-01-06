@@ -1,16 +1,16 @@
 import { openai } from '@zenning/openai';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 
 /**
  * @deprecated Use the `@zenning/mcp` package instead.
  *
-import { experimental_createMCPClient, auth } from 'ai';
+import { experimental_createMCPClient, auth } from '@zenning/ai';
 import type {
   OAuthClientProvider,
   OAuthClientInformation,
   OAuthClientMetadata,
   OAuthTokens,
-} from 'ai';
+} from '@zenning/ai';
 */
 
 import { createMCPClient, auth } from '@zenning/mcp';

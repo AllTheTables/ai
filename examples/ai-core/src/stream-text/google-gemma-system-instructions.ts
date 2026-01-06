@@ -1,5 +1,5 @@
 import { google } from '@zenning/google';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

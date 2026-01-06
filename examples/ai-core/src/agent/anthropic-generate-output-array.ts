@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { Output, ToolLoopAgent } from 'ai';
+import { Output, ToolLoopAgent } from '@zenning/ai';
 import { z } from 'zod';
 import { print } from '../lib/print';
 import { run } from '../lib/run';

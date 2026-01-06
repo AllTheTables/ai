@@ -1,7 +1,7 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
 import 'dotenv/config';
 import { weatherTool } from '../tools/weather-tool';
-import { stepCountIs, streamText, tool } from 'ai';
+import { stepCountIs, streamText, tool } from '@zenning/ai';
 import { z } from 'zod';
 
 async function main() {

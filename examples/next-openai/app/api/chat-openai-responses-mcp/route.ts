@@ -4,7 +4,7 @@ import {
   streamText,
   UIMessage,
   InferUITools,
-} from 'ai';
+} from '@zenning/ai';
 
 export const maxDuration = 30;
 

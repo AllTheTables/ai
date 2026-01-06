@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { streamText, stepCountIs } from 'ai';
+import { streamText, stepCountIs } from '@zenning/ai';
 import { run } from '../lib/run';
 import { anthropicLocalFsMemoryTool } from '../lib/anthropic-local-fs-memory-tool';
 

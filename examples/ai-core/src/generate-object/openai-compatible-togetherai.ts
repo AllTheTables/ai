@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { createOpenAICompatible } from '@zenning/openai-compatible';
-import { generateObject } from 'ai';
+import { generateObject } from '@zenning/ai';
 import { z } from 'zod';
 
 async function main() {

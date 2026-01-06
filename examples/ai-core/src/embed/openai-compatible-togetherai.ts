@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { createOpenAICompatible } from '@zenning/openai-compatible';
-import { embed } from 'ai';
+import { embed } from '@zenning/ai';
 
 async function main() {
   const togetherai = createOpenAICompatible({

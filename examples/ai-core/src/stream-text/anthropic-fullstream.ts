@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';

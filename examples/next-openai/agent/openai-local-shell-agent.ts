@@ -1,6 +1,6 @@
 import { openai } from '@zenning/openai';
 import { Sandbox } from '@vercel/sandbox';
-import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
+import { ToolLoopAgent, InferAgentUIMessage } from '@zenning/ai';
 
 // warning: this is a demo sandbox that is shared across chats on localhost
 let globalSandboxId: string | null = null;

@@ -5,7 +5,7 @@ import ChatInput from '@/components/chat-input';
 import CodeInterpreterView from '@/components/tool/openai-code-interpreter-view';
 import { OpenaiResponsesText } from '@/components/tool/openai-responses-text';
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 
 export default function TestOpenAIWebSearch() {
   const { status, sendMessage, messages } =

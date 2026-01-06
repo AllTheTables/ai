@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateText, jsonSchema, tool } from 'ai';
+import { generateText, jsonSchema, tool } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

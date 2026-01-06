@@ -1,4 +1,4 @@
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { gateway } from '@zenning/gateway';
 import 'dotenv/config';
 

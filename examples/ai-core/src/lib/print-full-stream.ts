@@ -1,4 +1,4 @@
-import { StreamTextResult } from 'ai';
+import { StreamTextResult } from '@zenning/ai';
 
 export async function printFullStream({
   result,

@@ -8,7 +8,7 @@ import {
   UIDataTypes,
   UIMessage,
   validateUIMessages,
-} from 'ai';
+} from '@zenning/ai';
 
 const tools = {
   code_interpreter: azure.tools.codeInterpreter(),

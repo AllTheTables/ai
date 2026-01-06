@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { APICallError, streamText, UserModelMessage } from 'ai';
+import { APICallError, streamText, UserModelMessage } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

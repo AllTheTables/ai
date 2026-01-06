@@ -1,7 +1,7 @@
 import { vertex as vertexNode } from '@zenning/google-vertex';
 import { vertex as vertexEdge } from '@zenning/google-vertex/edge';
 import { ImageModelV3, LanguageModelV3 } from '@zenning/provider';
-import { APICallError, generateImage } from 'ai';
+import { APICallError, generateImage } from '@zenning/ai';
 import 'dotenv/config';
 import { describe, expect, it, vi } from 'vitest';
 import {
@@ -12,8 +12,8 @@ import {
   defaultChatModelCapabilities,
   ModelWithCapabilities,
 } from './feature-test-suite';
-import { wrapLanguageModel } from 'ai';
-import { defaultSettingsMiddleware } from 'ai';
+import { wrapLanguageModel } from '@zenning/ai';
+import { defaultSettingsMiddleware } from '@zenning/ai';
 
 const RUNTIME_VARIANTS = {
   edge: {

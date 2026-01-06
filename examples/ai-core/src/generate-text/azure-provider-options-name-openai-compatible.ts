@@ -1,4 +1,4 @@
-import { generateText, stepCountIs, tool } from 'ai';
+import { generateText, stepCountIs, tool } from '@zenning/ai';
 import { z } from 'zod';
 import { run } from '../lib/run';
 import { azure } from '@zenning/azure';

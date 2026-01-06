@@ -1,5 +1,5 @@
 import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
-import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
+import { ToolLoopAgent, InferAgentUIMessage } from '@zenning/ai';
 
 export const anthropicWebFetchAgent = new ToolLoopAgent({
   model: anthropic('claude-sonnet-4-5'),

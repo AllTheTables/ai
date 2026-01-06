@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useChat } from 'ai/react';
+import { useChat } from '@zenning/ai/react';
 
 export function ChatWithApiString() {
   const { messages, sendMessage } = useChat({

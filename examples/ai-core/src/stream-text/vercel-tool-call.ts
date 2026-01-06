@@ -1,5 +1,5 @@
 import { vercel } from '@zenning/vercel';
-import { streamText, ToolCallPart, ToolResultPart, ModelMessage } from 'ai';
+import { streamText, ToolCallPart, ToolResultPart, ModelMessage } from '@zenning/ai';
 import 'dotenv/config';
 import { weatherTool } from '../tools/weather-tool';
 

@@ -1,4 +1,4 @@
-import { createUIMessageStreamResponse } from 'ai';
+import { createUIMessageStreamResponse } from '@zenning/ai';
 import { NextResponse } from 'next/server';
 
 import { ChatOpenAI } from '@langchain/openai';

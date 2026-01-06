@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { expect } from 'vitest';
 import { deepseek as provider } from '@zenning/deepseek';
-import { APICallError } from 'ai';
+import { APICallError } from '@zenning/ai';
 import {
   createFeatureTestSuite,
   createLanguageModelWithCapabilities,

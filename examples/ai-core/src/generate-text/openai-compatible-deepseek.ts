@@ -1,5 +1,5 @@
 import { createOpenAICompatible } from '@zenning/openai-compatible';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 const deepSeek = createOpenAICompatible({

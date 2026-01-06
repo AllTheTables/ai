@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { readUIMessageStream, stepCountIs, streamText, Tool, tool } from 'ai';
+import { readUIMessageStream, stepCountIs, streamText, Tool, tool } from '@zenning/ai';
 import { z } from 'zod';
 import { run } from '../lib/run';
 

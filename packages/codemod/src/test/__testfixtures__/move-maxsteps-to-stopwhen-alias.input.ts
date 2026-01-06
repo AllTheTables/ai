@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { generateText as GT } from 'ai';
+import { generateText as GT } from '@zenning/ai';
 import { useChat as UC } from '@zenning/react';
 
 async function foo() {

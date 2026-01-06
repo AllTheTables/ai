@@ -1,5 +1,5 @@
 import { createOpenAI } from '@zenning/openai';
-import { convertToModelMessages, streamText } from 'ai';
+import { convertToModelMessages, streamText } from '@zenning/ai';
 
 export default defineLazyEventHandler(async () => {
   const openai = createOpenAI({

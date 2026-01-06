@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { convertBase64ToUint8Array } from '../lib/convert-base64';
 import { presentImages } from '../lib/present-image';
 import { run } from '../lib/run';

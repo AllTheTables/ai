@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { createApplyPatchExecutor } from '../lib/apply-patch-file-editor';

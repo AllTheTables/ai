@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { tool } from 'ai';
+import { tool } from '@zenning/ai';
 import { z } from 'zod';
 
 // Case 1: Simple identifier named 'result' - needs rename in body

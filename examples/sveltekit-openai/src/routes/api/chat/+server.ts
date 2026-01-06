@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { createOpenAI } from '@zenning/openai';
-import { convertToModelMessages, streamText, stepCountIs } from 'ai';
+import { convertToModelMessages, streamText, stepCountIs } from '@zenning/ai';
 import { z } from 'zod';
 
 const openai = createOpenAI({

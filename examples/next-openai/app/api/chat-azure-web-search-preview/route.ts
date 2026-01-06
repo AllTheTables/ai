@@ -6,7 +6,7 @@ import {
   ToolSet,
   UIDataTypes,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 const tools = {
   web_search_preview: azure.tools.webSearchPreview({}),

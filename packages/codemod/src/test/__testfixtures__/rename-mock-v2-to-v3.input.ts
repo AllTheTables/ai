@@ -6,7 +6,7 @@ import {
   MockProviderV2,
   MockSpeechModelV2,
   MockTranscriptionModelV2,
-} from 'ai/test';
+} from '@zenning/ai/test';
 
 const languageModel = new MockLanguageModelV2();
 

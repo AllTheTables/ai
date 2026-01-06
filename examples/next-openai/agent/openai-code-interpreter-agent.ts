@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { InferAgentUIMessage, ToolLoopAgent } from 'ai';
+import { InferAgentUIMessage, ToolLoopAgent } from '@zenning/ai';
 
 export const openaiCodeInterpreterAgent = new ToolLoopAgent({
   model: openai('gpt-5-nano'),

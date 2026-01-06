@@ -1,5 +1,5 @@
 import { google } from '@zenning/google';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 import { presentImages } from '../lib/present-image';
 import { run } from '../lib/run';

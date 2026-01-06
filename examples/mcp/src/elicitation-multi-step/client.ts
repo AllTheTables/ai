@@ -1,6 +1,6 @@
 import { createMCPClient, ElicitationRequestSchema } from '@zenning/mcp';
 import { openai } from '@zenning/openai';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 import 'dotenv/config';

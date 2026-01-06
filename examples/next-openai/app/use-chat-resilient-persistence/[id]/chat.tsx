@@ -2,8 +2,8 @@
 
 import ChatInput from '@/components/chat-input';
 import { UIMessage, useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
-import { createIdGenerator } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
+import { createIdGenerator } from '@zenning/ai';
 
 export default function Chat({
   id,

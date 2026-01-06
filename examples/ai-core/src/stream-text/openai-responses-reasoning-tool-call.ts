@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { stepCountIs, streamText, tool } from 'ai';
+import { stepCountIs, streamText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

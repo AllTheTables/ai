@@ -12,7 +12,7 @@ import {
   customProvider,
   defaultSettingsMiddleware,
   wrapLanguageModel,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 
 // custom provider with alias names:

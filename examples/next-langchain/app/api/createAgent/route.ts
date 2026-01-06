@@ -1,4 +1,4 @@
-import { createUIMessageStreamResponse, UIMessage } from 'ai';
+import { createUIMessageStreamResponse, UIMessage } from '@zenning/ai';
 import { NextResponse } from 'next/server';
 
 import { createAgent } from 'langchain';

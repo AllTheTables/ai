@@ -4,7 +4,7 @@ import { useChat } from '@zenning/react';
 import {
   DefaultChatTransport,
   lastAssistantMessageIsCompleteWithApprovalResponses,
-} from 'ai';
+} from '@zenning/ai';
 import ChatInput from '@/components/chat-input';
 import { OpenAIShellMessage } from '@/agent/openai-shell-agent';
 import ShellView from '@/components/tool/openai-shell-view';

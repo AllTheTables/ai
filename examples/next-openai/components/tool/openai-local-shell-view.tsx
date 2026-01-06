@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { ChatAddToolApproveResponseFunction, UIToolInvocation } from 'ai';
+import { ChatAddToolApproveResponseFunction, UIToolInvocation } from '@zenning/ai';
 
 export default function LocalShellView({
   invocation,

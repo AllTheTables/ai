@@ -19,7 +19,7 @@ import {
   Prompt,
   Schema,
   ToolChoice,
-} from 'ai';
+} from '@zenning/ai';
 import {
   asLanguageModelUsage,
   convertToLanguageModelPrompt,
@@ -27,7 +27,7 @@ import {
   prepareRetries,
   prepareToolsAndToolChoice,
   standardizePrompt,
-} from 'ai/internal';
+} from '@zenning/ai/internal';
 import { ReactNode } from 'react';
 import * as z3 from 'zod/v3';
 import * as z4 from 'zod/v4';

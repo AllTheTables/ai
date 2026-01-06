@@ -1,5 +1,5 @@
-import { streamObject } from 'ai';
-import { convertArrayToReadableStream, MockLanguageModelV3 } from 'ai/test';
+import { streamObject } from '@zenning/ai';
+import { convertArrayToReadableStream, MockLanguageModelV3 } from '@zenning/ai/test';
 import 'dotenv/config';
 import { z } from 'zod';
 

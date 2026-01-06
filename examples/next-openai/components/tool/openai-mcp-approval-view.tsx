@@ -1,4 +1,4 @@
-import { ChatAddToolApproveResponseFunction, DynamicToolUIPart } from 'ai';
+import { ChatAddToolApproveResponseFunction, DynamicToolUIPart } from '@zenning/ai';
 
 // Type definitions for MCP output
 type McpOutput = {

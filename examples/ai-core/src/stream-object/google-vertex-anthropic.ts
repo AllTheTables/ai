@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { vertexAnthropic } from '@zenning/google-vertex/anthropic';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import { z } from 'zod';
 
 async function main() {

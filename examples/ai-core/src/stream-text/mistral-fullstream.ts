@@ -1,5 +1,5 @@
 import { mistral } from '@zenning/mistral';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';

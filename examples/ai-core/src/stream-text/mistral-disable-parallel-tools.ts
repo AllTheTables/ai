@@ -1,4 +1,4 @@
-import { streamText, tool } from 'ai';
+import { streamText, tool } from '@zenning/ai';
 import { z } from 'zod';
 import 'dotenv/config';
 import { mistral } from '@zenning/mistral';

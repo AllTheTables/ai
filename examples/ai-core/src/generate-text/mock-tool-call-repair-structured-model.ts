@@ -1,6 +1,6 @@
 import { openai } from '@zenning/openai';
-import { generateObject, generateText, NoSuchToolError, tool } from 'ai';
-import { MockLanguageModelV3 } from 'ai/test';
+import { generateObject, generateText, NoSuchToolError, tool } from '@zenning/ai';
+import { MockLanguageModelV3 } from '@zenning/ai/test';
 import 'dotenv/config';
 import { z } from 'zod';
 

@@ -7,7 +7,7 @@ import {
   UIDataTypes,
   UIMessage,
   validateUIMessages,
-} from 'ai';
+} from '@zenning/ai';
 
 export const maxDuration = 30;
 

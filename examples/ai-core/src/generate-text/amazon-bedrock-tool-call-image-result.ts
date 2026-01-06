@@ -1,5 +1,5 @@
 import { bedrock } from '@zenning/amazon-bedrock';
-import { generateText, stepCountIs, tool } from 'ai';
+import { generateText, stepCountIs, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

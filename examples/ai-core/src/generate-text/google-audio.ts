@@ -1,5 +1,5 @@
 import { google } from '@zenning/google';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 

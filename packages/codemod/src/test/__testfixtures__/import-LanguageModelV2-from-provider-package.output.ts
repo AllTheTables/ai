@@ -3,7 +3,7 @@ import { LanguageModelV2 } from '@zenning/provider';
 import { LanguageModelV2 } from '@zenning/provider';
 import { LanguageModelV2Middleware } from '@zenning/provider';
 import { LanguageModelV2Middleware } from '@zenning/provider';
-import { someOtherFunction } from 'ai';
+import { someOtherFunction } from '@zenning/ai';
 
 // Multiple imports in one declaration
 import {
@@ -13,7 +13,7 @@ import {
   LanguageModelV2Middleware as LMV2MiddlewareMulti,
 } from '@zenning/provider';
 
-import { anotherFunction } from 'ai';
+import { anotherFunction } from '@zenning/ai';
 
 // Import with alias
 import { LanguageModelV2 as LMV1 } from '@zenning/provider';
@@ -21,7 +21,7 @@ import { LanguageModelV2 as LMV1 } from '@zenning/provider';
 // Mixed imports
 import { LanguageModelV2 as LMV1Mixed } from '@zenning/provider';
 
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 
 // Should not affect other packages
 import { LanguageModelV1 as LMV1Other } from 'some-other-package';

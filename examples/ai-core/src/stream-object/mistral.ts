@@ -1,5 +1,5 @@
 import { mistral } from '@zenning/mistral';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

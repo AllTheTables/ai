@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { convertToModelMessages, streamObject, streamText } from 'ai';
+import { convertToModelMessages, streamObject, streamText } from '@zenning/ai';
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import z from 'zod';

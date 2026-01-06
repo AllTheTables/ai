@@ -1,5 +1,5 @@
 import { bedrock } from '@zenning/amazon-bedrock';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import 'dotenv/config';

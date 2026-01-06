@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { Output, ToolLoopAgent } from 'ai';
+import { Output, ToolLoopAgent } from '@zenning/ai';
 import { run } from '../lib/run';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';

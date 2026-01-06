@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { convertToModelMessages, streamText, UIDataTypes, UIMessage } from 'ai';
+import { convertToModelMessages, streamText, UIDataTypes, UIMessage } from '@zenning/ai';
 import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds

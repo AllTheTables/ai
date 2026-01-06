@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { CoreMessage, CoreUserMessage, CoreAssistantMessage, CoreToolMessage } from 'ai';
+import { CoreMessage, CoreUserMessage, CoreAssistantMessage, CoreToolMessage } from '@zenning/ai';
 
 function processMessage(message: CoreMessage) {
   console.log(message);

@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { embedMany } from 'ai';
+import { embedMany } from '@zenning/ai';
 import { run } from '../lib/run';
 
 run(async () => {

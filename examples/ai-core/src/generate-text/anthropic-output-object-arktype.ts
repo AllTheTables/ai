@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { generateText, Output } from 'ai';
+import { generateText, Output } from '@zenning/ai';
 import { type } from 'arktype';
 import { run } from '../lib/run';
 

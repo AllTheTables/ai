@@ -1,4 +1,4 @@
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import { createOpenAICompatible } from '@zenning/openai-compatible';
 import 'dotenv/config';
 

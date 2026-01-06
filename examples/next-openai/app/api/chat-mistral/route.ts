@@ -1,5 +1,5 @@
 import { mistral } from '@zenning/mistral';
-import { convertToModelMessages, streamText, UIMessage } from 'ai';
+import { convertToModelMessages, streamText, UIMessage } from '@zenning/ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;

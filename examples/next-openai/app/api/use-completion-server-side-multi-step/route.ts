@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { stepCountIs, streamText, tool } from 'ai';
+import { stepCountIs, streamText, tool } from '@zenning/ai';
 import { z } from 'zod';
 
 // Allow streaming responses up to 60 seconds

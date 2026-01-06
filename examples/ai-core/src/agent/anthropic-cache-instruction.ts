@@ -1,5 +1,5 @@
 import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
-import { ToolLoopAgent } from 'ai';
+import { ToolLoopAgent } from '@zenning/ai';
 import fs from 'node:fs';
 import { print } from '../lib/print';
 import { run } from '../lib/run';

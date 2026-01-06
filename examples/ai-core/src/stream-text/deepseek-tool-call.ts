@@ -1,5 +1,5 @@
 import { deepseek } from '@zenning/deepseek';
-import { stepCountIs, streamText } from 'ai';
+import { stepCountIs, streamText } from '@zenning/ai';
 import { printFullStream } from '../lib/print-full-stream';
 import { run } from '../lib/run';
 import { weatherTool } from '../tools/weather-tool';

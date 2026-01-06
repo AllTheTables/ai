@@ -1,6 +1,6 @@
 import { toBaseMessages, toUIMessageStream } from '@zenning/langchain';
 import { ChatOpenAI } from '@langchain/openai';
-import { createUIMessageStreamResponse, UIMessage } from 'ai';
+import { createUIMessageStreamResponse, UIMessage } from '@zenning/ai';
 import { StateGraph, MessagesAnnotation } from '@langchain/langgraph';
 import { NextResponse } from 'next/server';
 

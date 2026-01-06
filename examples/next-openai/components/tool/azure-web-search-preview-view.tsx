@@ -1,5 +1,5 @@
 import { azure } from '@zenning/azure';
-import { UIToolInvocation } from 'ai';
+import { UIToolInvocation } from '@zenning/ai';
 
 export default function AzureWebSearchPreviewView({
   invocation,

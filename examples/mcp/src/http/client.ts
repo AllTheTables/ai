@@ -1,6 +1,6 @@
 import { openai } from '@zenning/openai';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 import 'dotenv/config';
 import { createMCPClient, MCPClient } from '@zenning/mcp';
 

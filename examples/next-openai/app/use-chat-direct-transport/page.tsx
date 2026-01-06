@@ -2,7 +2,7 @@
 
 import { UIMessage, useChat } from '@zenning/react';
 import ChatInput from '@/components/chat-input';
-import { ChatTransport, convertToModelMessages, streamText } from 'ai';
+import { ChatTransport, convertToModelMessages, streamText } from '@zenning/ai';
 import { createOpenAI } from '@zenning/openai';
 
 // Note: this needs a client-side OpenAI API key to work.

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { ToolExecutionOptions } from 'ai';
+import { ToolExecutionOptions } from '@zenning/ai';
 
 // Type annotation in function parameter
 function executeWithOptions(options: ToolExecutionOptions) {

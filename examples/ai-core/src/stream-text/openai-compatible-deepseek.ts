@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { createOpenAICompatible } from '@zenning/openai-compatible';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 
 async function main() {
   const deepseek = createOpenAICompatible({

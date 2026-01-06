@@ -4,7 +4,7 @@ import {
   type UIMessageChunk,
   type ChatTransport,
   type ChatRequestOptions,
-} from 'ai';
+} from '@zenning/ai';
 import {
   RemoteGraph,
   type RemoteGraphParams,

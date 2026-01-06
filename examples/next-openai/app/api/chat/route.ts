@@ -4,7 +4,7 @@ import {
   convertToModelMessages,
   streamText,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 export const maxDuration = 30;
 

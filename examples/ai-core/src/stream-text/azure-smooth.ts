@@ -1,5 +1,5 @@
 import { azure } from '@zenning/azure';
-import { smoothStream, streamText } from 'ai';
+import { smoothStream, streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

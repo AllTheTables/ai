@@ -6,7 +6,7 @@ import ChatInput from '@/components/chat-input';
 import { ReasoningView } from '@/components/reasoning-view';
 import WeatherView from '@/components/tool/weather-view';
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 
 export default function ChatDeepSeekTools() {
   const { error, status, sendMessage, messages, regenerate } =

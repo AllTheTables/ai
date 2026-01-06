@@ -8,7 +8,7 @@ import {
   convertModelMessages,
 } from './adapter';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { ModelMessage, UIMessage } from 'ai';
+import type { ModelMessage, UIMessage } from '@zenning/ai';
 import {
   AIMessage,
   AIMessageChunk,

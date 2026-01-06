@@ -1,5 +1,5 @@
 import { deepseek, DeepSeekChatOptions } from '@zenning/deepseek';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import { print } from '../lib/print';
 import { run } from '../lib/run';
 

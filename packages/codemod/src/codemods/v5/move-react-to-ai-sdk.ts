@@ -2,12 +2,12 @@ import { createTransformer } from '../lib/create-transformer';
 
 /**
  * Migrates from ai/react to @zenning/react:
- * - import { useChat } from 'ai/react' → import { useChat } from '@zenning/react'
+ * - import { useChat } from '@zenning/ai/react' → import { useChat } from '@zenning/react'
  */
 export default createTransformer((fileInfo, api, options, context) => {
   const { j, root } = context;
 
-  // Transform imports from 'ai/react' to '@zenning/react'
+  // Transform imports from '@zenning/ai/react' to '@zenning/react'
   root
     .find(j.ImportDeclaration, {
       source: {

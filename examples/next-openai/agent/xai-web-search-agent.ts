@@ -1,5 +1,5 @@
 import { xai } from '@zenning/xai';
-import { ToolLoopAgent, InferAgentUIMessage } from 'ai';
+import { ToolLoopAgent, InferAgentUIMessage } from '@zenning/ai';
 
 export const xaiWebSearchAgent = new ToolLoopAgent({
   model: xai.responses('grok-4-fast'),

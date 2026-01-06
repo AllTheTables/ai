@@ -1,4 +1,4 @@
-import { convertToModelMessages, streamText, UIMessage } from 'ai';
+import { convertToModelMessages, streamText, UIMessage } from '@zenning/ai';
 import { openai } from '@zenning/openai';
 import { z } from 'zod';
 

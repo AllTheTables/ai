@@ -1,5 +1,5 @@
 import { bedrock } from '@zenning/amazon-bedrock';
-import { embed } from 'ai';
+import { embed } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

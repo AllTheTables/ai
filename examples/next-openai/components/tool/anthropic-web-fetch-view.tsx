@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { UIToolInvocation } from 'ai';
+import { UIToolInvocation } from '@zenning/ai';
 
 export default function AnthropicWebFetchView({
   invocation,

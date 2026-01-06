@@ -12,7 +12,7 @@ const mockRenames: Record<string, string> = {
 export default createTransformer((fileInfo, api, options, context) => {
   const { j, root } = context;
 
-  // Replace import specifiers from 'ai/test' package
+  // Replace import specifiers from '@zenning/ai/test' package
   root
     .find(j.ImportDeclaration)
     .filter(path => {

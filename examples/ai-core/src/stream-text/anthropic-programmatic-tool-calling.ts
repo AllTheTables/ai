@@ -2,7 +2,7 @@ import {
   anthropic,
   forwardAnthropicContainerIdFromLastStep,
 } from '@zenning/anthropic';
-import { streamText, stepCountIs, tool } from 'ai';
+import { streamText, stepCountIs, tool } from '@zenning/ai';
 import { z } from 'zod';
 import { run } from '../lib/run';
 

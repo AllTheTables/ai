@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { generateText as GT, stepCountIs } from 'ai';
+import { generateText as GT, stepCountIs } from '@zenning/ai';
 import { useChat as UC } from '@zenning/react';
 
 async function foo() {

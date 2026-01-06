@@ -1,5 +1,5 @@
-import { simulateReadableStream, smoothStream, streamText } from 'ai';
-import { MockLanguageModelV3 } from 'ai/test';
+import { simulateReadableStream, smoothStream, streamText } from '@zenning/ai';
+import { MockLanguageModelV3 } from '@zenning/ai/test';
 
 async function main() {
   const result = streamText({

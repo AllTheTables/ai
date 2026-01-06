@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import fs from 'node:fs';
 import 'dotenv/config';
 

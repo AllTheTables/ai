@@ -3,7 +3,7 @@ import {
   createDataStreamResponse,
   createDataStream,
   DataStreamWriter,
-} from 'ai';
+} from '@zenning/ai';
 
 async function handler() {
   const stream = await createDataStream();

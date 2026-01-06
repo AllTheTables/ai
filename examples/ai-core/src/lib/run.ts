@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { APICallError } from 'ai';
+import { APICallError } from '@zenning/ai';
 import { print } from './print';
 
 export function run(fn: () => Promise<void>) {

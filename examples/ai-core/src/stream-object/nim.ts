@@ -1,5 +1,5 @@
 import { createOpenAICompatible } from '@zenning/openai-compatible';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import { z } from 'zod';
 import 'dotenv/config';
 

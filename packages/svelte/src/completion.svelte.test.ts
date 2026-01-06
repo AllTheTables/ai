@@ -3,7 +3,7 @@ import {
   TestResponseController,
 } from '@zenning/test-server/with-vitest';
 import { render } from '@testing-library/svelte';
-import type { UIMessageChunk } from 'ai';
+import type { UIMessageChunk } from '@zenning/ai';
 import { Completion } from './completion.svelte.js';
 import CompletionSynchronization from './tests/completion-synchronization.svelte';
 import { describe, it, expect, vi } from 'vitest';

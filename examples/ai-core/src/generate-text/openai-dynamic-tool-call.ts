@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { dynamicTool, generateText, stepCountIs, ToolSet } from 'ai';
+import { dynamicTool, generateText, stepCountIs, ToolSet } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';

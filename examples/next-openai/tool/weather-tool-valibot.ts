@@ -1,4 +1,4 @@
-import { UIToolInvocation, tool } from 'ai';
+import { UIToolInvocation, tool } from '@zenning/ai';
 import * as v from 'valibot';
 import { valibotSchema } from '@zenning/valibot';
 

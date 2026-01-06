@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { generateText, Output } from 'ai';
+import { generateText, Output } from '@zenning/ai';
 import { z } from 'zod';
 import { print } from '../lib/print';
 import { run } from '../lib/run';

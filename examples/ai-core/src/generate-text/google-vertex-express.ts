@@ -1,5 +1,5 @@
 import { createVertex } from '@zenning/google-vertex';
-import { generateText } from 'ai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

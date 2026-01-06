@@ -4,7 +4,7 @@ import {
   togetherai as provider,
   TogetherAIErrorData,
 } from '@zenning/togetherai';
-import { APICallError } from 'ai';
+import { APICallError } from '@zenning/ai';
 import {
   createEmbeddingModelWithCapabilities,
   createFeatureTestSuite,

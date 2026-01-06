@@ -7,7 +7,7 @@ import {
   DefaultChatTransport,
   isStaticToolUIPart,
   TextStreamChatTransport,
-} from 'ai';
+} from '@zenning/ai';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Chat } from './chat.ng';
 

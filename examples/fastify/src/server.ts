@@ -3,7 +3,7 @@ import {
   createUIMessageStream,
   createUIMessageStreamResponse,
   streamText,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 import Fastify from 'fastify';
 

@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 import { createMCPClient } from '@zenning/mcp';
 
 import 'dotenv/config';

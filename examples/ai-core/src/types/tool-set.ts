@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { StaticToolCall, StaticToolResult, generateText, tool } from 'ai';
+import { StaticToolCall, StaticToolResult, generateText, tool } from '@zenning/ai';
 import { z } from 'zod';
 
 const myToolSet = {

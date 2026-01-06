@@ -1,5 +1,5 @@
 import { elevenlabs } from '@zenning/elevenlabs';
-import { experimental_transcribe as transcribe } from 'ai';
+import { experimental_transcribe as transcribe } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

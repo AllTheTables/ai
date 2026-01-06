@@ -1,5 +1,5 @@
 import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { run } from '../lib/run';
 import { print } from '../lib/print';
 import { printFullStream } from '../lib/print-full-stream';

@@ -1,7 +1,7 @@
 'use client';
 
 import { openai } from '@zenning/openai';
-import { UIToolInvocation } from 'ai';
+import { UIToolInvocation } from '@zenning/ai';
 import { parseDiffForVisualization } from '@/lib/apply-diff';
 
 export default function OpenAIApplyPatchView({

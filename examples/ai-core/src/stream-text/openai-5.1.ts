@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { printFullStream } from '../lib/print-full-stream';
 import { run } from '../lib/run';
 

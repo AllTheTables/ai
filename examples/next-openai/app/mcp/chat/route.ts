@@ -1,6 +1,6 @@
 import { openai } from '@zenning/openai';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { convertToModelMessages, stepCountIs, streamText } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText } from '@zenning/ai';
 import { createMCPClient } from '@zenning/mcp';
 
 export async function POST(req: Request) {

@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { UIToolInvocation } from 'ai';
+import { UIToolInvocation } from '@zenning/ai';
 
 export default function OpenAIWebSearchView({
   invocation,

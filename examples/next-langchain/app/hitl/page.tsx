@@ -1,7 +1,7 @@
 'use client';
 
 import { useChat } from '@zenning/react';
-import { DefaultChatTransport } from 'ai';
+import { DefaultChatTransport } from '@zenning/ai';
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { AlertCircle, Sparkles, Shield } from 'lucide-react';
 import { ChatMessage } from '../../components/chat-message';

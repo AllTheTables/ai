@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 

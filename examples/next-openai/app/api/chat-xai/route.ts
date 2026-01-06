@@ -1,5 +1,5 @@
 import { xai } from '@zenning/xai';
-import { convertToModelMessages, streamText, UIMessage } from 'ai';
+import { convertToModelMessages, streamText, UIMessage } from '@zenning/ai';
 
 export const maxDuration = 30;
 

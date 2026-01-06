@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { generateText, tool } from 'ai';
+import { generateText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

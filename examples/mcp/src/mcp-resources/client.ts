@@ -1,6 +1,6 @@
 import { createMCPClient } from '@zenning/mcp';
 import { openai } from '@zenning/openai';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 
 async function main() {
   const mcpClient = await createMCPClient({

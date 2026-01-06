@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { vertex } from '@zenning/google-vertex';
-import { generateText, streamText } from 'ai';
+import { generateText, streamText } from '@zenning/ai';
 
 // Case 1: Direct providerMetadata access with optional chaining
 const result1 = await generateText({

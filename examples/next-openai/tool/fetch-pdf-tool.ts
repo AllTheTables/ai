@@ -1,5 +1,5 @@
 import { convertUint8ArrayToBase64 } from '@zenning/provider-utils';
-import { UIToolInvocation, tool } from 'ai';
+import { UIToolInvocation, tool } from '@zenning/ai';
 import { z } from 'zod';
 
 export const fetchPdfTool = tool({

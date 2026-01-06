@@ -1,6 +1,6 @@
 'use client';
 
-import { ChatStatus } from 'ai';
+import { ChatStatus } from '@zenning/ai';
 import { useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { ChatMessage } from './chat-message';

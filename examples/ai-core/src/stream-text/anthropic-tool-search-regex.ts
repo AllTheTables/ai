@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { streamText, tool, stepCountIs } from 'ai';
+import { streamText, tool, stepCountIs } from '@zenning/ai';
 import { z } from 'zod';
 import { run } from '../lib/run';
 

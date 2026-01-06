@@ -3,7 +3,7 @@ import { createTransformer } from '../lib/create-transformer';
 export default createTransformer((fileInfo, api, options, context) => {
   const { j, root } = context;
 
-  // Find and replace import specifiers from 'ai'
+  // Find and replace import specifiers from '@zenning/ai'
   root
     .find(j.ImportDeclaration)
     .filter(path => path.node.source.value === 'ai')

@@ -1,6 +1,6 @@
 import { bedrock } from '@zenning/amazon-bedrock';
 import { anthropicTools } from '@zenning/anthropic/internal';
-import { stepCountIs, streamText, ToolCallPart, ToolResultPart } from 'ai';
+import { stepCountIs, streamText, ToolCallPart, ToolResultPart } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

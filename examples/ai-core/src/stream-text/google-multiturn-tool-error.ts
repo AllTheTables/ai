@@ -1,5 +1,5 @@
 import { google } from '@zenning/google';
-import { streamText, tool } from 'ai';
+import { streamText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 import { readFile } from 'fs/promises';

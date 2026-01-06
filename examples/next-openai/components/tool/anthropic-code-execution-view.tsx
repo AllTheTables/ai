@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { UIToolInvocation } from 'ai';
+import { UIToolInvocation } from '@zenning/ai';
 import { Download } from 'lucide-react';
 
 export default function AnthropicCodeExecutionView({

@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { cosineSimilarity, embedMany } from 'ai';
+import { cosineSimilarity, embedMany } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

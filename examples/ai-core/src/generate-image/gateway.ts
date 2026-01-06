@@ -1,4 +1,4 @@
-import { generateImage } from 'ai';
+import { generateImage } from '@zenning/ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';
 

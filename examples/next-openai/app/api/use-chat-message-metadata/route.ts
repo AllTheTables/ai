@@ -1,4 +1,4 @@
-import { createAgentUIStreamResponse, UIMessage } from 'ai';
+import { createAgentUIStreamResponse, UIMessage } from '@zenning/ai';
 import {
   ExampleMetadata,
   openaiMetadataAgent,

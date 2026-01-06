@@ -1,5 +1,5 @@
 import { vertex } from '@zenning/google-vertex';
-import { generateText, Output } from 'ai';
+import { generateText, Output } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

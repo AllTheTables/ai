@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { Output, stepCountIs, streamText } from 'ai';
+import { Output, stepCountIs, streamText } from '@zenning/ai';
 import { run } from '../lib/run';
 import { weatherTool } from '../tools/weather-tool';
 

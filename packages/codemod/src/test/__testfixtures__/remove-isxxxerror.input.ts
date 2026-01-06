@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { APICallError, TypeValidationError } from 'ai';
+import { APICallError, TypeValidationError } from '@zenning/ai';
 import { NoSuchModelError } from '@zenning/provider';
 import { CustomError } from 'other-pkg';
 

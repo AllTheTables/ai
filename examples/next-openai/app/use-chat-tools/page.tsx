@@ -5,7 +5,7 @@ import { useChat } from '@zenning/react';
 import {
   DefaultChatTransport,
   lastAssistantMessageIsCompleteWithToolCalls,
-} from 'ai';
+} from '@zenning/ai';
 import { UseChatToolsMessage } from '../api/use-chat-tools/route';
 
 export default function Chat() {

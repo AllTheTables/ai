@@ -1,5 +1,5 @@
 import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
-import { LanguageModel, ToolLoopAgent } from 'ai';
+import { LanguageModel, ToolLoopAgent } from '@zenning/ai';
 import { z } from 'zod';
 import { print } from '../lib/print';
 import { printFullStream } from '../lib/print-full-stream';

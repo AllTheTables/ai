@@ -1,7 +1,7 @@
 // @ts-nocheck
 // Test file for restructure-file-stream-parts codemod
 
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 
 // Test streamText usage and fullStream iteration
 const result = streamText({
@@ -43,7 +43,7 @@ const fileStreamPart = {
   }
 };
 
-import type { ModelMessage } from 'ai';
+import type { ModelMessage } from '@zenning/ai';
 
 export const TEST_PROMPTS: Record<string, ModelMessage> = {
   USER_IMAGE_ATTACHMENT: {

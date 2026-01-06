@@ -8,7 +8,7 @@ import {
   isStaticToolUIPart,
   TextStreamChatTransport,
   type UIMessageChunk,
-} from 'ai';
+} from '@zenning/ai';
 import { flushSync } from 'svelte';
 import { Chat } from './chat.svelte.js';
 import { promiseWithResolvers } from './utils.svelte.js';

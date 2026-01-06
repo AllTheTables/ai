@@ -2,7 +2,7 @@
 
 import { Card } from '@/app/components';
 import { useChat } from '@zenning/react';
-import { TextStreamChatTransport } from 'ai';
+import { TextStreamChatTransport } from '@zenning/ai';
 import { useState } from 'react';
 
 export default function Page() {

@@ -38,7 +38,7 @@ export type DirectChatTransportOptions<
  * @example
  * ```tsx
  * import { useChat } from '@zenning/react';
- * import { DirectChatTransport } from 'ai';
+ * import { DirectChatTransport } from '@zenning/ai';
  * import { myAgent } from './my-agent';
  *
  * const { messages, sendMessage } = useChat({

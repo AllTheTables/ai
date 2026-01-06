@@ -1,5 +1,5 @@
 import { togetherai } from '@zenning/togetherai';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

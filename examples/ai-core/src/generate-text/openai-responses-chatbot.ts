@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { ModelMessage, generateText } from 'ai';
+import { ModelMessage, generateText } from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 import { weatherTool } from '../tools/weather-tool';

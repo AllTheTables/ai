@@ -1,5 +1,5 @@
 import { cerebras } from '@zenning/cerebras';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { run } from '../lib/run';
 import 'dotenv/config';
 import { saveRawChunks } from '../lib/save-raw-chunks';

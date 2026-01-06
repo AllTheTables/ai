@@ -1,4 +1,4 @@
-import { generateObject } from 'ai';
+import { generateObject } from '@zenning/ai';
 import { openai } from '@zenning/openai';
 import { z } from 'zod';
 

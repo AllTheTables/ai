@@ -1,6 +1,6 @@
 import { openai as provider } from '@zenning/openai';
 import { LanguageModelV3 } from '@zenning/provider';
-import { APICallError } from 'ai';
+import { APICallError } from '@zenning/ai';
 import 'dotenv/config';
 import { expect } from 'vitest';
 import {

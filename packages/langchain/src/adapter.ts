@@ -8,7 +8,7 @@ import {
   type UIMessageChunk,
   convertToModelMessages,
   type ModelMessage,
-} from 'ai';
+} from '@zenning/ai';
 import {
   convertToolResultPart,
   convertAssistantContent,

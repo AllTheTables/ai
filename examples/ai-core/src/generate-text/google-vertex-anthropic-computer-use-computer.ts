@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { vertexAnthropic } from '@zenning/google-vertex/anthropic';
-import { generateText, stepCountIs } from 'ai';
+import { generateText, stepCountIs } from '@zenning/ai';
 import fs from 'node:fs';
 
 async function main() {

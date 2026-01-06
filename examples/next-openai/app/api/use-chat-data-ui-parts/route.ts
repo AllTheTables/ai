@@ -6,7 +6,7 @@ import {
   createUIMessageStreamResponse,
   stepCountIs,
   streamText,
-} from 'ai';
+} from '@zenning/ai';
 import { z } from 'zod';
 
 export async function POST(req: Request) {

@@ -1,5 +1,5 @@
 import { mistral } from '@zenning/mistral';
-import { embedMany } from 'ai';
+import { embedMany } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

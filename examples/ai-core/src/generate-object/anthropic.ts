@@ -1,5 +1,5 @@
 import { anthropic } from '@zenning/anthropic';
-import { generateObject } from 'ai';
+import { generateObject } from '@zenning/ai';
 import { z } from 'zod';
 import { run } from '../lib/run';
 

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { generateText, streamText, generateObject, streamObject } from 'ai';
+import { generateText, streamText, generateObject, streamObject } from '@zenning/ai';
 
 async function main() {
   const result = await generateText({

@@ -4,7 +4,7 @@ import {
   createUIMessageStream,
   streamText,
   pipeUIMessageStreamToResponse,
-} from 'ai';
+} from '@zenning/ai';
 import { Response } from 'express';
 
 @Controller()

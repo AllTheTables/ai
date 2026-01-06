@@ -1,5 +1,5 @@
 import { openai } from '@zenning/openai';
-import { generateText, wrapLanguageModel } from 'ai';
+import { generateText, wrapLanguageModel } from '@zenning/ai';
 import 'dotenv/config';
 import { yourCacheMiddleware } from './your-cache-middleware';
 
