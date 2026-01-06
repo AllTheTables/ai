@@ -33,7 +33,7 @@
     }
   },
   "dependencies": {
-    "ai": "workspace:*"
+    "@zenning/ai": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "20.17.24",

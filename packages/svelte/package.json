@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@zenning/provider-utils": "workspace:*",
-    "ai": "workspace:*"
+    "@zenning/ai": "workspace:*"
   },
   "devDependencies": {
     "@zenning/test-server": "latest",

@@ -39,7 +39,7 @@
     "README.md"
   ],
   "dependencies": {
-    "ai": "workspace:*",
+    "@zenning/ai": "workspace:*",
     "@zenning/provider": "workspace:*",
     "@zenning/provider-utils": "workspace:*",
     "jsondiffpatch": "0.7.3"

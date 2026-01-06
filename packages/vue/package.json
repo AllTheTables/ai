@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "@zenning/provider-utils": "workspace:*",
-    "ai": "workspace:*",
+    "@zenning/ai": "workspace:*",
     "swrv": "^1.0.4"
   },
   "devDependencies": {
