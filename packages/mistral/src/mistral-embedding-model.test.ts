@@ -1,4 +1,4 @@
-import { EmbeddingModelV3Embedding } from '@ai-sdk/provider';
+import { EmbeddingModelV3Embedding } from '@zenning/provider';
 import { createTestServer } from '@ai-sdk/test-server/with-vitest';
 import { createMistral } from './mistral-provider';
 import { describe, it, expect, vi } from 'vitest';
@@ -14,7 +14,7 @@ const dummyEmbeddings = [
 const testValues = ['sunny day at the beach', 'rainy day in the city'];
 
 const provider = createMistral({ apiKey: 'test-api-key' });
-const model = provider.textEmbeddingModel('mistral-embed');
+const model = provider.embeddingModel('mistral-embed');
 
 const server = createTestServer({
   'https://api.mistral.ai/v1/embeddings': {},

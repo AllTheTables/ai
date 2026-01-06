@@ -1,8 +1,8 @@
 import {
-  TranscriptionModelV2,
+  TranscriptionModelV3,
   ProviderV3,
   NoSuchModelError,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   FetchFunction,
   loadApiKey,
@@ -23,7 +23,12 @@ export interface AssemblyAIProvider extends ProviderV3 {
   /**
 Creates a model for transcription.
    */
-  transcription(modelId: AssemblyAITranscriptionModelId): TranscriptionModelV2;
+  transcription(modelId: AssemblyAITranscriptionModelId): TranscriptionModelV3;
+
+  /**
+   * @deprecated Use `embeddingModel` instead.
+   */
+  textEmbeddingModel(modelId: string): never;
 }
 
 export interface AssemblyAIProviderSettings {
@@ -77,6 +82,7 @@ export function createAssemblyAI(
     };
   };
 
+  provider.specificationVersion = 'v3' as const;
   provider.transcription = createTranscriptionModel;
   provider.transcriptionModel = createTranscriptionModel;
 
@@ -88,20 +94,13 @@ export function createAssemblyAI(
     });
   };
 
-  provider.textEmbeddingModel = () => {
-    throw new NoSuchModelError({
-      modelId: 'unknown',
-      modelType: 'textEmbeddingModel',
-      message: 'AssemblyAI does not provide text embedding models',
-    });
+  provider.embeddingModel = (modelId: string) => {
+    throw new NoSuchModelError({ modelId, modelType: 'embeddingModel' });
   };
+  provider.textEmbeddingModel = provider.embeddingModel;
 
-  provider.imageModel = () => {
-    throw new NoSuchModelError({
-      modelId: 'unknown',
-      modelType: 'imageModel',
-      message: 'AssemblyAI does not provide image models',
-    });
+  provider.imageModel = (modelId: string) => {
+    throw new NoSuchModelError({ modelId, modelType: 'imageModel' });
   };
 
   return provider as AssemblyAIProvider;

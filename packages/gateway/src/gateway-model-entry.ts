@@ -1,4 +1,4 @@
-import type { LanguageModelV3 } from '@ai-sdk/provider';
+import type { LanguageModelV3 } from '@zenning/provider';
 
 export interface GatewayLanguageModelEntry {
   /**

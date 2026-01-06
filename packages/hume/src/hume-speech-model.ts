@@ -1,4 +1,4 @@
-import { SpeechModelV2, SpeechModelV2CallWarning } from '@ai-sdk/provider';
+import { SpeechModelV3, SharedV3Warning } from '@zenning/provider';
 import {
   combineHeaders,
   createBinaryResponseHandler,
@@ -90,8 +90,8 @@ interface HumeSpeechModelConfig extends HumeConfig {
   };
 }
 
-export class HumeSpeechModel implements SpeechModelV2 {
-  readonly specificationVersion = 'v2';
+export class HumeSpeechModel implements SpeechModelV3 {
+  readonly specificationVersion = 'v3';
 
   get provider(): string {
     return this.config.provider;
@@ -110,8 +110,8 @@ export class HumeSpeechModel implements SpeechModelV2 {
     instructions,
     language,
     providerOptions,
-  }: Parameters<SpeechModelV2['doGenerate']>[0]) {
-    const warnings: SpeechModelV2CallWarning[] = [];
+  }: Parameters<SpeechModelV3['doGenerate']>[0]) {
+    const warnings: SharedV3Warning[] = [];
 
     // Parse provider options
     const humeOptions = await parseProviderOptions({
@@ -141,8 +141,8 @@ export class HumeSpeechModel implements SpeechModelV2 {
         requestBody.format = { type: outputFormat as 'mp3' | 'pcm' | 'wav' };
       } else {
         warnings.push({
-          type: 'unsupported-setting',
-          setting: 'outputFormat',
+          type: 'unsupported',
+          feature: 'outputFormat',
           details: `Unsupported output format: ${outputFormat}. Using mp3 instead.`,
         });
       }
@@ -186,8 +186,8 @@ export class HumeSpeechModel implements SpeechModelV2 {
 
     if (language) {
       warnings.push({
-        type: 'unsupported-setting',
-        setting: 'language',
+        type: 'unsupported',
+        feature: 'language',
         details: `Hume speech models do not support language selection. Language parameter "${language}" was ignored.`,
       });
     }
@@ -199,8 +199,8 @@ export class HumeSpeechModel implements SpeechModelV2 {
   }
 
   async doGenerate(
-    options: Parameters<SpeechModelV2['doGenerate']>[0],
-  ): Promise<Awaited<ReturnType<SpeechModelV2['doGenerate']>>> {
+    options: Parameters<SpeechModelV3['doGenerate']>[0],
+  ): Promise<Awaited<ReturnType<SpeechModelV3['doGenerate']>>> {
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
     const { requestBody, warnings } = await this.getArgs(options);
 

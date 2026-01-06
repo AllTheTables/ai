@@ -1,12 +1,6 @@
-import { SpeechModelV2, SpeechModelV2CallWarning } from '@zenning/provider';
+import { SpeechModelV2, SpeechModelV3 } from '@zenning/provider';
 
 /**
-Speech model that is used by the AI SDK Core functions.
+Speech model that is used by the AI SDK.
   */
-export type SpeechModel = SpeechModelV2;
-
-/**
-Warning from the model provider for this call. The call will proceed, but e.g.
-some settings might not be supported, which can lead to suboptimal results.
-  */
-export type SpeechWarning = SpeechModelV2CallWarning;
+export type SpeechModel = string | SpeechModelV3 | SpeechModelV2;

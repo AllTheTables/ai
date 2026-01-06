@@ -1,6 +1,6 @@
 import { createVercel } from './vercel-provider';
 import { OpenAICompatibleChatLanguageModel } from '@ai-sdk/openai-compatible';
-import { LanguageModelV3 } from '@ai-sdk/provider';
+import { LanguageModelV3 } from '@zenning/provider';
 import { loadApiKey } from '@ai-sdk/provider-utils';
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 

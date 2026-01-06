@@ -1,4 +1,4 @@
-import { JSONSchema7, LanguageModelV3Prompt } from '@ai-sdk/provider';
+import { JSONSchema7, LanguageModelV3Prompt } from '@zenning/provider';
 import { expect, it, describe } from 'vitest';
 import {
   injectJsonInstruction,

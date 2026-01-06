@@ -12,7 +12,7 @@ export default createTransformer((fileInfo, api, options, context) => {
     .filter(path => {
       return (
         path.node.source.type === 'StringLiteral' &&
-        path.node.source.value === '@ai-sdk/openai'
+        path.node.source.value === '@zenning/openai'
       );
     })
     .forEach(path => {

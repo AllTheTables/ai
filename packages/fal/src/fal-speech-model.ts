@@ -1,4 +1,4 @@
-import { SpeechModelV2, SpeechModelV2CallWarning } from '@ai-sdk/provider';
+import { SpeechModelV3, SharedV3Warning } from '@zenning/provider';
 import {
   combineHeaders,
   createBinaryResponseHandler,
@@ -41,8 +41,8 @@ interface FalSpeechModelConfig extends FalConfig {
   };
 }
 
-export class FalSpeechModel implements SpeechModelV2 {
-  readonly specificationVersion = 'v2';
+export class FalSpeechModel implements SpeechModelV3 {
+  readonly specificationVersion = 'v3';
 
   get provider(): string {
     return this.config.provider;
@@ -60,8 +60,8 @@ export class FalSpeechModel implements SpeechModelV2 {
     speed,
     language,
     providerOptions,
-  }: Parameters<SpeechModelV2['doGenerate']>[0]) {
-    const warnings: SpeechModelV2CallWarning[] = [];
+  }: Parameters<SpeechModelV3['doGenerate']>[0]) {
+    const warnings: SharedV3Warning[] = [];
 
     const falOptions = await parseProviderOptions({
       provider: 'fal',
@@ -80,8 +80,8 @@ export class FalSpeechModel implements SpeechModelV2 {
     // Language is not directly supported; warn and ignore
     if (language) {
       warnings.push({
-        type: 'unsupported-setting',
-        setting: 'language',
+        type: 'unsupported',
+        feature: 'language',
         details:
           "fal speech models don't support 'language' directly; consider providerOptions.fal.language_boost",
       });
@@ -90,9 +90,9 @@ export class FalSpeechModel implements SpeechModelV2 {
     // warn on invalid values (and on hex until we support hex response handling)
     if (outputFormat && outputFormat !== 'url' && outputFormat !== 'hex') {
       warnings.push({
-        type: 'unsupported-setting',
-        setting: 'outputFormat',
-        details: `Unsupported or unhandled outputFormat: ${outputFormat}. Using 'url' instead.`,
+        type: 'unsupported',
+        feature: 'outputFormat',
+        details: `Unsupported outputFormat: ${outputFormat}. Using 'url' instead.`,
       });
     }
 
@@ -100,8 +100,8 @@ export class FalSpeechModel implements SpeechModelV2 {
   }
 
   async doGenerate(
-    options: Parameters<SpeechModelV2['doGenerate']>[0],
-  ): Promise<Awaited<ReturnType<SpeechModelV2['doGenerate']>>> {
+    options: Parameters<SpeechModelV3['doGenerate']>[0],
+  ): Promise<Awaited<ReturnType<SpeechModelV3['doGenerate']>>> {
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
     const { requestBody, warnings } = await this.getArgs(options);
 

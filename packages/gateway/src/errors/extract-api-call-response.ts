@@ -1,4 +1,4 @@
-import type { APICallError } from '@ai-sdk/provider';
+import type { APICallError } from '@zenning/provider';
 
 export function extractApiCallResponse(error: APICallError): unknown {
   if (error.data !== undefined) {

@@ -31,12 +31,12 @@ const imageAnalysisTool = tool({
     }
   },
 
-  toModelOutput(output: { base64Image?: string }) {
+  toModelOutput({ output }) {
     return {
       type: 'content',
       value: [
         {
-          type: 'media',
+          type: 'image-data',
           mediaType: 'image/png',
           data: output.base64Image!,
         },

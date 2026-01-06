@@ -1,25 +1,17 @@
-import { SpeechModelV2, SpeechModelV2CallWarning } from '@zenning/provider';
+import { SpeechModelV3, SharedV3Warning } from '@zenning/provider';
 import {
   combineHeaders,
   createBinaryResponseHandler,
   parseProviderOptions,
   postJsonToApi,
-} from '@zenning/provider-utils';
-import { z } from 'zod/v4';
+} from '@ai-sdk/provider-utils';
 import { OpenAIConfig } from '../openai-config';
 import { openaiFailedResponseHandler } from '../openai-error';
-import { OpenAISpeechAPITypes } from './openai-speech-api-types';
-import { OpenAISpeechModelId } from './openai-speech-options';
-
-// https://platform.openai.com/docs/api-reference/audio/createSpeech
-const OpenAIProviderOptionsSchema = z.object({
-  instructions: z.string().nullish(),
-  speed: z.number().min(0.25).max(4.0).default(1.0).nullish(),
-});
-
-export type OpenAISpeechCallOptions = z.infer<
-  typeof OpenAIProviderOptionsSchema
->;
+import { OpenAISpeechAPITypes } from './openai-speech-api';
+import {
+  openaiSpeechProviderOptionsSchema,
+  OpenAISpeechModelId,
+} from './openai-speech-options';
 
 interface OpenAISpeechModelConfig extends OpenAIConfig {
   _internal?: {
@@ -27,8 +19,8 @@ interface OpenAISpeechModelConfig extends OpenAIConfig {
   };
 }
 
-export class OpenAISpeechModel implements SpeechModelV2 {
-  readonly specificationVersion = 'v2';
+export class OpenAISpeechModel implements SpeechModelV3 {
+  readonly specificationVersion = 'v3';
 
   get provider(): string {
     return this.config.provider;
@@ -47,14 +39,14 @@ export class OpenAISpeechModel implements SpeechModelV2 {
     instructions,
     language,
     providerOptions,
-  }: Parameters<SpeechModelV2['doGenerate']>[0]) {
-    const warnings: SpeechModelV2CallWarning[] = [];
+  }: Parameters<SpeechModelV3['doGenerate']>[0]) {
+    const warnings: SharedV3Warning[] = [];
 
     // Parse provider options
     const openAIOptions = await parseProviderOptions({
       provider: 'openai',
       providerOptions,
-      schema: OpenAIProviderOptionsSchema,
+      schema: openaiSpeechProviderOptionsSchema,
     });
 
     // Create request body
@@ -72,8 +64,8 @@ export class OpenAISpeechModel implements SpeechModelV2 {
         requestBody.response_format = outputFormat;
       } else {
         warnings.push({
-          type: 'unsupported-setting',
-          setting: 'outputFormat',
+          type: 'unsupported',
+          feature: 'outputFormat',
           details: `Unsupported output format: ${outputFormat}. Using mp3 instead.`,
         });
       }
@@ -93,8 +85,8 @@ export class OpenAISpeechModel implements SpeechModelV2 {
 
     if (language) {
       warnings.push({
-        type: 'unsupported-setting',
-        setting: 'language',
+        type: 'unsupported',
+        feature: 'language',
         details: `OpenAI speech models do not support language selection. Language parameter "${language}" was ignored.`,
       });
     }
@@ -106,8 +98,8 @@ export class OpenAISpeechModel implements SpeechModelV2 {
   }
 
   async doGenerate(
-    options: Parameters<SpeechModelV2['doGenerate']>[0],
-  ): Promise<Awaited<ReturnType<SpeechModelV2['doGenerate']>>> {
+    options: Parameters<SpeechModelV3['doGenerate']>[0],
+  ): Promise<Awaited<ReturnType<SpeechModelV3['doGenerate']>>> {
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
     const { requestBody, warnings } = await this.getArgs(options);
 

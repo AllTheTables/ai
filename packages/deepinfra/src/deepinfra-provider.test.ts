@@ -5,7 +5,7 @@ import {
   OpenAICompatibleCompletionLanguageModel,
   OpenAICompatibleEmbeddingModel,
 } from '@ai-sdk/openai-compatible';
-import { LanguageModelV3, EmbeddingModelV3 } from '@ai-sdk/provider';
+import { LanguageModelV3, EmbeddingModelV3 } from '@zenning/provider';
 import { loadApiKey } from '@ai-sdk/provider-utils';
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 
@@ -34,7 +34,7 @@ vi.mock('./deepinfra-image-model', () => ({
 
 describe('DeepInfraProvider', () => {
   let mockLanguageModel: LanguageModelV3;
-  let mockEmbeddingModel: EmbeddingModelV3<string>;
+  let mockEmbeddingModel: EmbeddingModelV3;
 
   beforeEach(() => {
     // Mock implementations of models
@@ -43,7 +43,7 @@ describe('DeepInfraProvider', () => {
     } as LanguageModelV3;
     mockEmbeddingModel = {
       // Add any required methods for EmbeddingModelV3
-    } as EmbeddingModelV3<string>;
+    } as EmbeddingModelV3;
 
     // Reset mocks
     vi.clearAllMocks();
@@ -125,12 +125,12 @@ describe('DeepInfraProvider', () => {
     });
   });
 
-  describe('textEmbeddingModel', () => {
+  describe('embeddingModel', () => {
     it('should construct a text embedding model with correct configuration', () => {
       const provider = createDeepInfra();
       const modelId = 'deepinfra-embedding-model';
 
-      const model = provider.textEmbeddingModel(modelId);
+      const model = provider.embeddingModel(modelId);
 
       expect(model).toBeInstanceOf(OpenAICompatibleEmbeddingModel);
     });

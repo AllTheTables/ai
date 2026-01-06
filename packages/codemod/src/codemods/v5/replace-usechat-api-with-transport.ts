@@ -13,7 +13,7 @@ export default createTransformer((fileInfo, api, options, context) => {
     })
     .forEach(path => {
       const importDeclaration = path.node;
-      importDeclaration.source.value = '@ai-sdk/react';
+      importDeclaration.source.value = '@zenning/react';
 
       // Collect useChat import names
       importDeclaration.specifiers?.forEach(spec => {
@@ -32,7 +32,7 @@ export default createTransformer((fileInfo, api, options, context) => {
   // Also collect useChat names from existing @ai-sdk/react imports
   root
     .find(j.ImportDeclaration, {
-      source: { value: '@ai-sdk/react' },
+      source: { value: '@zenning/react' },
     })
     .forEach(path => {
       const importDeclaration = path.node;
@@ -98,7 +98,7 @@ export default createTransformer((fileInfo, api, options, context) => {
 
   if (needsDefaultChatTransportImport) {
     const reactImports = root.find(j.ImportDeclaration, {
-      source: { value: '@ai-sdk/react' },
+      source: { value: '@zenning/react' },
     });
 
     if (reactImports.length > 0) {
@@ -125,7 +125,7 @@ export default createTransformer((fileInfo, api, options, context) => {
           .insertAfter(
             j.importDeclaration(
               [j.importSpecifier(j.identifier('DefaultChatTransport'))],
-              j.literal('@ai-sdk/react'),
+              j.literal('@zenning/react'),
             ),
           );
       } else {
@@ -136,7 +136,7 @@ export default createTransformer((fileInfo, api, options, context) => {
           .insertBefore(
             j.importDeclaration(
               [j.importSpecifier(j.identifier('DefaultChatTransport'))],
-              j.literal('@ai-sdk/react'),
+              j.literal('@zenning/react'),
             ),
           );
       }

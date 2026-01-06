@@ -13,7 +13,7 @@ export default createTransformer((fileInfo, api, options, context) => {
     })
     .forEach(path => {
       const importDeclaration = path.node;
-      importDeclaration.source.value = '@ai-sdk/react';
+      importDeclaration.source.value = '@zenning/react';
 
       // Collect useChat import names
       importDeclaration.specifiers?.forEach(spec => {
@@ -32,7 +32,7 @@ export default createTransformer((fileInfo, api, options, context) => {
   // Also collect useChat names from existing @ai-sdk/react imports
   root
     .find(j.ImportDeclaration, {
-      source: { value: '@ai-sdk/react' },
+      source: { value: '@zenning/react' },
     })
     .forEach(path => {
       const importDeclaration = path.node;

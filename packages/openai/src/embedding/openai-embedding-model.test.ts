@@ -1,4 +1,4 @@
-import { EmbeddingModelV3Embedding } from '@ai-sdk/provider';
+import { EmbeddingModelV3Embedding } from '@zenning/provider';
 import { createTestServer } from '@ai-sdk/test-server/with-vitest';
 import { createOpenAI } from '../openai-provider';
 import { describe, it, expect, vi } from 'vitest';

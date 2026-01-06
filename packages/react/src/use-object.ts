@@ -1,26 +1,19 @@
 import {
   FetchFunction,
+  FlexibleSchema,
   InferSchema,
   isAbortError,
   safeValidateTypes,
-} from '@zenning/provider-utils';
-import {
-  asSchema,
-  DeepPartial,
-  isDeepEqualData,
-  parsePartialJson,
-  Schema,
-} from '@zenning/ai';
+} from '@ai-sdk/provider-utils';
+import { asSchema, DeepPartial, isDeepEqualData, parsePartialJson } from 'ai';
 import { useCallback, useId, useRef, useState } from 'react';
 import useSWR from 'swr';
-import * as z3 from 'zod/v3';
-import * as z4 from 'zod/v4';
 
 // use function to allow for mocking in tests:
 const getOriginalFetch = () => fetch;
 
 export type Experimental_UseObjectOptions<
-  SCHEMA extends z4.core.$ZodType | z3.Schema | Schema,
+  SCHEMA extends FlexibleSchema,
   RESULT,
 > = {
   /**
@@ -29,7 +22,7 @@ export type Experimental_UseObjectOptions<
   api: string;
 
   /**
-   * A Zod schema that defines the shape of the complete object.
+   * A schema that defines the shape of the complete object.
    */
   schema: SCHEMA;
 
@@ -118,7 +111,7 @@ export type Experimental_UseObjectHelpers<RESULT, INPUT> = {
 };
 
 function useObject<
-  SCHEMA extends z4.core.$ZodType | z3.Schema | Schema,
+  SCHEMA extends FlexibleSchema,
   RESULT = InferSchema<SCHEMA>,
   INPUT = any,
 >({
@@ -218,12 +211,12 @@ function useObject<
             if (onFinish != null) {
               const validationResult = await safeValidateTypes({
                 value: latestObject,
-                schema: asSchema(schema) as any,
+                schema: asSchema(schema),
               });
 
               onFinish(
                 validationResult.success
-                  ? { object: validationResult.value as RESULT, error: undefined }
+                  ? { object: validationResult.value, error: undefined }
                   : { object: undefined, error: validationResult.error },
               );
             }

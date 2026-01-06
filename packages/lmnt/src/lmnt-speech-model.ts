@@ -1,4 +1,4 @@
-import { SpeechModelV2, SpeechModelV2CallWarning } from '@ai-sdk/provider';
+import { SpeechModelV3, SharedV3Warning } from '@zenning/provider';
 import {
   combineHeaders,
   createBinaryResponseHandler,
@@ -83,8 +83,8 @@ interface LMNTSpeechModelConfig extends LMNTConfig {
   };
 }
 
-export class LMNTSpeechModel implements SpeechModelV2 {
-  readonly specificationVersion = 'v2';
+export class LMNTSpeechModel implements SpeechModelV3 {
+  readonly specificationVersion = 'v3';
 
   get provider(): string {
     return this.config.provider;
@@ -102,8 +102,8 @@ export class LMNTSpeechModel implements SpeechModelV2 {
     speed,
     language,
     providerOptions,
-  }: Parameters<SpeechModelV2['doGenerate']>[0]) {
-    const warnings: SpeechModelV2CallWarning[] = [];
+  }: Parameters<SpeechModelV3['doGenerate']>[0]) {
+    const warnings: SharedV3Warning[] = [];
 
     // Parse provider options
     const lmntOptions = await parseProviderOptions({
@@ -126,8 +126,8 @@ export class LMNTSpeechModel implements SpeechModelV2 {
         requestBody.response_format = outputFormat;
       } else {
         warnings.push({
-          type: 'unsupported-setting',
-          setting: 'outputFormat',
+          type: 'unsupported',
+          feature: 'outputFormat',
           details: `Unsupported output format: ${outputFormat}. Using mp3 instead.`,
         });
       }
@@ -167,8 +167,8 @@ export class LMNTSpeechModel implements SpeechModelV2 {
   }
 
   async doGenerate(
-    options: Parameters<SpeechModelV2['doGenerate']>[0],
-  ): Promise<Awaited<ReturnType<SpeechModelV2['doGenerate']>>> {
+    options: Parameters<SpeechModelV3['doGenerate']>[0],
+  ): Promise<Awaited<ReturnType<SpeechModelV3['doGenerate']>>> {
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
     const { requestBody, warnings } = await this.getArgs(options);
 

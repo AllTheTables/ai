@@ -1,4 +1,4 @@
-import { EmptyResponseBodyError } from '@ai-sdk/provider';
+import { EmptyResponseBodyError } from '@zenning/provider';
 import {
   ParseResult,
   safeParseJSON,

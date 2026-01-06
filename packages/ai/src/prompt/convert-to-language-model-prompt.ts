@@ -3,6 +3,7 @@ import {
   LanguageModelV3Message,
   LanguageModelV3Prompt,
   LanguageModelV3TextPart,
+  LanguageModelV3ToolResultOutput,
 } from '@zenning/provider';
 import {
   DataContent,
@@ -10,8 +11,12 @@ import {
   ImagePart,
   isUrlSupported,
   ModelMessage,
+  ReasoningPart,
   TextPart,
-} from '@zenning/provider-utils';
+  ToolCallPart,
+  ToolResultOutput,
+  ToolResultPart,
+} from '@ai-sdk/provider-utils';
 import {
   detectMediaType,
   imageMediaTypeSignatures,
@@ -23,6 +28,7 @@ import {
 import { convertToLanguageModelV3DataContent } from './data-content';
 import { InvalidMessageRoleError } from './invalid-message-role-error';
 import { StandardizedPrompt } from './standardize-prompt';
+import { asArray } from '../util/as-array';
 
 export async function convertToLanguageModelPrompt({
   prompt,
@@ -39,14 +45,38 @@ export async function convertToLanguageModelPrompt({
     supportedUrls,
   );
 
-  return [
+  const messages = [
     ...(prompt.system != null
-      ? [{ role: 'system' as const, content: prompt.system }]
+      ? typeof prompt.system === 'string'
+        ? [{ role: 'system' as const, content: prompt.system }]
+        : asArray(prompt.system).map(message => ({
+            role: 'system' as const,
+            content: message.content,
+            providerOptions: message.providerOptions,
+          }))
       : []),
     ...prompt.messages.map(message =>
       convertToLanguageModelMessage({ message, downloadedAssets }),
     ),
   ];
+
+  // combine consecutive tool messages into a single tool message
+  const combinedMessages = [];
+  for (const message of messages) {
+    if (message.role !== 'tool') {
+      combinedMessages.push(message);
+      continue;
+    }
+
+    const lastCombinedMessage = combinedMessages.at(-1);
+    if (lastCombinedMessage?.role === 'tool') {
+      lastCombinedMessage.content.push(...message.content);
+    } else {
+      combinedMessages.push(message);
+    }
+  }
+
+  return combinedMessages;
 }
 
 /**
@@ -114,6 +144,16 @@ export function convertToLanguageModelMessage({
               part.text !== '' ||
               part.providerOptions != null,
           )
+          .filter(
+            (
+              part,
+            ): part is
+              | TextPart
+              | FilePart
+              | ReasoningPart
+              | ToolCallPart
+              | ToolResultPart => part.type !== 'tool-approval-request',
+          )
           .map(part => {
             const providerOptions = part.providerOptions;
 
@@ -159,7 +199,7 @@ export function convertToLanguageModelMessage({
                   type: 'tool-result' as const,
                   toolCallId: part.toolCallId,
                   toolName: part.toolName,
-                  output: part.output,
+                  output: mapToolResultOutput(part.output),
                   providerOptions,
                 };
               }
@@ -172,13 +212,33 @@ export function convertToLanguageModelMessage({
     case 'tool': {
       return {
         role: 'tool',
-        content: message.content.map(part => ({
-          type: 'tool-result' as const,
-          toolCallId: part.toolCallId,
-          toolName: part.toolName,
-          output: part.output,
-          providerOptions: part.providerOptions,
-        })),
+        content: message.content
+          .filter(
+            // Only include tool-approval-response for provider-executed tools
+            part =>
+              part.type !== 'tool-approval-response' || part.providerExecuted,
+          )
+          .map(part => {
+            switch (part.type) {
+              case 'tool-result': {
+                return {
+                  type: 'tool-result' as const,
+                  toolCallId: part.toolCallId,
+                  toolName: part.toolName,
+                  output: mapToolResultOutput(part.output),
+                  providerOptions: part.providerOptions,
+                };
+              }
+              case 'tool-approval-response': {
+                return {
+                  type: 'tool-approval-response' as const,
+                  approvalId: part.approvalId,
+                  approved: part.approved,
+                  reason: part.reason,
+                };
+              }
+            }
+          }),
         providerOptions: message.providerOptions,
       };
     }
@@ -346,4 +406,37 @@ function convertPartToLanguageModelPart(
       };
     }
   }
+}
+
+function mapToolResultOutput(
+  output: ToolResultOutput,
+): LanguageModelV3ToolResultOutput {
+  if (output.type !== 'content') {
+    return output;
+  }
+
+  return {
+    type: 'content',
+    value: output.value.map(item => {
+      if (item.type !== 'media') {
+        return item;
+      }
+
+      // AI SDK 5 tool backwards compatibility:
+      // map media type to image-data or file-data
+      if (item.mediaType.startsWith('image/')) {
+        return {
+          type: 'image-data' as const,
+          data: item.data,
+          mediaType: item.mediaType,
+        };
+      }
+
+      return {
+        type: 'file-data' as const,
+        data: item.data,
+        mediaType: item.mediaType,
+      };
+    }),
+  };
 }

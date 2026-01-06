@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { createAnthropic } from '@ai-sdk/anthropic';
-import { createOpenAI } from '@ai-sdk/openai';
+import { createOpenAI } from '@zenning/openai';
 import { createMistral } from '@ai-sdk/mistral';
 
 const anthropic = createAnthropic({
