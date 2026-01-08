@@ -1,6 +1,6 @@
-import { streamText, simulateReadableStream } from 'ai';
-import { MockLanguageModelV3 } from 'ai/test';
-import { LanguageModelV3StreamPart } from '@ai-sdk/provider';
+import { streamText, simulateReadableStream } from '@zenning/ai';
+import { MockLanguageModelV3 } from '@zenning/ai/test';
+import { LanguageModelV3StreamPart } from '@zenning/provider';
 
 const generateLongContent = (tokens: number, includeTools = false) => {
   const chunks: LanguageModelV3StreamPart[] = [
@@ -66,11 +66,19 @@ const generateLongContent = (tokens: number, includeTools = false) => {
 
   chunks.push({
     type: 'finish',
-    finishReason: 'stop',
+    finishReason: { raw: undefined, unified: 'stop' },
     usage: {
-      inputTokens: 10,
-      outputTokens: tokens,
-      totalTokens: tokens + 10,
+      inputTokens: {
+        total: 10,
+        noCache: 10,
+        cacheRead: undefined,
+        cacheWrite: undefined,
+      },
+      outputTokens: {
+        total: tokens,
+        text: tokens,
+        reasoning: undefined,
+      },
     },
   });
 

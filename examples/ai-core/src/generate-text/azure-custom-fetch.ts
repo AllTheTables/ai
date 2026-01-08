@@ -1,5 +1,5 @@
-import { createAzure } from '@ai-sdk/azure';
-import { generateText } from 'ai';
+import { createAzure } from '@zenning/azure';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 const azure = createAzure({
@@ -16,7 +16,7 @@ const azure = createAzure({
 
 async function main() {
   const result = await generateText({
-    model: azure('v0-gpt-35-turbo'), // use your own deployment
+    model: azure('gpt-4.1-mini'), // use your own deployment
     prompt: 'Invent a new holiday and describe its traditions.',
   });
 

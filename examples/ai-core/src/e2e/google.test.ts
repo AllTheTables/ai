@@ -1,5 +1,5 @@
-import { GoogleErrorData, google as provider } from '@ai-sdk/google';
-import { APICallError, ImageModelV3, LanguageModelV3 } from '@ai-sdk/provider';
+import { GoogleErrorData, google as provider } from '@zenning/google';
+import { APICallError, ImageModelV3, LanguageModelV3 } from '@zenning/provider';
 import 'dotenv/config';
 import { expect } from 'vitest';
 import {
@@ -10,8 +10,8 @@ import {
   createImageModelWithCapabilities,
   defaultChatModelCapabilities,
 } from './feature-test-suite';
-import { wrapLanguageModel } from 'ai';
-import { defaultSettingsMiddleware } from 'ai';
+import { wrapLanguageModel } from '@zenning/ai';
+import { defaultSettingsMiddleware } from '@zenning/ai';
 
 const createChatModel = (
   modelId: string,
@@ -55,7 +55,7 @@ createFeatureTestSuite({
     ],
     embeddingModels: [
       createEmbeddingModelWithCapabilities(
-        provider.textEmbeddingModel('gemini-embedding-001'),
+        provider.embeddingModel('gemini-embedding-001'),
       ),
     ],
     imageModels: [createImageModel('imagen-3.0-generate-002')],

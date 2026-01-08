@@ -1,4 +1,4 @@
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import { describe, expect, it, vi } from 'vitest';
 import { createElevenLabs } from './elevenlabs-provider';
 
@@ -119,11 +119,15 @@ describe('ElevenLabsSpeechModel', () => {
         instructions: 'Speak slowly',
       });
 
-      expect(result.warnings).toContainEqual({
-        type: 'unsupported-setting',
-        setting: 'instructions',
-        details: expect.stringContaining('instructions'),
-      });
+      expect(result.warnings).toMatchInlineSnapshot(`
+        [
+          {
+            "details": "ElevenLabs speech models do not support instructions. Instructions parameter was ignored.",
+            "feature": "instructions",
+            "type": "unsupported",
+          },
+        ]
+      `);
     });
 
     it('should pass provider-specific options', async () => {

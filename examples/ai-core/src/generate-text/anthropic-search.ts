@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { anthropic } from '@ai-sdk/anthropic';
-import { generateText } from 'ai';
+import { anthropic } from '@zenning/anthropic';
+import { generateText } from '@zenning/ai';
 
 async function main() {
   const result = await generateText({

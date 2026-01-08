@@ -1,5 +1,5 @@
-import { cohere, type CohereChatModelOptions } from '@ai-sdk/cohere';
-import { generateText } from 'ai';
+import { cohere, type CohereChatModelOptions } from '@zenning/cohere';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

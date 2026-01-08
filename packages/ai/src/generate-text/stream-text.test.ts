@@ -1,12 +1,14 @@
 import {
   LanguageModelV3,
   LanguageModelV3CallOptions,
-  LanguageModelV3CallWarning,
   LanguageModelV3FunctionTool,
-  LanguageModelV3ProviderDefinedTool,
+  LanguageModelV3Prompt,
+  LanguageModelV3ProviderTool,
   LanguageModelV3StreamPart,
+  LanguageModelV3Usage,
   SharedV3ProviderMetadata,
-} from '@ai-sdk/provider';
+  SharedV3Warning,
+} from '@zenning/provider';
 import {
   delay,
   dynamicTool,
@@ -14,14 +16,15 @@ import {
   ModelMessage,
   tool,
   Tool,
-} from '@ai-sdk/provider-utils';
+  ToolExecuteFunction,
+} from '@zenning/provider-utils';
 import {
   convertArrayToReadableStream,
   convertAsyncIterableToArray,
   convertReadableStreamToArray,
   convertResponseStreamToArray,
   mockId,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import assert from 'node:assert';
 import {
   afterEach,
@@ -33,15 +36,19 @@ import {
   vitest,
 } from 'vitest';
 import { z } from 'zod/v4';
+import { Output } from '..';
 import * as logWarningsModule from '../logger/log-warnings';
 import { MockLanguageModelV3 } from '../test/mock-language-model-v3';
 import { createMockServerResponse } from '../test/mock-server-response';
 import { MockTracer } from '../test/mock-tracer';
 import { mockValues } from '../test/mock-values';
-import { object, text } from './output';
+import {
+  asLanguageModelUsage,
+  createNullLanguageModelUsage,
+} from '../types/usage';
 import { StepResult } from './step-result';
 import { stepCountIs } from './stop-condition';
-import { streamText } from './stream-text';
+import { streamText, StreamTextOnFinishCallback } from './stream-text';
 import { StreamTextResult, TextStreamPart } from './stream-text-result';
 import { ToolSet } from './tool-set';
 
@@ -56,20 +63,32 @@ const defaultSettings = () =>
     onError: () => {},
   }) as const;
 
-const testUsage = {
-  inputTokens: 3,
-  outputTokens: 10,
-  totalTokens: 13,
-  reasoningTokens: undefined,
-  cachedInputTokens: undefined,
+const testUsage: LanguageModelV3Usage = {
+  inputTokens: {
+    total: 3,
+    noCache: 3,
+    cacheRead: undefined,
+    cacheWrite: undefined,
+  },
+  outputTokens: {
+    total: 10,
+    text: 10,
+    reasoning: undefined,
+  },
 };
 
-const testUsage2 = {
-  inputTokens: 3,
-  outputTokens: 10,
-  totalTokens: 23,
-  reasoningTokens: 10,
-  cachedInputTokens: 3,
+const testUsage2: LanguageModelV3Usage = {
+  inputTokens: {
+    total: 3,
+    noCache: 3,
+    cacheRead: 0,
+    cacheWrite: 0,
+  },
+  outputTokens: {
+    total: 10,
+    text: 10,
+    reasoning: 10,
+  },
 };
 
 function createTestModel({
@@ -92,7 +111,7 @@ function createTestModel({
     { type: 'text-end', id: '1' },
     {
       type: 'finish',
-      finishReason: 'stop',
+      finishReason: { unified: 'stop', raw: 'stop' },
       usage: testUsage,
       providerMetadata: {
         testProvider: { testKey: 'testValue' },
@@ -105,7 +124,7 @@ function createTestModel({
   stream?: ReadableStream<LanguageModelV3StreamPart>;
   request?: { body: string };
   response?: { headers: Record<string, string> };
-  warnings?: LanguageModelV3CallWarning[];
+  warnings?: SharedV3Warning[];
 } = {}): LanguageModelV3 {
   return new MockLanguageModelV3({
     doStream: async () => ({ stream, request, response, warnings }),
@@ -136,7 +155,7 @@ const modelWithSources = new MockLanguageModelV3({
       },
       {
         type: 'finish',
-        finishReason: 'stop',
+        finishReason: { unified: 'stop', raw: 'stop' },
         usage: testUsage,
       },
     ]),
@@ -168,7 +187,7 @@ const modelWithDocumentSources = new MockLanguageModelV3({
       },
       {
         type: 'finish',
-        finishReason: 'stop',
+        finishReason: { unified: 'stop', raw: 'stop' },
         usage: testUsage,
       },
     ]),
@@ -193,7 +212,7 @@ const modelWithFiles = new MockLanguageModelV3({
       },
       {
         type: 'finish',
-        finishReason: 'stop',
+        finishReason: { unified: 'stop', raw: 'stop' },
         usage: testUsage,
       },
     ]),
@@ -320,7 +339,7 @@ const modelWithReasoning = new MockLanguageModelV3({
       },
       {
         type: 'finish',
-        finishReason: 'stop',
+        finishReason: { unified: 'stop', raw: 'stop' },
         usage: testUsage,
       },
     ]),
@@ -362,7 +381,7 @@ describe('streamText', () => {
                 { type: 'text-end', id: '1' },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: testUsage,
                 },
               ]),
@@ -392,7 +411,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -445,7 +464,7 @@ describe('streamText', () => {
                 { type: 'text-end', id: '1' },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: testUsage,
                 },
               ]),
@@ -495,6 +514,7 @@ describe('streamText', () => {
             {
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "response": {
                 "headers": undefined,
                 "id": "response-id",
@@ -504,17 +524,37 @@ describe('streamText', () => {
               "type": "finish-step",
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
             },
             {
               "finishReason": "stop",
+              "rawFinishReason": "stop",
               "totalUsage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
@@ -704,6 +744,7 @@ describe('streamText', () => {
             {
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "response": {
                 "headers": undefined,
                 "id": "id-0",
@@ -713,17 +754,37 @@ describe('streamText', () => {
               "type": "finish-step",
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
             },
             {
               "finishReason": "stop",
+              "rawFinishReason": "stop",
               "totalUsage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
@@ -792,6 +853,7 @@ describe('streamText', () => {
             {
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "response": {
                 "headers": undefined,
                 "id": "id-0",
@@ -801,17 +863,37 @@ describe('streamText', () => {
               "type": "finish-step",
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
             },
             {
               "finishReason": "stop",
+              "rawFinishReason": "stop",
               "totalUsage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
@@ -874,6 +956,7 @@ describe('streamText', () => {
             {
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "response": {
                 "headers": undefined,
                 "id": "id-0",
@@ -883,17 +966,37 @@ describe('streamText', () => {
               "type": "finish-step",
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
             },
             {
               "finishReason": "stop",
+              "rawFinishReason": "stop",
               "totalUsage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
@@ -925,7 +1028,7 @@ describe('streamText', () => {
                 { type: 'text-end', id: '1' },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: testUsage,
                 },
               ]),
@@ -979,6 +1082,7 @@ describe('streamText', () => {
             {
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "response": {
                 "headers": undefined,
                 "id": "id-2000",
@@ -988,17 +1092,37 @@ describe('streamText', () => {
               "type": "finish-step",
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
             },
             {
               "finishReason": "stop",
+              "rawFinishReason": "stop",
               "totalUsage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
@@ -1060,7 +1184,7 @@ describe('streamText', () => {
                 },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: testUsage,
                 },
               ]),
@@ -1069,6 +1193,7 @@ describe('streamText', () => {
         }),
         tools: {
           tool1: tool({
+            title: 'Tool 1',
             inputSchema: z.object({ value: z.string() }),
           }),
         },
@@ -1143,7 +1268,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'tool-calls',
+              finishReason: { unified: 'tool-calls', raw: undefined },
               usage: testUsage2,
             },
           ]),
@@ -1171,6 +1296,7 @@ describe('streamText', () => {
             {
               "dynamic": false,
               "id": "call_O17Uplv4lJvD6DVdIvFFeRMw",
+              "title": undefined,
               "toolName": "test-tool",
               "type": "tool-input-start",
             },
@@ -1219,6 +1345,7 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call_O17Uplv4lJvD6DVdIvFFeRMw",
               "toolName": "test-tool",
               "type": "tool-call",
@@ -1226,6 +1353,7 @@ describe('streamText', () => {
             {
               "finishReason": "tool-calls",
               "providerMetadata": undefined,
+              "rawFinishReason": undefined,
               "response": {
                 "headers": undefined,
                 "id": "id-0",
@@ -1234,21 +1362,41 @@ describe('streamText', () => {
               },
               "type": "finish-step",
               "usage": {
-                "cachedInputTokens": 3,
+                "cachedInputTokens": 0,
+                "inputTokenDetails": {
+                  "cacheReadTokens": 0,
+                  "cacheWriteTokens": 0,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": 10,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": 10,
-                "totalTokens": 23,
+                "totalTokens": 13,
               },
             },
             {
               "finishReason": "tool-calls",
+              "rawFinishReason": undefined,
               "totalUsage": {
-                "cachedInputTokens": 3,
+                "cachedInputTokens": 0,
+                "inputTokenDetails": {
+                  "cacheReadTokens": 0,
+                  "cacheWriteTokens": 0,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": 10,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": 10,
-                "totalTokens": 23,
+                "totalTokens": 13,
               },
               "type": "finish",
             },
@@ -1274,13 +1422,14 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
         }),
         tools: {
           tool1: tool({
+            title: 'Tool 1',
             inputSchema: z.object({ value: z.string() }),
             execute: async (input, options) => {
               expect(input).toStrictEqual({ value: 'value' });
@@ -1317,13 +1466,14 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
         }),
         tools: {
           tool1: {
+            title: 'Tool 1',
             inputSchema: z.object({ value: z.string() }),
             execute: async ({ value }) => {
               await delay(50); // delay to show bug where step finish is sent before tool result
@@ -1360,7 +1510,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -1408,6 +1558,7 @@ describe('streamText', () => {
             {
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "response": {
                 "headers": undefined,
                 "id": "id-0",
@@ -1417,17 +1568,37 @@ describe('streamText', () => {
               "type": "finish-step",
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
             },
             {
               "finishReason": "stop",
+              "rawFinishReason": "stop",
               "totalUsage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
@@ -1519,7 +1690,7 @@ describe('streamText', () => {
             // Note: finish-step and finish are still added after error
             {
               type: 'finish',
-              finishReason: 'error',
+              finishReason: { unified: 'error', raw: undefined },
               usage: testUsage,
             },
           ]),
@@ -1541,7 +1712,7 @@ describe('streamText', () => {
         expect.objectContaining({
           finishReason: 'error',
           text: 'Hello',
-          usage: testUsage,
+          usage: asLanguageModelUsage(testUsage),
         }),
       );
     });
@@ -1570,7 +1741,7 @@ describe('streamText', () => {
                   },
                   {
                     type: 'finish',
-                    finishReason: 'tool-calls',
+                    finishReason: { unified: 'tool-calls', raw: undefined },
                     usage: testUsage,
                   },
                 ]),
@@ -1668,7 +1839,7 @@ describe('streamText', () => {
           "data: {"type":"finish-step"}
 
         ",
-          "data: {"type":"finish"}
+          "data: {"type":"finish","finishReason":"stop"}
 
         ",
           "data: [DONE]
@@ -1739,7 +1910,7 @@ describe('streamText', () => {
           "data: {"type":"finish-step"}
 
         ",
-          "data: {"type":"finish"}
+          "data: {"type":"finish","finishReason":"stop"}
 
         ",
           "data: [DONE]
@@ -1808,7 +1979,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -1954,7 +2125,7 @@ describe('streamText', () => {
           "data: {"type":"finish-step"}
 
         ",
-          "data: {"type":"finish"}
+          "data: {"type":"finish","finishReason":"stop"}
 
         ",
           "data: [DONE]
@@ -2014,7 +2185,7 @@ describe('streamText', () => {
           "data: {"type":"finish-step"}
 
         ",
-          "data: {"type":"finish"}
+          "data: {"type":"finish","finishReason":"stop"}
 
         ",
           "data: [DONE]
@@ -2072,7 +2243,7 @@ describe('streamText', () => {
           "data: {"type":"finish-step"}
 
         ",
-          "data: {"type":"finish"}
+          "data: {"type":"finish","finishReason":"stop"}
 
         ",
           "data: [DONE]
@@ -2163,6 +2334,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -2229,7 +2401,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -2338,6 +2510,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -2360,7 +2533,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -2479,6 +2652,7 @@ describe('streamText', () => {
               "type": "message-metadata",
             },
             {
+              "finishReason": "stop",
               "messageMetadata": {
                 "key8": "value8",
               },
@@ -2536,7 +2710,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -2585,7 +2759,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -2618,6 +2792,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -2793,6 +2968,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -2855,6 +3031,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -2919,6 +3096,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -2969,6 +3147,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -3021,6 +3200,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -3074,6 +3254,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -3160,8 +3341,16 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
-              usage: { inputTokens: 10, outputTokens: 5, totalTokens: 15 },
+              finishReason: { unified: 'stop', raw: 'stop' },
+              usage: {
+                inputTokens: {
+                  total: 10,
+                  noCache: 10,
+                  cacheRead: 0,
+                  cacheWrite: 0,
+                },
+                outputTokens: { total: 5, text: 5, reasoning: 0 },
+              },
             },
           ]),
         }),
@@ -3248,7 +3437,7 @@ describe('streamText', () => {
                 controller.enqueue({ type: 'text-end', id: '1' });
                 controller.enqueue({
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: { inputTokens: 10, outputTokens: 5, totalTokens: 15 },
                 });
                 controller.close();
@@ -3320,7 +3509,7 @@ describe('streamText', () => {
             { type: 'text-delta', id: '1', delta: '!' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -3362,7 +3551,7 @@ describe('streamText', () => {
             { type: 'text-delta', id: '1', delta: '!' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -3415,39 +3604,39 @@ describe('streamText', () => {
 
       expect(await convertResponseStreamToArray(response))
         .toMatchInlineSnapshot(`
-        [
-          "data: {"type":"start"}
+          [
+            "data: {"type":"start"}
 
-        ",
-          "data: {"type":"start-step"}
+          ",
+            "data: {"type":"start-step"}
 
-        ",
-          "data: {"type":"text-start","id":"1"}
+          ",
+            "data: {"type":"text-start","id":"1"}
 
-        ",
-          "data: {"type":"text-delta","id":"1","delta":"Hello"}
+          ",
+            "data: {"type":"text-delta","id":"1","delta":"Hello"}
 
-        ",
-          "data: {"type":"text-delta","id":"1","delta":", "}
+          ",
+            "data: {"type":"text-delta","id":"1","delta":", "}
 
-        ",
-          "data: {"type":"text-delta","id":"1","delta":"world!"}
+          ",
+            "data: {"type":"text-delta","id":"1","delta":"world!"}
 
-        ",
-          "data: {"type":"text-end","id":"1"}
+          ",
+            "data: {"type":"text-end","id":"1"}
 
-        ",
-          "data: {"type":"finish-step"}
+          ",
+            "data: {"type":"finish-step"}
 
-        ",
-          "data: {"type":"finish"}
+          ",
+            "data: {"type":"finish","finishReason":"stop"}
 
-        ",
-          "data: [DONE]
+          ",
+            "data: [DONE]
 
-        ",
-        ]
-      `);
+          ",
+          ]
+        `);
     });
 
     it('should create a Response with a data stream and custom headers', async () => {
@@ -3482,39 +3671,39 @@ describe('streamText', () => {
         `);
       expect(await convertResponseStreamToArray(response))
         .toMatchInlineSnapshot(`
-        [
-          "data: {"type":"start"}
+          [
+            "data: {"type":"start"}
 
-        ",
-          "data: {"type":"start-step"}
+          ",
+            "data: {"type":"start-step"}
 
-        ",
-          "data: {"type":"text-start","id":"1"}
+          ",
+            "data: {"type":"text-start","id":"1"}
 
-        ",
-          "data: {"type":"text-delta","id":"1","delta":"Hello"}
+          ",
+            "data: {"type":"text-delta","id":"1","delta":"Hello"}
 
-        ",
-          "data: {"type":"text-delta","id":"1","delta":", "}
+          ",
+            "data: {"type":"text-delta","id":"1","delta":", "}
 
-        ",
-          "data: {"type":"text-delta","id":"1","delta":"world!"}
+          ",
+            "data: {"type":"text-delta","id":"1","delta":"world!"}
 
-        ",
-          "data: {"type":"text-end","id":"1"}
+          ",
+            "data: {"type":"text-end","id":"1"}
 
-        ",
-          "data: {"type":"finish-step"}
+          ",
+            "data: {"type":"finish-step"}
 
-        ",
-          "data: {"type":"finish"}
+          ",
+            "data: {"type":"finish","finishReason":"stop"}
 
-        ",
-          "data: [DONE]
+          ",
+            "data: [DONE]
 
-        ",
-        ]
-      `);
+          ",
+          ]
+        `);
     });
 
     it('should mask error messages by default', async () => {
@@ -3703,7 +3892,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -3760,6 +3949,7 @@ describe('streamText', () => {
             {
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "response": {
                 "headers": undefined,
                 "id": "id-0",
@@ -3769,17 +3959,37 @@ describe('streamText', () => {
               "type": "finish-step",
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
             },
             {
               "finishReason": "stop",
+              "rawFinishReason": "stop",
               "totalUsage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
@@ -3826,6 +4036,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ],
@@ -3859,7 +4070,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -3870,8 +4081,18 @@ describe('streamText', () => {
       expect(await result.usage).toMatchInlineSnapshot(`
         {
           "cachedInputTokens": undefined,
+          "inputTokenDetails": {
+            "cacheReadTokens": undefined,
+            "cacheWriteTokens": undefined,
+            "noCacheTokens": 3,
+          },
           "inputTokens": 3,
+          "outputTokenDetails": {
+            "reasoningTokens": undefined,
+            "textTokens": 10,
+          },
           "outputTokens": 10,
+          "raw": undefined,
           "reasoningTokens": undefined,
           "totalTokens": 13,
         }
@@ -3889,7 +4110,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -3911,7 +4132,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
               providerMetadata: {
                 testProvider: { testKey: 'testValue' },
@@ -4017,7 +4238,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -4048,7 +4269,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -4205,6 +4426,7 @@ describe('streamText', () => {
             ],
             "finishReason": "stop",
             "providerMetadata": undefined,
+            "rawFinishReason": "stop",
             "request": {},
             "response": {
               "headers": undefined,
@@ -4275,8 +4497,18 @@ describe('streamText', () => {
             },
             "usage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
+              "raw": undefined,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
@@ -4328,6 +4560,7 @@ describe('streamText', () => {
             ],
             "finishReason": "stop",
             "providerMetadata": undefined,
+            "rawFinishReason": "stop",
             "request": {},
             "response": {
               "headers": undefined,
@@ -4349,8 +4582,18 @@ describe('streamText', () => {
             },
             "usage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
+              "raw": undefined,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
@@ -4396,6 +4639,7 @@ describe('streamText', () => {
             ],
             "finishReason": "stop",
             "providerMetadata": undefined,
+            "rawFinishReason": "stop",
             "request": {},
             "response": {
               "headers": undefined,
@@ -4429,8 +4673,18 @@ describe('streamText', () => {
             },
             "usage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
+              "raw": undefined,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
@@ -4454,7 +4708,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -4475,6 +4729,7 @@ describe('streamText', () => {
             },
             "providerExecuted": undefined,
             "providerMetadata": undefined,
+            "title": undefined,
             "toolCallId": "call-1",
             "toolName": "tool1",
             "type": "tool-call",
@@ -4497,7 +4752,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -4514,12 +4769,11 @@ describe('streamText', () => {
       expect(await result.toolResults).toMatchInlineSnapshot(`
         [
           {
+            "dynamic": false,
             "input": {
               "value": "value",
             },
             "output": "value-result",
-            "providerExecuted": undefined,
-            "providerMetadata": undefined,
             "toolCallId": "call-1",
             "toolName": "tool1",
             "type": "tool-result",
@@ -4584,7 +4838,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '4' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage2,
             },
           ]),
@@ -4616,6 +4870,7 @@ describe('streamText', () => {
           {
             "dynamic": false,
             "id": "2",
+            "title": undefined,
             "toolName": "tool1",
             "type": "tool-input-start",
           },
@@ -4662,16 +4917,23 @@ describe('streamText', () => {
                 "custom": "value",
               },
             },
+            "title": undefined,
             "toolCallId": "2",
             "toolName": "tool1",
             "type": "tool-call",
           },
           {
+            "id": "4",
+            "providerMetadata": undefined,
+            "text": " World",
+            "type": "text-delta",
+          },
+          {
+            "dynamic": false,
             "input": {
               "value": "test",
             },
             "output": "test-result",
-            "providerExecuted": undefined,
             "providerMetadata": {
               "provider": {
                 "custom": "value",
@@ -4680,12 +4942,6 @@ describe('streamText', () => {
             "toolCallId": "2",
             "toolName": "tool1",
             "type": "tool-result",
-          },
-          {
-            "id": "4",
-            "providerMetadata": undefined,
-            "text": " World",
-            "type": "text-delta",
           },
         ]
       `);
@@ -4716,9 +4972,7 @@ describe('streamText', () => {
 
   describe('options.onFinish', () => {
     it('should send correct information', async () => {
-      let result!: Parameters<
-        Required<Parameters<typeof streamText>[0]>['onFinish']
-      >[0];
+      let result!: Parameters<StreamTextOnFinishCallback<any>>[0];
 
       const resultObject = streamText({
         model: createTestModel({
@@ -4742,7 +4996,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
               providerMetadata: {
                 testProvider: { testKey: 'testValue' },
@@ -4779,17 +5033,17 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-call",
             },
             {
+              "dynamic": false,
               "input": {
                 "value": "value",
               },
               "output": "value-result",
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-result",
@@ -4797,6 +5051,7 @@ describe('streamText', () => {
           ],
           "dynamicToolCalls": [],
           "dynamicToolResults": [],
+          "experimental_context": undefined,
           "files": [],
           "finishReason": "stop",
           "providerMetadata": {
@@ -4804,6 +5059,7 @@ describe('streamText', () => {
               "testKey": "testValue",
             },
           },
+          "rawFinishReason": "stop",
           "reasoning": [],
           "reasoningText": undefined,
           "request": {},
@@ -4859,6 +5115,7 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-call",
@@ -4866,12 +5123,11 @@ describe('streamText', () => {
           ],
           "staticToolResults": [
             {
+              "dynamic": false,
               "input": {
                 "value": "value",
               },
               "output": "value-result",
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-result",
@@ -4891,17 +5147,17 @@ describe('streamText', () => {
                   },
                   "providerExecuted": undefined,
                   "providerMetadata": undefined,
+                  "title": undefined,
                   "toolCallId": "call-1",
                   "toolName": "tool1",
                   "type": "tool-call",
                 },
                 {
+                  "dynamic": false,
                   "input": {
                     "value": "value",
                   },
                   "output": "value-result",
-                  "providerExecuted": undefined,
-                  "providerMetadata": undefined,
                   "toolCallId": "call-1",
                   "toolName": "tool1",
                   "type": "tool-result",
@@ -4913,6 +5169,7 @@ describe('streamText', () => {
                   "testKey": "testValue",
                 },
               },
+              "rawFinishReason": "stop",
               "request": {},
               "response": {
                 "headers": {
@@ -4960,8 +5217,18 @@ describe('streamText', () => {
               },
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
@@ -4976,6 +5243,7 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-call",
@@ -4983,12 +5251,11 @@ describe('streamText', () => {
           ],
           "toolResults": [
             {
+              "dynamic": false,
               "input": {
                 "value": "value",
               },
               "output": "value-result",
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-result",
@@ -4996,15 +5263,34 @@ describe('streamText', () => {
           ],
           "totalUsage": {
             "cachedInputTokens": undefined,
+            "inputTokenDetails": {
+              "cacheReadTokens": undefined,
+              "cacheWriteTokens": undefined,
+              "noCacheTokens": 3,
+            },
             "inputTokens": 3,
+            "outputTokenDetails": {
+              "reasoningTokens": undefined,
+              "textTokens": 10,
+            },
             "outputTokens": 10,
             "reasoningTokens": undefined,
             "totalTokens": 13,
           },
           "usage": {
             "cachedInputTokens": undefined,
+            "inputTokenDetails": {
+              "cacheReadTokens": undefined,
+              "cacheWriteTokens": undefined,
+              "noCacheTokens": 3,
+            },
             "inputTokens": 3,
+            "outputTokenDetails": {
+              "reasoningTokens": undefined,
+              "textTokens": 10,
+            },
             "outputTokens": 10,
+            "raw": undefined,
             "reasoningTokens": undefined,
             "totalTokens": 13,
           },
@@ -5063,9 +5349,11 @@ describe('streamText', () => {
           ],
           "dynamicToolCalls": [],
           "dynamicToolResults": [],
+          "experimental_context": undefined,
           "files": [],
           "finishReason": "stop",
           "providerMetadata": undefined,
+          "rawFinishReason": "stop",
           "reasoning": [],
           "reasoningText": undefined,
           "request": {},
@@ -5150,6 +5438,7 @@ describe('streamText', () => {
               ],
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "request": {},
               "response": {
                 "headers": undefined,
@@ -5171,8 +5460,18 @@ describe('streamText', () => {
               },
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
@@ -5184,15 +5483,34 @@ describe('streamText', () => {
           "toolResults": [],
           "totalUsage": {
             "cachedInputTokens": undefined,
+            "inputTokenDetails": {
+              "cacheReadTokens": undefined,
+              "cacheWriteTokens": undefined,
+              "noCacheTokens": 3,
+            },
             "inputTokens": 3,
+            "outputTokenDetails": {
+              "reasoningTokens": undefined,
+              "textTokens": 10,
+            },
             "outputTokens": 10,
             "reasoningTokens": undefined,
             "totalTokens": 13,
           },
           "usage": {
             "cachedInputTokens": undefined,
+            "inputTokenDetails": {
+              "cacheReadTokens": undefined,
+              "cacheWriteTokens": undefined,
+              "noCacheTokens": 3,
+            },
             "inputTokens": 3,
+            "outputTokenDetails": {
+              "reasoningTokens": undefined,
+              "textTokens": 10,
+            },
             "outputTokens": 10,
+            "raw": undefined,
             "reasoningTokens": undefined,
             "totalTokens": 13,
           },
@@ -5245,6 +5563,7 @@ describe('streamText', () => {
           ],
           "dynamicToolCalls": [],
           "dynamicToolResults": [],
+          "experimental_context": undefined,
           "files": [
             DefaultGeneratedFileWithType {
               "base64Data": "Hello World",
@@ -5261,6 +5580,7 @@ describe('streamText', () => {
           ],
           "finishReason": "stop",
           "providerMetadata": undefined,
+          "rawFinishReason": "stop",
           "reasoning": [],
           "reasoningText": undefined,
           "request": {},
@@ -5326,6 +5646,7 @@ describe('streamText', () => {
               ],
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "request": {},
               "response": {
                 "headers": undefined,
@@ -5359,8 +5680,18 @@ describe('streamText', () => {
               },
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
@@ -5372,15 +5703,34 @@ describe('streamText', () => {
           "toolResults": [],
           "totalUsage": {
             "cachedInputTokens": undefined,
+            "inputTokenDetails": {
+              "cacheReadTokens": undefined,
+              "cacheWriteTokens": undefined,
+              "noCacheTokens": 3,
+            },
             "inputTokens": 3,
+            "outputTokenDetails": {
+              "reasoningTokens": undefined,
+              "textTokens": 10,
+            },
             "outputTokens": 10,
             "reasoningTokens": undefined,
             "totalTokens": 13,
           },
           "usage": {
             "cachedInputTokens": undefined,
+            "inputTokenDetails": {
+              "cacheReadTokens": undefined,
+              "cacheWriteTokens": undefined,
+              "noCacheTokens": 3,
+            },
             "inputTokens": 3,
+            "outputTokenDetails": {
+              "reasoningTokens": undefined,
+              "textTokens": 10,
+            },
             "outputTokens": 10,
+            "raw": undefined,
             "reasoningTokens": undefined,
             "totalTokens": 13,
           },
@@ -5426,7 +5776,7 @@ describe('streamText', () => {
             { type: 'text-end', id: '1' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -5466,7 +5816,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -5523,24 +5873,21 @@ describe('streamText', () => {
 
   describe('options.stopWhen', () => {
     let result: StreamTextResult<any, any>;
-    let onFinishResult: Parameters<
-      Required<Parameters<typeof streamText>[0]>['onFinish']
-    >[0];
+    let onFinishResult: Parameters<StreamTextOnFinishCallback<any>>[0];
     let onStepFinishResults: StepResult<any>[];
     let tracer: MockTracer;
     let stepInputs: Array<any>;
 
     beforeEach(() => {
+      result = undefined as any;
+      onFinishResult = undefined as any;
+      onStepFinishResults = [];
       tracer = new MockTracer();
       stepInputs = [];
     });
 
     describe('2 steps: initial, tool-result', () => {
       beforeEach(async () => {
-        result = undefined as any;
-        onFinishResult = undefined as any;
-        onStepFinishResults = [];
-
         let responseCount = 0;
         result = streamText({
           model: new MockLanguageModelV3({
@@ -5569,7 +5916,7 @@ describe('streamText', () => {
                       },
                       {
                         type: 'finish',
-                        finishReason: 'tool-calls',
+                        finishReason: { unified: 'tool-calls', raw: undefined },
                         usage: testUsage,
                       },
                     ]),
@@ -5591,7 +5938,7 @@ describe('streamText', () => {
                       { type: 'text-end', id: '1' },
                       {
                         type: 'finish',
-                        finishReason: 'stop',
+                        finishReason: { unified: 'stop', raw: 'stop' },
                         usage: testUsage2,
                       },
                     ]),
@@ -5613,7 +5960,6 @@ describe('streamText', () => {
           },
           prompt: 'test-input',
           onFinish: async event => {
-            expect(onFinishResult).to.be.undefined;
             onFinishResult = event as unknown as typeof onFinishResult;
           },
           onStepFinish: async event => {
@@ -5782,17 +6128,17 @@ describe('streamText', () => {
                 },
                 "providerExecuted": undefined,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-call",
               },
               {
+                "dynamic": false,
                 "input": {
                   "value": "value",
                 },
                 "output": "result1",
-                "providerExecuted": undefined,
-                "providerMetadata": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-result",
@@ -5800,6 +6146,7 @@ describe('streamText', () => {
               {
                 "finishReason": "tool-calls",
                 "providerMetadata": undefined,
+                "rawFinishReason": undefined,
                 "response": {
                   "headers": {
                     "call": "1",
@@ -5811,8 +6158,18 @@ describe('streamText', () => {
                 "type": "finish-step",
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
@@ -5845,6 +6202,7 @@ describe('streamText', () => {
               {
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "response": {
                   "headers": {
                     "call": "2",
@@ -5855,21 +6213,41 @@ describe('streamText', () => {
                 },
                 "type": "finish-step",
                 "usage": {
-                  "cachedInputTokens": 3,
+                  "cachedInputTokens": 0,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": 0,
+                    "cacheWriteTokens": 0,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": 10,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": 10,
-                  "totalTokens": 23,
+                  "totalTokens": 13,
                 },
               },
               {
                 "finishReason": "stop",
+                "rawFinishReason": "stop",
                 "totalUsage": {
-                  "cachedInputTokens": 3,
+                  "cachedInputTokens": 0,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": 0,
+                    "cacheWriteTokens": 0,
+                    "noCacheTokens": 6,
+                  },
                   "inputTokens": 6,
+                  "outputTokenDetails": {
+                    "reasoningTokens": 10,
+                    "textTokens": 20,
+                  },
                   "outputTokens": 20,
                   "reasoningTokens": 10,
-                  "totalTokens": 36,
+                  "totalTokens": 26,
                 },
                 "type": "finish",
               },
@@ -5894,9 +6272,11 @@ describe('streamText', () => {
               ],
               "dynamicToolCalls": [],
               "dynamicToolResults": [],
+              "experimental_context": undefined,
               "files": [],
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "reasoning": [],
               "reasoningText": undefined,
               "request": {},
@@ -5971,17 +6351,17 @@ describe('streamText', () => {
                       },
                       "providerExecuted": undefined,
                       "providerMetadata": undefined,
+                      "title": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-call",
                     },
                     {
+                      "dynamic": false,
                       "input": {
                         "value": "value",
                       },
                       "output": "result1",
-                      "providerExecuted": undefined,
-                      "providerMetadata": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-result",
@@ -5989,6 +6369,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "tool-calls",
                   "providerMetadata": undefined,
+                  "rawFinishReason": undefined,
                   "request": {},
                   "response": {
                     "headers": {
@@ -6036,8 +6417,18 @@ describe('streamText', () => {
                   },
                   "usage": {
                     "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": undefined,
                     "totalTokens": 13,
                   },
@@ -6053,6 +6444,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "stop",
                   "providerMetadata": undefined,
+                  "rawFinishReason": "stop",
                   "request": {},
                   "response": {
                     "headers": {
@@ -6109,11 +6501,21 @@ describe('streamText', () => {
                     "timestamp": 1970-01-01T00:00:01.000Z,
                   },
                   "usage": {
-                    "cachedInputTokens": 3,
+                    "cachedInputTokens": 0,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": 0,
+                      "cacheWriteTokens": 0,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": 10,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": 10,
-                    "totalTokens": 23,
+                    "totalTokens": 13,
                   },
                   "warnings": [],
                 },
@@ -6122,18 +6524,37 @@ describe('streamText', () => {
               "toolCalls": [],
               "toolResults": [],
               "totalUsage": {
-                "cachedInputTokens": 3,
+                "cachedInputTokens": 0,
+                "inputTokenDetails": {
+                  "cacheReadTokens": 0,
+                  "cacheWriteTokens": 0,
+                  "noCacheTokens": 6,
+                },
                 "inputTokens": 6,
+                "outputTokenDetails": {
+                  "reasoningTokens": 10,
+                  "textTokens": 20,
+                },
                 "outputTokens": 20,
                 "reasoningTokens": 10,
-                "totalTokens": 36,
+                "totalTokens": 26,
               },
               "usage": {
-                "cachedInputTokens": 3,
+                "cachedInputTokens": 0,
+                "inputTokenDetails": {
+                  "cacheReadTokens": 0,
+                  "cacheWriteTokens": 0,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": 10,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": 10,
-                "totalTokens": 23,
+                "totalTokens": 13,
               },
               "warnings": [],
             }
@@ -6156,17 +6577,17 @@ describe('streamText', () => {
                     },
                     "providerExecuted": undefined,
                     "providerMetadata": undefined,
+                    "title": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-call",
                   },
                   {
+                    "dynamic": false,
                     "input": {
                       "value": "value",
                     },
                     "output": "result1",
-                    "providerExecuted": undefined,
-                    "providerMetadata": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-result",
@@ -6174,6 +6595,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "tool-calls",
                 "providerMetadata": undefined,
+                "rawFinishReason": undefined,
                 "request": {},
                 "response": {
                   "headers": {
@@ -6221,8 +6643,18 @@ describe('streamText', () => {
                 },
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
@@ -6238,6 +6670,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "request": {},
                 "response": {
                   "headers": {
@@ -6294,11 +6727,21 @@ describe('streamText', () => {
                   "timestamp": 1970-01-01T00:00:01.000Z,
                 },
                 "usage": {
-                  "cachedInputTokens": 3,
+                  "cachedInputTokens": 0,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": 0,
+                    "cacheWriteTokens": 0,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": 10,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": 10,
-                  "totalTokens": 23,
+                  "totalTokens": 13,
                 },
                 "warnings": [],
               },
@@ -6315,25 +6758,43 @@ describe('streamText', () => {
         it('result.totalUsage should contain total token usage', async () => {
           expect(await result.totalUsage).toMatchInlineSnapshot(`
             {
-              "cachedInputTokens": 3,
+              "cachedInputTokens": 0,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0,
+                "cacheWriteTokens": 0,
+                "noCacheTokens": 6,
+              },
               "inputTokens": 6,
+              "outputTokenDetails": {
+                "reasoningTokens": 10,
+                "textTokens": 20,
+              },
               "outputTokens": 20,
               "reasoningTokens": 10,
-              "totalTokens": 36,
+              "totalTokens": 26,
             }
           `);
         });
 
         it('result.usage should contain token usage from final step', async () => {
           expect(await result.totalUsage).toMatchInlineSnapshot(`
-          {
-            "cachedInputTokens": 3,
-            "inputTokens": 6,
-            "outputTokens": 20,
-            "reasoningTokens": 10,
-            "totalTokens": 36,
-          }
-        `);
+            {
+              "cachedInputTokens": 0,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0,
+                "cacheWriteTokens": 0,
+                "noCacheTokens": 6,
+              },
+              "inputTokens": 6,
+              "outputTokenDetails": {
+                "reasoningTokens": 10,
+                "textTokens": 20,
+              },
+              "outputTokens": 20,
+              "reasoningTokens": 10,
+              "totalTokens": 26,
+            }
+          `);
         });
 
         it('result.finishReason should contain finish reason from final step', async () => {
@@ -6360,17 +6821,17 @@ describe('streamText', () => {
                     },
                     "providerExecuted": undefined,
                     "providerMetadata": undefined,
+                    "title": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-call",
                   },
                   {
+                    "dynamic": false,
                     "input": {
                       "value": "value",
                     },
                     "output": "result1",
-                    "providerExecuted": undefined,
-                    "providerMetadata": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-result",
@@ -6378,6 +6839,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "tool-calls",
                 "providerMetadata": undefined,
+                "rawFinishReason": undefined,
                 "request": {},
                 "response": {
                   "headers": {
@@ -6425,8 +6887,18 @@ describe('streamText', () => {
                 },
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
@@ -6442,6 +6914,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "request": {},
                 "response": {
                   "headers": {
@@ -6498,11 +6971,21 @@ describe('streamText', () => {
                   "timestamp": 1970-01-01T00:00:01.000Z,
                 },
                 "usage": {
-                  "cachedInputTokens": 3,
+                  "cachedInputTokens": 0,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": 0,
+                    "cacheWriteTokens": 0,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": 10,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": 10,
-                  "totalTokens": 23,
+                  "totalTokens": 13,
                 },
                 "warnings": [],
               },
@@ -6631,6 +7114,7 @@ describe('streamText', () => {
                 "type": "finish-step",
               },
               {
+                "finishReason": "stop",
                 "type": "finish",
               },
             ]
@@ -6639,12 +7123,13 @@ describe('streamText', () => {
     });
 
     describe('2 steps: initial, tool-result with prepareStep', () => {
-      let result: StreamTextResult<any, any>;
       let doStreamCalls: Array<LanguageModelV3CallOptions>;
       let prepareStepCalls: Array<{
+        modelId: string;
         stepNumber: number;
         steps: Array<StepResult<any>>;
         messages: Array<ModelMessage>;
+        experimental_context: unknown;
       }>;
 
       beforeEach(async () => {
@@ -6673,7 +7158,7 @@ describe('streamText', () => {
                       },
                       {
                         type: 'finish',
-                        finishReason: 'tool-calls',
+                        finishReason: { unified: 'tool-calls', raw: undefined },
                         usage: testUsage,
                       },
                     ]),
@@ -6694,7 +7179,7 @@ describe('streamText', () => {
                       { type: 'text-end', id: '2' },
                       {
                         type: 'finish',
-                        finishReason: 'stop',
+                        finishReason: { unified: 'stop', raw: 'stop' },
                         usage: testUsage2,
                       },
                     ]),
@@ -6713,10 +7198,23 @@ describe('streamText', () => {
               execute: async () => 'result1',
             }),
           },
+          experimental_context: { context: 'state1' },
           prompt: 'test-input',
           stopWhen: stepCountIs(3),
-          prepareStep: async ({ model, stepNumber, steps, messages }) => {
-            prepareStepCalls.push({ stepNumber, steps, messages });
+          prepareStep: async ({
+            model,
+            stepNumber,
+            steps,
+            messages,
+            experimental_context,
+          }) => {
+            prepareStepCalls.push({
+              modelId: typeof model === 'string' ? model : model.modelId,
+              stepNumber,
+              steps,
+              messages,
+              experimental_context,
+            });
 
             if (stepNumber === 0) {
               return {
@@ -6731,6 +7229,7 @@ describe('streamText', () => {
                     content: 'new input from prepareStep',
                   },
                 ],
+                experimental_context: { context: 'state2' },
               };
             }
 
@@ -6738,6 +7237,7 @@ describe('streamText', () => {
               return {
                 activeTools: [],
                 system: 'system-message-1',
+                experimental_context: { context: 'state3' },
               };
             }
           },
@@ -6880,12 +7380,16 @@ describe('streamText', () => {
         expect(prepareStepCalls).toMatchInlineSnapshot(`
           [
             {
+              "experimental_context": {
+                "context": "state1",
+              },
               "messages": [
                 {
                   "content": "test-input",
                   "role": "user",
                 },
               ],
+              "modelId": "mock-model-id",
               "stepNumber": 0,
               "steps": [
                 DefaultStepResult {
@@ -6896,17 +7400,17 @@ describe('streamText', () => {
                       },
                       "providerExecuted": undefined,
                       "providerMetadata": undefined,
+                      "title": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-call",
                     },
                     {
+                      "dynamic": false,
                       "input": {
                         "value": "value",
                       },
                       "output": "result1",
-                      "providerExecuted": undefined,
-                      "providerMetadata": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-result",
@@ -6914,6 +7418,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "tool-calls",
                   "providerMetadata": undefined,
+                  "rawFinishReason": undefined,
                   "request": {},
                   "response": {
                     "headers": {
@@ -6956,8 +7461,18 @@ describe('streamText', () => {
                   },
                   "usage": {
                     "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": undefined,
                     "totalTokens": 13,
                   },
@@ -6973,6 +7488,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "stop",
                   "providerMetadata": undefined,
+                  "rawFinishReason": "stop",
                   "request": {},
                   "response": {
                     "headers": {
@@ -7024,17 +7540,30 @@ describe('streamText', () => {
                     "timestamp": 1970-01-01T00:00:01.000Z,
                   },
                   "usage": {
-                    "cachedInputTokens": 3,
+                    "cachedInputTokens": 0,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": 0,
+                      "cacheWriteTokens": 0,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": 10,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": 10,
-                    "totalTokens": 23,
+                    "totalTokens": 13,
                   },
                   "warnings": [],
                 },
               ],
             },
             {
+              "experimental_context": {
+                "context": "state2",
+              },
               "messages": [
                 {
                   "content": "test-input",
@@ -7070,6 +7599,7 @@ describe('streamText', () => {
                   "role": "tool",
                 },
               ],
+              "modelId": "mock-model-id",
               "stepNumber": 1,
               "steps": [
                 DefaultStepResult {
@@ -7080,17 +7610,17 @@ describe('streamText', () => {
                       },
                       "providerExecuted": undefined,
                       "providerMetadata": undefined,
+                      "title": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-call",
                     },
                     {
+                      "dynamic": false,
                       "input": {
                         "value": "value",
                       },
                       "output": "result1",
-                      "providerExecuted": undefined,
-                      "providerMetadata": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-result",
@@ -7098,6 +7628,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "tool-calls",
                   "providerMetadata": undefined,
+                  "rawFinishReason": undefined,
                   "request": {},
                   "response": {
                     "headers": {
@@ -7140,8 +7671,18 @@ describe('streamText', () => {
                   },
                   "usage": {
                     "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": undefined,
                     "totalTokens": 13,
                   },
@@ -7157,6 +7698,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "stop",
                   "providerMetadata": undefined,
+                  "rawFinishReason": "stop",
                   "request": {},
                   "response": {
                     "headers": {
@@ -7208,11 +7750,21 @@ describe('streamText', () => {
                     "timestamp": 1970-01-01T00:00:01.000Z,
                   },
                   "usage": {
-                    "cachedInputTokens": 3,
+                    "cachedInputTokens": 0,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": 0,
+                      "cacheWriteTokens": 0,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": 10,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": 10,
-                    "totalTokens": 23,
+                    "totalTokens": 13,
                   },
                   "warnings": [],
                 },
@@ -7243,10 +7795,6 @@ describe('streamText', () => {
         });
 
       beforeEach(async () => {
-        result = undefined as any;
-        onFinishResult = undefined as any;
-        onStepFinishResults = [];
-
         let responseCount = 0;
         result = streamText({
           model: new MockLanguageModelV3({
@@ -7276,7 +7824,7 @@ describe('streamText', () => {
                       },
                       {
                         type: 'finish',
-                        finishReason: 'tool-calls',
+                        finishReason: { unified: 'tool-calls', raw: undefined },
                         usage: testUsage,
                       },
                     ]),
@@ -7298,7 +7846,7 @@ describe('streamText', () => {
                       { type: 'text-end', id: '1' },
                       {
                         type: 'finish',
-                        finishReason: 'stop',
+                        finishReason: { unified: 'stop', raw: 'stop' },
                         usage: testUsage2,
                       },
                     ]),
@@ -7368,17 +7916,17 @@ describe('streamText', () => {
                 },
                 "providerExecuted": undefined,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-call",
               },
               {
+                "dynamic": false,
                 "input": {
                   "value": "VALUE",
                 },
                 "output": "RESULT1",
-                "providerExecuted": undefined,
-                "providerMetadata": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-result",
@@ -7386,6 +7934,7 @@ describe('streamText', () => {
               {
                 "finishReason": "tool-calls",
                 "providerMetadata": undefined,
+                "rawFinishReason": undefined,
                 "response": {
                   "headers": {
                     "call": "1",
@@ -7397,8 +7946,18 @@ describe('streamText', () => {
                 "type": "finish-step",
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
@@ -7431,6 +7990,7 @@ describe('streamText', () => {
               {
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "response": {
                   "headers": {
                     "call": "2",
@@ -7441,21 +8001,41 @@ describe('streamText', () => {
                 },
                 "type": "finish-step",
                 "usage": {
-                  "cachedInputTokens": 3,
+                  "cachedInputTokens": 0,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": 0,
+                    "cacheWriteTokens": 0,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": 10,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": 10,
-                  "totalTokens": 23,
+                  "totalTokens": 13,
                 },
               },
               {
                 "finishReason": "stop",
+                "rawFinishReason": "stop",
                 "totalUsage": {
-                  "cachedInputTokens": 3,
+                  "cachedInputTokens": 0,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": 0,
+                    "cacheWriteTokens": 0,
+                    "noCacheTokens": 6,
+                  },
                   "inputTokens": 6,
+                  "outputTokenDetails": {
+                    "reasoningTokens": 10,
+                    "textTokens": 20,
+                  },
                   "outputTokens": 20,
                   "reasoningTokens": 10,
-                  "totalTokens": 36,
+                  "totalTokens": 26,
                 },
                 "type": "finish",
               },
@@ -7480,9 +8060,11 @@ describe('streamText', () => {
               ],
               "dynamicToolCalls": [],
               "dynamicToolResults": [],
+              "experimental_context": undefined,
               "files": [],
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "reasoning": [],
               "reasoningText": undefined,
               "request": {},
@@ -7557,17 +8139,17 @@ describe('streamText', () => {
                       },
                       "providerExecuted": undefined,
                       "providerMetadata": undefined,
+                      "title": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-call",
                     },
                     {
+                      "dynamic": false,
                       "input": {
                         "value": "VALUE",
                       },
                       "output": "RESULT1",
-                      "providerExecuted": undefined,
-                      "providerMetadata": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-result",
@@ -7575,6 +8157,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "tool-calls",
                   "providerMetadata": undefined,
+                  "rawFinishReason": undefined,
                   "request": {},
                   "response": {
                     "headers": {
@@ -7622,8 +8205,18 @@ describe('streamText', () => {
                   },
                   "usage": {
                     "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": undefined,
                     "totalTokens": 13,
                   },
@@ -7639,6 +8232,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "stop",
                   "providerMetadata": undefined,
+                  "rawFinishReason": "stop",
                   "request": {},
                   "response": {
                     "headers": {
@@ -7695,11 +8289,21 @@ describe('streamText', () => {
                     "timestamp": 1970-01-01T00:00:01.000Z,
                   },
                   "usage": {
-                    "cachedInputTokens": 3,
+                    "cachedInputTokens": 0,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": 0,
+                      "cacheWriteTokens": 0,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": 10,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": 10,
-                    "totalTokens": 23,
+                    "totalTokens": 13,
                   },
                   "warnings": [],
                 },
@@ -7708,18 +8312,37 @@ describe('streamText', () => {
               "toolCalls": [],
               "toolResults": [],
               "totalUsage": {
-                "cachedInputTokens": 3,
+                "cachedInputTokens": 0,
+                "inputTokenDetails": {
+                  "cacheReadTokens": 0,
+                  "cacheWriteTokens": 0,
+                  "noCacheTokens": 6,
+                },
                 "inputTokens": 6,
+                "outputTokenDetails": {
+                  "reasoningTokens": 10,
+                  "textTokens": 20,
+                },
                 "outputTokens": 20,
                 "reasoningTokens": 10,
-                "totalTokens": 36,
+                "totalTokens": 26,
               },
               "usage": {
-                "cachedInputTokens": 3,
+                "cachedInputTokens": 0,
+                "inputTokenDetails": {
+                  "cacheReadTokens": 0,
+                  "cacheWriteTokens": 0,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": 10,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": 10,
-                "totalTokens": 23,
+                "totalTokens": 13,
               },
               "warnings": [],
             }
@@ -7742,17 +8365,17 @@ describe('streamText', () => {
                     },
                     "providerExecuted": undefined,
                     "providerMetadata": undefined,
+                    "title": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-call",
                   },
                   {
+                    "dynamic": false,
                     "input": {
                       "value": "VALUE",
                     },
                     "output": "RESULT1",
-                    "providerExecuted": undefined,
-                    "providerMetadata": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-result",
@@ -7760,6 +8383,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "tool-calls",
                 "providerMetadata": undefined,
+                "rawFinishReason": undefined,
                 "request": {},
                 "response": {
                   "headers": {
@@ -7807,8 +8431,18 @@ describe('streamText', () => {
                 },
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
@@ -7824,6 +8458,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "request": {},
                 "response": {
                   "headers": {
@@ -7880,11 +8515,21 @@ describe('streamText', () => {
                   "timestamp": 1970-01-01T00:00:01.000Z,
                 },
                 "usage": {
-                  "cachedInputTokens": 3,
+                  "cachedInputTokens": 0,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": 0,
+                    "cacheWriteTokens": 0,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": 10,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": 10,
-                  "totalTokens": 23,
+                  "totalTokens": 13,
                 },
                 "warnings": [],
               },
@@ -7897,25 +8542,43 @@ describe('streamText', () => {
         it('result.totalUsage should contain total token usage', async () => {
           expect(await result.totalUsage).toMatchInlineSnapshot(`
             {
-              "cachedInputTokens": 3,
+              "cachedInputTokens": 0,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0,
+                "cacheWriteTokens": 0,
+                "noCacheTokens": 6,
+              },
               "inputTokens": 6,
+              "outputTokenDetails": {
+                "reasoningTokens": 10,
+                "textTokens": 20,
+              },
               "outputTokens": 20,
               "reasoningTokens": 10,
-              "totalTokens": 36,
+              "totalTokens": 26,
             }
           `);
         });
 
         it('result.usage should contain token usage from final step', async () => {
           expect(await result.totalUsage).toMatchInlineSnapshot(`
-          {
-            "cachedInputTokens": 3,
-            "inputTokens": 6,
-            "outputTokens": 20,
-            "reasoningTokens": 10,
-            "totalTokens": 36,
-          }
-        `);
+            {
+              "cachedInputTokens": 0,
+              "inputTokenDetails": {
+                "cacheReadTokens": 0,
+                "cacheWriteTokens": 0,
+                "noCacheTokens": 6,
+              },
+              "inputTokens": 6,
+              "outputTokenDetails": {
+                "reasoningTokens": 10,
+                "textTokens": 20,
+              },
+              "outputTokens": 20,
+              "reasoningTokens": 10,
+              "totalTokens": 26,
+            }
+          `);
         });
 
         it('result.finishReason should contain finish reason from final step', async () => {
@@ -7942,17 +8605,17 @@ describe('streamText', () => {
                     },
                     "providerExecuted": undefined,
                     "providerMetadata": undefined,
+                    "title": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-call",
                   },
                   {
+                    "dynamic": false,
                     "input": {
                       "value": "VALUE",
                     },
                     "output": "RESULT1",
-                    "providerExecuted": undefined,
-                    "providerMetadata": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-result",
@@ -7960,6 +8623,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "tool-calls",
                 "providerMetadata": undefined,
+                "rawFinishReason": undefined,
                 "request": {},
                 "response": {
                   "headers": {
@@ -8007,8 +8671,18 @@ describe('streamText', () => {
                 },
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
@@ -8024,6 +8698,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "request": {},
                 "response": {
                   "headers": {
@@ -8080,11 +8755,21 @@ describe('streamText', () => {
                   "timestamp": 1970-01-01T00:00:01.000Z,
                 },
                 "usage": {
-                  "cachedInputTokens": 3,
+                  "cachedInputTokens": 0,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": 0,
+                    "cacheWriteTokens": 0,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": 10,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": 10,
-                  "totalTokens": 23,
+                  "totalTokens": 13,
                 },
                 "warnings": [],
               },
@@ -8157,11 +8842,11 @@ describe('streamText', () => {
                 "ai.response.finishReason": "stop",
                 "ai.response.text": "Hello, world!",
                 "ai.settings.maxRetries": 2,
-                "ai.usage.cachedInputTokens": 3,
+                "ai.usage.cachedInputTokens": 0,
                 "ai.usage.inputTokens": 6,
                 "ai.usage.outputTokens": 20,
                 "ai.usage.reasoningTokens": 10,
-                "ai.usage.totalTokens": 36,
+                "ai.usage.totalTokens": 26,
                 "operation.name": "ai.streamText",
               },
               "events": [],
@@ -8246,11 +8931,11 @@ describe('streamText', () => {
                 "ai.response.text": "Hello, world!",
                 "ai.response.timestamp": "1970-01-01T00:00:01.000Z",
                 "ai.settings.maxRetries": 2,
-                "ai.usage.cachedInputTokens": 3,
+                "ai.usage.cachedInputTokens": 0,
                 "ai.usage.inputTokens": 3,
                 "ai.usage.outputTokens": 10,
                 "ai.usage.reasoningTokens": 10,
-                "ai.usage.totalTokens": 23,
+                "ai.usage.totalTokens": 13,
                 "gen_ai.request.model": "mock-model-id",
                 "gen_ai.response.finish_reasons": [
                   "stop",
@@ -8344,6 +9029,7 @@ describe('streamText', () => {
                 "type": "finish-step",
               },
               {
+                "finishReason": "stop",
                 "type": "finish",
               },
             ]
@@ -8396,7 +9082,7 @@ describe('streamText', () => {
                       },
                       {
                         type: 'finish',
-                        finishReason: 'tool-calls',
+                        finishReason: { unified: 'tool-calls', raw: undefined },
                         usage: testUsage,
                       },
                     ]),
@@ -8458,17 +9144,17 @@ describe('streamText', () => {
                       },
                       "providerExecuted": undefined,
                       "providerMetadata": undefined,
+                      "title": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-call",
                     },
                     {
+                      "dynamic": false,
                       "input": {
                         "value": "value",
                       },
                       "output": "result1",
-                      "providerExecuted": undefined,
-                      "providerMetadata": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-result",
@@ -8476,6 +9162,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "tool-calls",
                   "providerMetadata": undefined,
+                  "rawFinishReason": undefined,
                   "request": {},
                   "response": {
                     "headers": {
@@ -8523,8 +9210,18 @@ describe('streamText', () => {
                   },
                   "usage": {
                     "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": undefined,
                     "totalTokens": 13,
                   },
@@ -8548,17 +9245,17 @@ describe('streamText', () => {
                       },
                       "providerExecuted": undefined,
                       "providerMetadata": undefined,
+                      "title": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-call",
                     },
                     {
+                      "dynamic": false,
                       "input": {
                         "value": "value",
                       },
                       "output": "result1",
-                      "providerExecuted": undefined,
-                      "providerMetadata": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-result",
@@ -8566,6 +9263,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "tool-calls",
                   "providerMetadata": undefined,
+                  "rawFinishReason": undefined,
                   "request": {},
                   "response": {
                     "headers": {
@@ -8613,8 +9311,18 @@ describe('streamText', () => {
                   },
                   "usage": {
                     "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": undefined,
                     "totalTokens": 13,
                   },
@@ -8646,7 +9354,7 @@ describe('streamText', () => {
                 { type: 'text-end', id: '1' },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: testUsage,
                 },
               ]),
@@ -8718,16 +9426,15 @@ describe('streamText', () => {
               },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
           }),
           tools: {
             web_search: {
-              type: 'provider-defined',
+              type: 'provider',
               id: 'test.web_search',
-              name: 'web_search',
               inputSchema: z.object({ value: z.string() }),
               outputSchema: z.object({ value: z.string() }),
               args: {},
@@ -8751,11 +9458,13 @@ describe('streamText', () => {
               },
               "providerExecuted": true,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "web_search",
               "type": "tool-call",
             },
             {
+              "dynamic": undefined,
               "input": {
                 "value": "value",
               },
@@ -8771,11 +9480,13 @@ describe('streamText', () => {
               },
               "providerExecuted": true,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-2",
               "toolName": "web_search",
               "type": "tool-call",
             },
             {
+              "dynamic": undefined,
               "error": "ERROR",
               "input": {
                 "value": "value",
@@ -8805,6 +9516,7 @@ describe('streamText', () => {
                 "dynamic": false,
                 "id": "call-1",
                 "providerExecuted": true,
+                "title": undefined,
                 "toolName": "web_search",
                 "type": "tool-input-start",
               },
@@ -8823,11 +9535,13 @@ describe('streamText', () => {
                 },
                 "providerExecuted": true,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "web_search",
                 "type": "tool-call",
               },
               {
+                "dynamic": undefined,
                 "input": {
                   "value": "value",
                 },
@@ -8843,11 +9557,13 @@ describe('streamText', () => {
                 },
                 "providerExecuted": true,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-2",
                 "toolName": "web_search",
                 "type": "tool-call",
               },
               {
+                "dynamic": undefined,
                 "error": "ERROR",
                 "input": {
                   "value": "value",
@@ -8860,6 +9576,7 @@ describe('streamText', () => {
               {
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "response": {
                   "headers": undefined,
                   "id": "id-0",
@@ -8869,17 +9586,37 @@ describe('streamText', () => {
                 "type": "finish-step",
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
               },
               {
                 "finishReason": "stop",
+                "rawFinishReason": "stop",
                 "totalUsage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
@@ -8893,62 +9630,63 @@ describe('streamText', () => {
       it('should include provider-executed tool call and result in the ui message stream', async () => {
         expect(await convertReadableStreamToArray(result.toUIMessageStream()))
           .toMatchInlineSnapshot(`
-          [
-            {
-              "type": "start",
-            },
-            {
-              "type": "start-step",
-            },
-            {
-              "providerExecuted": true,
-              "toolCallId": "call-1",
-              "toolName": "web_search",
-              "type": "tool-input-start",
-            },
-            {
-              "inputTextDelta": "{ "value": "value" }",
-              "toolCallId": "call-1",
-              "type": "tool-input-delta",
-            },
-            {
-              "input": {
-                "value": "value",
+            [
+              {
+                "type": "start",
               },
-              "providerExecuted": true,
-              "toolCallId": "call-1",
-              "toolName": "web_search",
-              "type": "tool-input-available",
-            },
-            {
-              "output": "{ "value": "result1" }",
-              "providerExecuted": true,
-              "toolCallId": "call-1",
-              "type": "tool-output-available",
-            },
-            {
-              "input": {
-                "value": "value",
+              {
+                "type": "start-step",
               },
-              "providerExecuted": true,
-              "toolCallId": "call-2",
-              "toolName": "web_search",
-              "type": "tool-input-available",
-            },
-            {
-              "errorText": "ERROR",
-              "providerExecuted": true,
-              "toolCallId": "call-2",
-              "type": "tool-output-error",
-            },
-            {
-              "type": "finish-step",
-            },
-            {
-              "type": "finish",
-            },
-          ]
-        `);
+              {
+                "providerExecuted": true,
+                "toolCallId": "call-1",
+                "toolName": "web_search",
+                "type": "tool-input-start",
+              },
+              {
+                "inputTextDelta": "{ "value": "value" }",
+                "toolCallId": "call-1",
+                "type": "tool-input-delta",
+              },
+              {
+                "input": {
+                  "value": "value",
+                },
+                "providerExecuted": true,
+                "toolCallId": "call-1",
+                "toolName": "web_search",
+                "type": "tool-input-available",
+              },
+              {
+                "output": "{ "value": "result1" }",
+                "providerExecuted": true,
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
+              },
+              {
+                "input": {
+                  "value": "value",
+                },
+                "providerExecuted": true,
+                "toolCallId": "call-2",
+                "toolName": "web_search",
+                "type": "tool-input-available",
+              },
+              {
+                "errorText": "ERROR",
+                "providerExecuted": true,
+                "toolCallId": "call-2",
+                "type": "tool-output-error",
+              },
+              {
+                "type": "finish-step",
+              },
+              {
+                "finishReason": "stop",
+                "type": "finish",
+              },
+            ]
+          `);
       });
     });
   });
@@ -8983,7 +9721,7 @@ describe('streamText', () => {
               },
               {
                 type: 'finish',
-                finishReason: 'tool-calls',
+                finishReason: { unified: 'tool-calls', raw: undefined },
                 usage: testUsage,
               },
             ]),
@@ -9010,6 +9748,7 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "dynamicTool",
               "type": "tool-call",
@@ -9022,8 +9761,6 @@ describe('streamText', () => {
               "output": {
                 "value": "test-result",
               },
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
               "toolCallId": "call-1",
               "toolName": "dynamicTool",
               "type": "tool-result",
@@ -9047,6 +9784,7 @@ describe('streamText', () => {
               {
                 "dynamic": true,
                 "id": "call-1",
+                "title": undefined,
                 "toolName": "dynamicTool",
                 "type": "tool-input-start",
               },
@@ -9066,6 +9804,7 @@ describe('streamText', () => {
                 },
                 "providerExecuted": undefined,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "dynamicTool",
                 "type": "tool-call",
@@ -9078,8 +9817,6 @@ describe('streamText', () => {
                 "output": {
                   "value": "test-result",
                 },
-                "providerExecuted": undefined,
-                "providerMetadata": undefined,
                 "toolCallId": "call-1",
                 "toolName": "dynamicTool",
                 "type": "tool-result",
@@ -9087,6 +9824,7 @@ describe('streamText', () => {
               {
                 "finishReason": "tool-calls",
                 "providerMetadata": undefined,
+                "rawFinishReason": undefined,
                 "response": {
                   "headers": undefined,
                   "id": "id-0",
@@ -9096,17 +9834,37 @@ describe('streamText', () => {
                 "type": "finish-step",
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
               },
               {
                 "finishReason": "tool-calls",
+                "rawFinishReason": undefined,
                 "totalUsage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
@@ -9159,6 +9917,7 @@ describe('streamText', () => {
                 "type": "finish-step",
               },
               {
+                "finishReason": "tool-calls",
                 "type": "finish",
               },
             ]
@@ -9187,7 +9946,7 @@ describe('streamText', () => {
                 { type: 'text-end', id: '1' },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: testUsage,
                 },
               ]),
@@ -9223,7 +9982,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -9323,7 +10082,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -9362,7 +10121,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -9428,7 +10187,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -9520,7 +10279,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'tool-calls',
+              finishReason: { unified: 'tool-calls', raw: undefined },
               usage: testUsage,
             },
           ]),
@@ -9741,7 +10500,7 @@ describe('streamText', () => {
                 },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: testUsage,
                 },
               ]),
@@ -9750,6 +10509,7 @@ describe('streamText', () => {
         }),
         tools: {
           tool1: {
+            title: 'Tool 1',
             inputSchema: jsonSchema<{ value: string }>({
               type: 'object',
               properties: { value: { type: 'string' } },
@@ -9839,7 +10599,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -9874,17 +10634,17 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-call",
             },
             {
+              "dynamic": false,
               "error": [Error: test error],
               "input": {
                 "value": "value",
               },
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-error",
@@ -9892,6 +10652,7 @@ describe('streamText', () => {
             {
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "response": {
                 "headers": undefined,
                 "id": "id-0",
@@ -9901,17 +10662,37 @@ describe('streamText', () => {
               "type": "finish-step",
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
             },
             {
               "finishReason": "stop",
+              "rawFinishReason": "stop",
               "totalUsage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
@@ -9933,17 +10714,17 @@ describe('streamText', () => {
                 },
                 "providerExecuted": undefined,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-call",
               },
               {
+                "dynamic": false,
                 "error": [Error: test error],
                 "input": {
                   "value": "value",
                 },
-                "providerExecuted": undefined,
-                "providerMetadata": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-error",
@@ -9951,6 +10732,7 @@ describe('streamText', () => {
             ],
             "finishReason": "stop",
             "providerMetadata": undefined,
+            "rawFinishReason": "stop",
             "request": {},
             "response": {
               "headers": undefined,
@@ -9991,8 +10773,18 @@ describe('streamText', () => {
             },
             "usage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
+              "raw": undefined,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
@@ -10065,6 +10857,7 @@ describe('streamText', () => {
               "type": "finish-step",
             },
             {
+              "finishReason": "stop",
               "type": "finish",
             },
           ]
@@ -10185,7 +10978,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -10196,7 +10989,16 @@ describe('streamText', () => {
                 if (chunk.type === 'finish') {
                   chunk.totalUsage = {
                     inputTokens: 200,
+                    inputTokenDetails: {
+                      noCacheTokens: 200,
+                      cacheReadTokens: undefined,
+                      cacheWriteTokens: undefined,
+                    },
                     outputTokens: 300,
+                    outputTokenDetails: {
+                      reasoningTokens: undefined,
+                      textTokens: 300,
+                    },
                     totalTokens: undefined,
                     reasoningTokens: undefined,
                     cachedInputTokens: undefined,
@@ -10208,13 +11010,24 @@ describe('streamText', () => {
           prompt: 'test-input',
         });
 
-        expect(await result.totalUsage).toStrictEqual({
-          inputTokens: 200,
-          outputTokens: 300,
-          totalTokens: undefined,
-          reasoningTokens: undefined,
-          cachedInputTokens: undefined,
-        });
+        expect(await result.totalUsage).toMatchInlineSnapshot(`
+          {
+            "cachedInputTokens": undefined,
+            "inputTokenDetails": {
+              "cacheReadTokens": undefined,
+              "cacheWriteTokens": undefined,
+              "noCacheTokens": 200,
+            },
+            "inputTokens": 200,
+            "outputTokenDetails": {
+              "reasoningTokens": undefined,
+              "textTokens": 300,
+            },
+            "outputTokens": 300,
+            "reasoningTokens": undefined,
+            "totalTokens": undefined,
+          }
+        `);
       });
 
       it('result.finishReason should be transformed', async () => {
@@ -10226,7 +11039,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'length',
+                finishReason: { unified: 'length', raw: 'raw-length' },
                 usage: testUsage,
               },
             ]),
@@ -10262,7 +11075,7 @@ describe('streamText', () => {
               },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -10285,6 +11098,7 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-call",
@@ -10309,7 +11123,7 @@ describe('streamText', () => {
               },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -10327,12 +11141,11 @@ describe('streamText', () => {
         expect(await result.toolResults).toMatchInlineSnapshot(`
           [
             {
+              "dynamic": false,
               "input": {
                 "value": "VALUE",
               },
               "output": "RESULT1",
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-result",
@@ -10363,7 +11176,7 @@ describe('streamText', () => {
               },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -10393,17 +11206,17 @@ describe('streamText', () => {
                   },
                   "providerExecuted": undefined,
                   "providerMetadata": undefined,
+                  "title": undefined,
                   "toolCallId": "call-1",
                   "toolName": "tool1",
                   "type": "tool-call",
                 },
                 {
+                  "dynamic": false,
                   "input": {
                     "value": "VALUE",
                   },
                   "output": "RESULT1",
-                  "providerExecuted": undefined,
-                  "providerMetadata": undefined,
                   "toolCallId": "call-1",
                   "toolName": "tool1",
                   "type": "tool-result",
@@ -10411,6 +11224,7 @@ describe('streamText', () => {
               ],
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "request": {},
               "response": {
                 "headers": undefined,
@@ -10456,8 +11270,18 @@ describe('streamText', () => {
               },
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
@@ -10482,7 +11306,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -10512,7 +11336,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
                 providerMetadata: {
                   testProvider: {
@@ -10563,7 +11387,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
                 providerMetadata: {
                   testProvider: { testKey: 'testValue' },
@@ -10601,17 +11425,17 @@ describe('streamText', () => {
                 },
                 "providerExecuted": undefined,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-call",
               },
               {
+                "dynamic": false,
                 "input": {
                   "value": "VALUE",
                 },
                 "output": "VALUE-RESULT",
-                "providerExecuted": undefined,
-                "providerMetadata": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-result",
@@ -10619,6 +11443,7 @@ describe('streamText', () => {
             ],
             "dynamicToolCalls": [],
             "dynamicToolResults": [],
+            "experimental_context": undefined,
             "files": [],
             "finishReason": "stop",
             "providerMetadata": {
@@ -10626,6 +11451,7 @@ describe('streamText', () => {
                 "testKey": "TEST VALUE",
               },
             },
+            "rawFinishReason": "stop",
             "reasoning": [],
             "reasoningText": undefined,
             "request": {},
@@ -10681,6 +11507,7 @@ describe('streamText', () => {
                 },
                 "providerExecuted": undefined,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-call",
@@ -10688,12 +11515,11 @@ describe('streamText', () => {
             ],
             "staticToolResults": [
               {
+                "dynamic": false,
                 "input": {
                   "value": "VALUE",
                 },
                 "output": "VALUE-RESULT",
-                "providerExecuted": undefined,
-                "providerMetadata": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-result",
@@ -10713,17 +11539,17 @@ describe('streamText', () => {
                     },
                     "providerExecuted": undefined,
                     "providerMetadata": undefined,
+                    "title": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-call",
                   },
                   {
+                    "dynamic": false,
                     "input": {
                       "value": "VALUE",
                     },
                     "output": "VALUE-RESULT",
-                    "providerExecuted": undefined,
-                    "providerMetadata": undefined,
                     "toolCallId": "call-1",
                     "toolName": "tool1",
                     "type": "tool-result",
@@ -10735,6 +11561,7 @@ describe('streamText', () => {
                     "testKey": "TEST VALUE",
                   },
                 },
+                "rawFinishReason": "stop",
                 "request": {},
                 "response": {
                   "headers": {
@@ -10782,8 +11609,18 @@ describe('streamText', () => {
                 },
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
@@ -10798,6 +11635,7 @@ describe('streamText', () => {
                 },
                 "providerExecuted": undefined,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-call",
@@ -10805,12 +11643,11 @@ describe('streamText', () => {
             ],
             "toolResults": [
               {
+                "dynamic": false,
                 "input": {
                   "value": "VALUE",
                 },
                 "output": "VALUE-RESULT",
-                "providerExecuted": undefined,
-                "providerMetadata": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-result",
@@ -10818,15 +11655,34 @@ describe('streamText', () => {
             ],
             "totalUsage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
             "usage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
+              "raw": undefined,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
@@ -10862,7 +11718,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
                 providerMetadata: {
                   testProvider: { testKey: 'testValue' },
@@ -10900,17 +11756,17 @@ describe('streamText', () => {
                 },
                 "providerExecuted": undefined,
                 "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-call",
               },
               {
+                "dynamic": false,
                 "input": {
                   "value": "VALUE",
                 },
                 "output": "VALUE-RESULT",
-                "providerExecuted": undefined,
-                "providerMetadata": undefined,
                 "toolCallId": "call-1",
                 "toolName": "tool1",
                 "type": "tool-result",
@@ -10922,6 +11778,7 @@ describe('streamText', () => {
                 "testKey": "TEST VALUE",
               },
             },
+            "rawFinishReason": "stop",
             "request": {},
             "response": {
               "headers": {
@@ -10969,8 +11826,18 @@ describe('streamText', () => {
             },
             "usage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
+              "raw": undefined,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
@@ -11004,7 +11871,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
                 providerMetadata: {
                   testProvider: { testKey: 'testValue' },
@@ -11070,7 +11937,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -11107,6 +11974,7 @@ describe('streamText', () => {
             {
               "dynamic": false,
               "id": "call-1",
+              "title": undefined,
               "toolName": "tool1",
               "type": "tool-input-start",
             },
@@ -11131,26 +11999,26 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "tool1",
               "type": "tool-call",
-            },
-            {
-              "input": {
-                "value": "TEST",
-              },
-              "output": "TEST-RESULT",
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
-              "toolCallId": "call-1",
-              "toolName": "tool1",
-              "type": "tool-result",
             },
             {
               "id": "1",
               "providerMetadata": undefined,
               "text": " WORLD",
               "type": "text-delta",
+            },
+            {
+              "dynamic": false,
+              "input": {
+                "value": "TEST",
+              },
+              "output": "TEST-RESULT",
+              "toolCallId": "call-1",
+              "toolName": "tool1",
+              "type": "tool-result",
             },
           ]
         `);
@@ -11229,14 +12097,9 @@ describe('streamText', () => {
                 controller.enqueue({
                   type: 'finish-step',
                   finishReason: 'stop',
+                  rawFinishReason: undefined,
                   providerMetadata: undefined,
-                  usage: {
-                    inputTokens: undefined,
-                    outputTokens: undefined,
-                    totalTokens: undefined,
-                    reasoningTokens: undefined,
-                    cachedInputTokens: undefined,
-                  },
+                  usage: createNullLanguageModelUsage(),
                   response: {
                     id: 'response-id',
                     modelId: 'mock-model-id',
@@ -11247,13 +12110,8 @@ describe('streamText', () => {
                 controller.enqueue({
                   type: 'finish',
                   finishReason: 'stop',
-                  totalUsage: {
-                    inputTokens: undefined,
-                    outputTokens: undefined,
-                    totalTokens: undefined,
-                    reasoningTokens: undefined,
-                    cachedInputTokens: undefined,
-                  },
+                  rawFinishReason: undefined,
+                  totalUsage: createNullLanguageModelUsage(),
                 });
 
                 return;
@@ -11274,13 +12132,19 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: {
-                  inputTokens: undefined,
-                  outputTokens: undefined,
-                  totalTokens: undefined,
-                  reasoningTokens: undefined,
-                  cachedInputTokens: undefined,
+                  inputTokens: {
+                    total: undefined,
+                    noCache: undefined,
+                    cacheRead: undefined,
+                    cacheWrite: undefined,
+                  },
+                  outputTokens: {
+                    total: undefined,
+                    text: undefined,
+                    reasoning: undefined,
+                  },
                 },
               },
             ]),
@@ -11313,6 +12177,7 @@ describe('streamText', () => {
               {
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": undefined,
                 "response": {
                   "id": "response-id",
                   "modelId": "mock-model-id",
@@ -11320,20 +12185,37 @@ describe('streamText', () => {
                 },
                 "type": "finish-step",
                 "usage": {
-                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": undefined,
+                  },
                   "inputTokens": undefined,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": undefined,
+                  },
                   "outputTokens": undefined,
-                  "reasoningTokens": undefined,
+                  "raw": undefined,
                   "totalTokens": undefined,
                 },
               },
               {
                 "finishReason": "stop",
+                "rawFinishReason": undefined,
                 "totalUsage": {
-                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": undefined,
+                  },
                   "inputTokens": undefined,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": undefined,
+                  },
                   "outputTokens": undefined,
-                  "reasoningTokens": undefined,
+                  "raw": undefined,
                   "totalTokens": undefined,
                 },
                 "type": "finish",
@@ -11357,7 +12239,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -11382,6 +12264,7 @@ describe('streamText', () => {
             ],
             "finishReason": "stop",
             "providerMetadata": undefined,
+            "rawFinishReason": undefined,
             "request": {},
             "response": {
               "id": "response-id",
@@ -11401,10 +12284,18 @@ describe('streamText', () => {
               "timestamp": 1970-01-01T00:00:00.000Z,
             },
             "usage": {
-              "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": undefined,
+              },
               "inputTokens": undefined,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": undefined,
+              },
               "outputTokens": undefined,
-              "reasoningTokens": undefined,
+              "raw": undefined,
               "totalTokens": undefined,
             },
             "warnings": [],
@@ -11415,22 +12306,18 @@ describe('streamText', () => {
   });
 
   describe('options.output', () => {
-    describe('no output', () => {
-      it('should throw error when accessing partial output stream', async () => {
+    describe('text output (default)', () => {
+      it('should send partial output stream', async () => {
         const result = streamText({
           model: createTestModel({
             stream: convertArrayToReadableStream([
               { type: 'text-start', id: '1' },
-              { type: 'text-delta', id: '1', delta: '{ ' },
-              { type: 'text-delta', id: '1', delta: '"value": ' },
-              { type: 'text-delta', id: '1', delta: `"Hello, ` },
-              { type: 'text-delta', id: '1', delta: `world` },
-              { type: 'text-delta', id: '1', delta: `!"` },
-              { type: 'text-delta', id: '1', delta: ' }' },
+              { type: 'text-delta', id: '1', delta: 'Hello, ' },
+              { type: 'text-delta', id: '1', delta: 'world!' },
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -11438,11 +12325,34 @@ describe('streamText', () => {
           prompt: 'prompt',
         });
 
-        await expect(async () => {
-          await convertAsyncIterableToArray(
-            result.experimental_partialOutputStream,
-          );
-        }).rejects.toThrow('No output specified');
+        expect(await convertAsyncIterableToArray(result.partialOutputStream))
+          .toMatchInlineSnapshot(`
+          [
+            "Hello, ",
+            "Hello, world!",
+          ]
+        `);
+      });
+
+      it('should resolve output promise with the correct content', async () => {
+        const result = streamText({
+          model: createTestModel({
+            stream: convertArrayToReadableStream([
+              { type: 'text-start', id: '1' },
+              { type: 'text-delta', id: '1', delta: 'Hello, ' },
+              { type: 'text-delta', id: '1', delta: 'world!' },
+              { type: 'text-end', id: '1' },
+              {
+                type: 'finish',
+                finishReason: { unified: 'stop', raw: 'stop' },
+                usage: testUsage,
+              },
+            ]),
+          }),
+          prompt: 'prompt',
+        });
+
+        expect(await result.output).toStrictEqual('Hello, world!');
       });
     });
 
@@ -11453,25 +12363,48 @@ describe('streamText', () => {
             stream: convertArrayToReadableStream([
               { type: 'text-start', id: '1' },
               { type: 'text-delta', id: '1', delta: 'Hello, ' },
-              { type: 'text-delta', id: '1', delta: ',' },
-              { type: 'text-delta', id: '1', delta: ' world!' },
+              { type: 'text-delta', id: '1', delta: 'world!' },
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
           }),
-          experimental_output: text(),
           prompt: 'prompt',
+          output: Output.text(),
         });
 
-        expect(
-          await convertAsyncIterableToArray(
-            result.experimental_partialOutputStream,
-          ),
-        ).toStrictEqual(['Hello, ', 'Hello, ,', 'Hello, , world!']);
+        expect(await convertAsyncIterableToArray(result.partialOutputStream))
+          .toMatchInlineSnapshot(`
+          [
+            "Hello, ",
+            "Hello, world!",
+          ]
+        `);
+      });
+
+      it('should resolve output promise with the correct content', async () => {
+        const result = streamText({
+          model: createTestModel({
+            stream: convertArrayToReadableStream([
+              { type: 'text-start', id: '1' },
+              { type: 'text-delta', id: '1', delta: 'Hello, ' },
+              { type: 'text-delta', id: '1', delta: 'world!' },
+              { type: 'text-end', id: '1' },
+              {
+                type: 'finish',
+                finishReason: { unified: 'stop', raw: 'stop' },
+                usage: testUsage,
+              },
+            ]),
+          }),
+          prompt: 'prompt',
+          output: Output.text(),
+        });
+
+        expect(await result.output).toStrictEqual('Hello, world!');
       });
     });
 
@@ -11495,14 +12428,14 @@ describe('streamText', () => {
                   { type: 'text-end', id: '1' },
                   {
                     type: 'finish',
-                    finishReason: 'stop',
+                    finishReason: { unified: 'stop', raw: 'stop' },
                     usage: testUsage,
                   },
                 ]),
               };
             },
           }),
-          experimental_output: object({
+          output: Output.object({
             schema: z.object({ value: z.string() }),
           }),
           prompt: 'prompt',
@@ -11572,12 +12505,12 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
           }),
-          experimental_output: object({
+          output: Output.object({
             schema: z.object({ value: z.string() }),
           }),
           prompt: 'prompt',
@@ -11609,21 +12542,19 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
           }),
-          experimental_output: object({
+          output: Output.object({
             schema: z.object({ value: z.string() }),
           }),
           prompt: 'prompt',
         });
 
         expect(
-          await convertAsyncIterableToArray(
-            result.experimental_partialOutputStream,
-          ),
+          await convertAsyncIterableToArray(result.partialOutputStream),
         ).toStrictEqual([
           {},
           { value: 'Hello, ' },
@@ -11644,21 +12575,19 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
           }),
-          experimental_output: object({
+          output: Output.object({
             schema: z.object({ value: z.string() }),
           }),
           prompt: 'prompt',
         });
 
         expect(
-          await convertAsyncIterableToArray(
-            result.experimental_partialOutputStream,
-          ),
+          await convertAsyncIterableToArray(result.partialOutputStream),
         ).toStrictEqual([{}, { value: 'Hello, ' }, { value: 'Hello, world!' }]);
       });
 
@@ -11675,18 +12604,45 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
           }),
-          experimental_output: object({
+          output: Output.object({
             schema: z.object({ value: z.string() }),
           }),
           prompt: 'prompt',
         });
 
         expect(await result.text).toStrictEqual('{ "value": "Hello, world!" }');
+      });
+
+      it('should resolve output promise with the correct content', async () => {
+        const result = streamText({
+          model: createTestModel({
+            stream: convertArrayToReadableStream([
+              { type: 'text-start', id: '1' },
+              { type: 'text-delta', id: '1', delta: '{ ' },
+              { type: 'text-delta', id: '1', delta: '"value": ' },
+              { type: 'text-delta', id: '1', delta: `"Hello, ` },
+              { type: 'text-delta', id: '1', delta: `world!" ` },
+              { type: 'text-delta', id: '1', delta: '}' },
+              { type: 'text-end', id: '1' },
+              {
+                type: 'finish',
+                finishReason: { unified: 'stop', raw: 'stop' },
+                usage: testUsage,
+              },
+            ]),
+          }),
+          output: Output.object({
+            schema: z.object({ value: z.string() }),
+          }),
+          prompt: 'prompt',
+        });
+
+        expect(await result.output).toStrictEqual({ value: 'Hello, world!' });
       });
 
       it('should call onFinish with the correct content', async () => {
@@ -11706,12 +12662,12 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
           }),
-          experimental_output: object({
+          output: Output.object({
             schema: z.object({ value: z.string() }),
           }),
           prompt: 'prompt',
@@ -11739,9 +12695,11 @@ describe('streamText', () => {
             ],
             "dynamicToolCalls": [],
             "dynamicToolResults": [],
+            "experimental_context": undefined,
             "files": [],
             "finishReason": "stop",
             "providerMetadata": undefined,
+            "rawFinishReason": "stop",
             "reasoning": [],
             "reasoningText": undefined,
             "request": {},
@@ -11777,6 +12735,7 @@ describe('streamText', () => {
                 ],
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "request": {},
                 "response": {
                   "headers": undefined,
@@ -11798,8 +12757,18 @@ describe('streamText', () => {
                 },
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
@@ -11811,15 +12780,34 @@ describe('streamText', () => {
             "toolResults": [],
             "totalUsage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
             "usage": {
               "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 3,
+              },
               "inputTokens": 3,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 10,
+              },
               "outputTokens": 10,
+              "raw": undefined,
               "reasoningTokens": undefined,
               "totalTokens": 13,
             },
@@ -11828,12 +12816,383 @@ describe('streamText', () => {
         `);
       });
     });
+
+    describe('array output', () => {
+      let result: StreamTextResult<any, any> | undefined;
+
+      let onFinishResult:
+        | Parameters<Required<Parameters<typeof streamText>[0]>['onFinish']>[0]
+        | undefined;
+
+      beforeEach(async () => {
+        result = undefined;
+        onFinishResult = undefined;
+      });
+
+      describe('array with 3 elements', () => {
+        beforeEach(async () => {
+          result = streamText({
+            model: createTestModel({
+              stream: convertArrayToReadableStream([
+                { type: 'text-start', id: '1' },
+                { type: 'text-delta', id: '1', delta: '{"elements":[' },
+                // first element:
+                { type: 'text-delta', id: '1', delta: '{' },
+                { type: 'text-delta', id: '1', delta: '"content":' },
+                { type: 'text-delta', id: '1', delta: `"element 1"` },
+                { type: 'text-delta', id: '1', delta: '},' },
+                // second element:
+                { type: 'text-delta', id: '1', delta: '{ ' },
+                { type: 'text-delta', id: '1', delta: '"content": ' },
+                { type: 'text-delta', id: '1', delta: `"element 2"` },
+                { type: 'text-delta', id: '1', delta: '},' },
+                // third element:
+                { type: 'text-delta', id: '1', delta: '{' },
+                { type: 'text-delta', id: '1', delta: '"content":' },
+                { type: 'text-delta', id: '1', delta: `"element 3"` },
+                { type: 'text-delta', id: '1', delta: '}' },
+                // end of array
+                { type: 'text-delta', id: '1', delta: ']' },
+                { type: 'text-delta', id: '1', delta: '}' },
+                { type: 'text-end', id: '1' },
+                // finish
+                {
+                  type: 'finish',
+                  finishReason: { unified: 'stop', raw: 'stop' },
+                  usage: testUsage,
+                },
+              ]),
+            }),
+            output: Output.array({
+              element: z.object({ content: z.string() }),
+            }),
+            prompt: 'prompt',
+            onFinish: async event => {
+              onFinishResult = event as unknown as typeof onFinishResult;
+            },
+          });
+        });
+
+        it('should stream only complete objects in partialObjectStream', async () => {
+          expect(await convertAsyncIterableToArray(result!.partialOutputStream))
+            .toMatchInlineSnapshot(`
+            [
+              [],
+              [
+                {
+                  "content": "element 1",
+                },
+              ],
+              [
+                {
+                  "content": "element 1",
+                },
+                {
+                  "content": "element 2",
+                },
+              ],
+              [
+                {
+                  "content": "element 1",
+                },
+                {
+                  "content": "element 2",
+                },
+                {
+                  "content": "element 3",
+                },
+              ],
+            ]
+          `);
+        });
+
+        it('should resolve output promise with the correct content', async () => {
+          expect(await result!.output).toStrictEqual([
+            { content: 'element 1' },
+            { content: 'element 2' },
+            { content: 'element 3' },
+          ]);
+        });
+
+        it('should resolve text promise with the correct text', async () => {
+          expect(await result!.text).toMatchInlineSnapshot(
+            `"{"elements":[{"content":"element 1"},{ "content": "element 2"},{"content":"element 3"}]}"`,
+          );
+        });
+      });
+
+      describe('array with 2 elements streamed in 1 chunk', () => {
+        beforeEach(async () => {
+          result = streamText({
+            model: createTestModel({
+              stream: convertArrayToReadableStream([
+                {
+                  type: 'text-start',
+                  id: '1',
+                },
+                {
+                  type: 'text-delta',
+                  id: '1',
+                  delta:
+                    '{"elements":[{"content":"element 1"},{"content":"element 2"}]}',
+                },
+                {
+                  type: 'text-end',
+                  id: '1',
+                },
+                {
+                  type: 'finish',
+                  finishReason: { unified: 'stop', raw: 'stop' },
+                  usage: testUsage,
+                },
+              ]),
+            }),
+            output: Output.array({
+              element: z.object({ content: z.string() }),
+            }),
+            prompt: 'prompt',
+            onFinish: async event => {
+              onFinishResult = event as unknown as typeof onFinishResult;
+            },
+          });
+        });
+
+        it('should stream only complete objects in partialObjectStream', async () => {
+          expect(await convertAsyncIterableToArray(result!.partialOutputStream))
+            .toMatchInlineSnapshot(`
+            [
+              [
+                {
+                  "content": "element 1",
+                },
+                {
+                  "content": "element 2",
+                },
+              ],
+            ]
+          `);
+        });
+
+        it('should resolve output promise with the correct content', async () => {
+          expect(await result!.output).toStrictEqual([
+            { content: 'element 1' },
+            { content: 'element 2' },
+          ]);
+        });
+
+        it('should resolve text promise with the correct text', async () => {
+          expect(await result!.text).toMatchInlineSnapshot(
+            `"{"elements":[{"content":"element 1"},{"content":"element 2"}]}"`,
+          );
+        });
+      });
+    });
+
+    describe('choice output', () => {
+      it('should stream an choice value', async () => {
+        const mockModel = createTestModel({
+          stream: convertArrayToReadableStream([
+            { type: 'text-start', id: '1' },
+            { type: 'text-delta', id: '1', delta: '{ ' },
+            { type: 'text-delta', id: '1', delta: '"result": ' },
+            { type: 'text-delta', id: '1', delta: `"su` },
+            { type: 'text-delta', id: '1', delta: `nny` },
+            { type: 'text-delta', id: '1', delta: `"` },
+            { type: 'text-delta', id: '1', delta: ' }' },
+            { type: 'text-end', id: '1' },
+            {
+              type: 'finish',
+              finishReason: { unified: 'stop', raw: 'stop' },
+              usage: testUsage,
+            },
+          ]),
+        });
+
+        const result = streamText({
+          model: mockModel,
+          output: Output.choice({
+            options: ['sunny', 'rainy', 'snowy'],
+          }),
+          prompt: 'prompt',
+        });
+
+        expect(await convertAsyncIterableToArray(result.partialOutputStream))
+          .toMatchInlineSnapshot(`
+            [
+              "sunny",
+            ]
+          `);
+      });
+
+      it('should resolve text promise with the correct text', async () => {
+        const mockModel = createTestModel({
+          stream: convertArrayToReadableStream([
+            { type: 'text-start', id: '1' },
+            { type: 'text-delta', id: '1', delta: '{ ' },
+            { type: 'text-delta', id: '1', delta: '"result": ' },
+            { type: 'text-delta', id: '1', delta: `"su` },
+            { type: 'text-delta', id: '1', delta: `nny` },
+            { type: 'text-delta', id: '1', delta: `"` },
+            { type: 'text-delta', id: '1', delta: ' }' },
+            { type: 'text-end', id: '1' },
+            {
+              type: 'finish',
+              finishReason: { unified: 'stop', raw: 'stop' },
+              usage: testUsage,
+            },
+          ]),
+        });
+
+        const result = streamText({
+          model: mockModel,
+          output: Output.choice({
+            options: ['sunny', 'rainy', 'snowy'],
+          }),
+          prompt: 'prompt',
+        });
+
+        expect(await result.text).toBe('{ "result": "sunny" }');
+      });
+
+      it('should resolve output promise with the correct content', async () => {
+        const mockModel = createTestModel({
+          stream: convertArrayToReadableStream([
+            { type: 'text-start', id: '1' },
+            { type: 'text-delta', id: '1', delta: '{ ' },
+            { type: 'text-delta', id: '1', delta: '"result": ' },
+            { type: 'text-delta', id: '1', delta: `"su` },
+            { type: 'text-delta', id: '1', delta: `nny` },
+            { type: 'text-delta', id: '1', delta: `"` },
+            { type: 'text-delta', id: '1', delta: ' }' },
+            { type: 'text-end', id: '1' },
+            {
+              type: 'finish',
+              finishReason: { unified: 'stop', raw: 'stop' },
+              usage: testUsage,
+            },
+          ]),
+        });
+
+        const result = streamText({
+          model: mockModel,
+          output: Output.choice({
+            options: ['sunny', 'rainy', 'snowy'],
+          }),
+          prompt: 'prompt',
+        });
+
+        expect(await result.output).toBe('sunny');
+      });
+
+      it('should not stream incorrect values', async () => {
+        const mockModel = new MockLanguageModelV3({
+          doStream: {
+            stream: convertArrayToReadableStream([
+              { type: 'text-start', id: '1' },
+              { type: 'text-delta', id: '1', delta: '{ ' },
+              { type: 'text-delta', id: '1', delta: '"result": ' },
+              { type: 'text-delta', id: '1', delta: `"foo` },
+              { type: 'text-delta', id: '1', delta: `bar` },
+              { type: 'text-delta', id: '1', delta: `"` },
+              { type: 'text-delta', id: '1', delta: ' }' },
+              { type: 'text-end', id: '1' },
+              {
+                type: 'finish',
+                finishReason: { unified: 'stop', raw: 'stop' },
+                usage: testUsage,
+              },
+            ]),
+          },
+        });
+
+        const result = streamText({
+          model: mockModel,
+          output: Output.choice({
+            options: ['sunny', 'rainy', 'snowy'],
+          }),
+          prompt: 'prompt',
+        });
+
+        expect(
+          await convertAsyncIterableToArray(result.partialOutputStream),
+        ).toMatchInlineSnapshot(`[]`);
+      });
+
+      it('should handle ambiguous values', async () => {
+        const mockModel = createTestModel({
+          stream: convertArrayToReadableStream([
+            { type: 'text-start', id: '1' },
+            { type: 'text-delta', id: '1', delta: '{ ' },
+            { type: 'text-delta', id: '1', delta: '"result": ' },
+            { type: 'text-delta', id: '1', delta: `"foo` },
+            { type: 'text-delta', id: '1', delta: `bar` },
+            { type: 'text-delta', id: '1', delta: `"` },
+            { type: 'text-delta', id: '1', delta: ' }' },
+            {
+              type: 'finish',
+              finishReason: { unified: 'stop', raw: 'stop' },
+              usage: testUsage,
+            },
+          ]),
+        });
+
+        const result = streamText({
+          model: mockModel,
+          output: Output.choice({
+            options: ['foobar', 'foobar2'],
+          }),
+          prompt: 'prompt',
+        });
+
+        expect(await convertAsyncIterableToArray(result.partialOutputStream))
+          .toMatchInlineSnapshot(`
+          [
+            "foobar",
+          ]
+        `);
+      });
+
+      it('should handle non-ambiguous values', async () => {
+        const mockModel = createTestModel({
+          stream: convertArrayToReadableStream([
+            { type: 'text-start', id: '1' },
+            { type: 'text-delta', id: '1', delta: '{ ' },
+            { type: 'text-delta', id: '1', delta: '"result": ' },
+            { type: 'text-delta', id: '1', delta: `"foo` },
+            { type: 'text-delta', id: '1', delta: `bar` },
+            { type: 'text-delta', id: '1', delta: `"` },
+            { type: 'text-delta', id: '1', delta: ' }' },
+            { type: 'text-end', id: '1' },
+            {
+              type: 'finish',
+              finishReason: { unified: 'stop', raw: 'stop' },
+              usage: testUsage,
+            },
+          ]),
+        });
+
+        const result = streamText({
+          model: mockModel,
+          output: Output.choice({
+            options: ['foobar', 'barfoo'],
+          }),
+          prompt: 'prompt',
+        });
+
+        expect(await convertAsyncIterableToArray(result.partialOutputStream))
+          .toMatchInlineSnapshot(`
+          [
+            "foobar",
+          ]
+        `);
+      });
+    });
   });
 
   describe('options.activeTools', () => {
     it('should filter available tools to only the ones in activeTools', async () => {
       let tools:
-        | (LanguageModelV3FunctionTool | LanguageModelV3ProviderDefinedTool)[]
+        | (LanguageModelV3FunctionTool | LanguageModelV3ProviderTool)[]
         | undefined;
 
       const result = streamText({
@@ -11850,7 +13209,7 @@ describe('streamText', () => {
                 { type: 'text-end', id: '1' },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { unified: 'stop', raw: 'stop' },
                   usage: testUsage,
                 },
               ]),
@@ -11922,7 +13281,7 @@ describe('streamText', () => {
           { type: 'text-end', id: '1' },
           {
             type: 'finish',
-            finishReason: 'stop',
+            finishReason: { unified: 'stop', raw: 'stop' },
             usage: testUsage,
           },
         ]),
@@ -11972,7 +13331,7 @@ describe('streamText', () => {
           { type: 'text-end', id: '1' },
           {
             type: 'finish',
-            finishReason: 'stop',
+            finishReason: { unified: 'stop', raw: 'stop' },
             usage: testUsage,
           },
         ]),
@@ -11999,7 +13358,11 @@ describe('streamText', () => {
           return {
             stream: convertArrayToReadableStream([
               { type: 'stream-start', warnings: [] },
-              { type: 'finish', finishReason: 'stop', usage: testUsage },
+              {
+                type: 'finish',
+                finishReason: { unified: 'stop', raw: 'stop' },
+                usage: testUsage,
+              },
             ]),
           };
         },
@@ -12055,7 +13418,7 @@ describe('streamText', () => {
           { type: 'text-end', id: '1' },
           {
             type: 'finish',
-            finishReason: 'stop',
+            finishReason: { unified: 'stop', raw: 'stop' },
             usage: testUsage,
           },
         ]),
@@ -12140,7 +13503,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -12202,7 +13565,7 @@ describe('streamText', () => {
               { type: 'text-end', id: '1' },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -12322,6 +13685,7 @@ describe('streamText', () => {
               {
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "response": {
                   "headers": undefined,
                   "id": "id-0",
@@ -12331,17 +13695,37 @@ describe('streamText', () => {
                 "type": "finish-step",
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
               },
               {
                 "finishReason": "stop",
+                "rawFinishReason": "stop",
                 "totalUsage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
@@ -12407,6 +13791,7 @@ describe('streamText', () => {
               ],
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "request": {},
               "response": {
                 "headers": undefined,
@@ -12443,8 +13828,18 @@ describe('streamText', () => {
               },
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
@@ -12458,7 +13853,7 @@ describe('streamText', () => {
 
   describe('abort signal', () => {
     describe('basic abort', () => {
-      let result: StreamTextResult<ToolSet, TextStreamPart<ToolSet>>;
+      let result: StreamTextResult<ToolSet, never>;
       let onErrorCalls: Array<{ error: unknown }> = [];
       let onAbortCalls: Array<{ steps: StepResult<ToolSet>[] }> = [];
 
@@ -12573,7 +13968,7 @@ describe('streamText', () => {
     });
 
     describe('abort in 2nd step', () => {
-      let result: StreamTextResult<any, TextStreamPart<any>>;
+      let result: StreamTextResult<any, never>;
       let onErrorCalls: Array<{ error: unknown }> = [];
       let onAbortCalls: Array<{ steps: StepResult<any>[] }> = [];
 
@@ -12617,7 +14012,10 @@ describe('streamText', () => {
                       case 2:
                         controller.enqueue({
                           type: 'finish',
-                          finishReason: 'tool-calls',
+                          finishReason: {
+                            unified: 'tool-calls',
+                            raw: undefined,
+                          },
                           usage: testUsage,
                         });
                         controller.close();
@@ -12691,17 +14089,17 @@ describe('streamText', () => {
                       },
                       "providerExecuted": undefined,
                       "providerMetadata": undefined,
+                      "title": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-call",
                     },
                     {
+                      "dynamic": false,
                       "input": {
                         "value": "value",
                       },
                       "output": "result1",
-                      "providerExecuted": undefined,
-                      "providerMetadata": undefined,
                       "toolCallId": "call-1",
                       "toolName": "tool1",
                       "type": "tool-result",
@@ -12709,6 +14107,7 @@ describe('streamText', () => {
                   ],
                   "finishReason": "tool-calls",
                   "providerMetadata": undefined,
+                  "rawFinishReason": undefined,
                   "request": {},
                   "response": {
                     "headers": undefined,
@@ -12749,8 +14148,18 @@ describe('streamText', () => {
                   },
                   "usage": {
                     "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
                     "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
                     "outputTokens": 10,
+                    "raw": undefined,
                     "reasoningTokens": undefined,
                     "totalTokens": 13,
                   },
@@ -12765,64 +14174,75 @@ describe('streamText', () => {
       it('should only stream initial chunks in full stream', async () => {
         expect(await convertAsyncIterableToArray(result.fullStream))
           .toMatchInlineSnapshot(`
-          [
-            {
-              "type": "start",
-            },
-            {
-              "request": {},
-              "type": "start-step",
-              "warnings": [],
-            },
-            {
-              "input": {
-                "value": "value",
+            [
+              {
+                "type": "start",
               },
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
-              "toolCallId": "call-1",
-              "toolName": "tool1",
-              "type": "tool-call",
-            },
-            {
-              "input": {
-                "value": "value",
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
               },
-              "output": "result1",
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
-              "toolCallId": "call-1",
-              "toolName": "tool1",
-              "type": "tool-result",
-            },
-            {
-              "finishReason": "tool-calls",
-              "providerMetadata": undefined,
-              "response": {
-                "headers": undefined,
-                "id": "id-0",
-                "modelId": "mock-model-id",
-                "timestamp": 1970-01-01T00:00:00.000Z,
+              {
+                "input": {
+                  "value": "value",
+                },
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-call",
               },
-              "type": "finish-step",
-              "usage": {
-                "cachedInputTokens": undefined,
-                "inputTokens": 3,
-                "outputTokens": 10,
-                "reasoningTokens": undefined,
-                "totalTokens": 13,
+              {
+                "dynamic": false,
+                "input": {
+                  "value": "value",
+                },
+                "output": "result1",
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-result",
               },
-            },
-            {
-              "request": {},
-              "type": "start-step",
-              "warnings": [],
-            },
-            {
-              "type": "abort",
-            },
-          ]
-        `);
+              {
+                "finishReason": "tool-calls",
+                "providerMetadata": undefined,
+                "rawFinishReason": undefined,
+                "response": {
+                  "headers": undefined,
+                  "id": "id-0",
+                  "modelId": "mock-model-id",
+                  "timestamp": 1970-01-01T00:00:00.000Z,
+                },
+                "type": "finish-step",
+                "usage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "raw": undefined,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+              },
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
+              },
+              {
+                "type": "abort",
+              },
+            ]
+          `);
       });
 
       it('should sent an abort chunk in the ui message stream', async () => {
@@ -12863,7 +14283,7 @@ describe('streamText', () => {
     });
 
     describe('abort during tool call', () => {
-      let result: StreamTextResult<any, TextStreamPart<any>>;
+      let result: StreamTextResult<any, never>;
       let onErrorCalls: Array<{ error: unknown }> = [];
       let onAbortCalls: Array<{ steps: StepResult<any>[] }> = [];
 
@@ -12911,7 +14331,10 @@ describe('streamText', () => {
                       case 2:
                         controller.enqueue({
                           type: 'finish',
-                          finishReason: 'tool-calls',
+                          finishReason: {
+                            unified: 'tool-calls',
+                            raw: undefined,
+                          },
                           usage: testUsage,
                         });
                         controller.close();
@@ -12945,7 +14368,10 @@ describe('streamText', () => {
                         });
                         controller.enqueue({
                           type: 'finish',
-                          finishReason: 'tool-calls',
+                          finishReason: {
+                            unified: 'tool-calls',
+                            raw: undefined,
+                          },
                           usage: testUsage,
                         });
                         controller.close();
@@ -12987,20 +14413,25 @@ describe('streamText', () => {
       it('should end full stream with abort part', async () => {
         expect(await convertAsyncIterableToArray(result.fullStream))
           .toMatchInlineSnapshot(`
-          [
-            {
-              "type": "start",
-            },
-            {
-              "type": "abort",
-            },
-          ]
-        `);
+            [
+              {
+                "type": "start",
+              },
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
+              },
+              {
+                "type": "abort",
+              },
+            ]
+          `);
       });
     });
   });
 
-  describe('tool execution context', () => {
+  describe('context', () => {
     it('should send context to tool execution', async () => {
       let recordedContext: unknown | undefined;
 
@@ -13030,7 +14461,7 @@ describe('streamText', () => {
             },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { unified: 'stop', raw: 'stop' },
               usage: testUsage,
             },
           ]),
@@ -13053,6 +14484,72 @@ describe('streamText', () => {
       await result.consumeStream();
 
       // tool should be executed by client
+      expect(recordedContext).toStrictEqual({
+        context: 'test',
+      });
+    });
+
+    it('should pass experimental_context to prepareStep', async () => {
+      let capturedContext: unknown;
+
+      const result = streamText({
+        model: new MockLanguageModelV3({
+          doStream: async () => ({
+            stream: convertArrayToReadableStream([
+              { type: 'text-start', id: '1' },
+              { type: 'text-delta', id: '1', delta: 'Hello' },
+              { type: 'text-end', id: '1' },
+              {
+                type: 'finish',
+                finishReason: { unified: 'stop', raw: 'stop' },
+                usage: testUsage,
+              },
+            ]),
+            response: {},
+          }),
+        }),
+        experimental_context: { myData: 'test-value' },
+        prepareStep: async ({ experimental_context }) => {
+          capturedContext = experimental_context;
+          return undefined;
+        },
+        prompt: 'test',
+      });
+
+      await result.consumeStream();
+      expect(capturedContext).toEqual({ myData: 'test-value' });
+    });
+
+    it('should send context in onFinish callback', async () => {
+      let recordedContext: unknown | undefined;
+
+      const result = streamText({
+        model: new MockLanguageModelV3({
+          doStream: async () => ({
+            stream: convertArrayToReadableStream([
+              { type: 'text-start', id: '1' },
+              { type: 'text-delta', id: '1', delta: 'Hello, ' },
+              { type: 'text-delta', id: '1', delta: 'world!' },
+              { type: 'text-end', id: '1' },
+              {
+                type: 'finish',
+                finishReason: { unified: 'stop', raw: 'stop' },
+                usage: testUsage,
+              },
+            ]),
+          }),
+        }),
+        experimental_context: {
+          context: 'test',
+        },
+        prompt: 'test-input',
+        onFinish: ({ experimental_context }) => {
+          recordedContext = experimental_context;
+        },
+      });
+
+      await result.consumeStream();
+
       expect(recordedContext).toStrictEqual({
         context: 'test',
       });
@@ -13092,7 +14589,7 @@ describe('streamText', () => {
               },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -13130,6 +14627,9 @@ describe('streamText', () => {
                 "cities": "San Francisco",
               },
               "invalid": true,
+              "providerExecuted": undefined,
+              "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "cityAttractions",
               "type": "tool-call",
@@ -13150,6 +14650,7 @@ describe('streamText', () => {
               "input": {
                 "cities": "San Francisco",
               },
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "cityAttractions",
               "type": "tool-error",
@@ -13173,6 +14674,7 @@ describe('streamText', () => {
               {
                 "dynamic": false,
                 "id": "call-1",
+                "title": undefined,
                 "toolName": "cityAttractions",
                 "type": "tool-input-start",
               },
@@ -13202,6 +14704,9 @@ describe('streamText', () => {
                   "cities": "San Francisco",
                 },
                 "invalid": true,
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "cityAttractions",
                 "type": "tool-call",
@@ -13222,6 +14727,7 @@ describe('streamText', () => {
                 "input": {
                   "cities": "San Francisco",
                 },
+                "title": undefined,
                 "toolCallId": "call-1",
                 "toolName": "cityAttractions",
                 "type": "tool-error",
@@ -13229,6 +14735,7 @@ describe('streamText', () => {
               {
                 "finishReason": "stop",
                 "providerMetadata": undefined,
+                "rawFinishReason": "stop",
                 "response": {
                   "headers": undefined,
                   "id": "id-0",
@@ -13238,17 +14745,37 @@ describe('streamText', () => {
                 "type": "finish-step",
                 "usage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
+                  "raw": undefined,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
                 },
               },
               {
                 "finishReason": "stop",
+                "rawFinishReason": "stop",
                 "totalUsage": {
                   "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
                   "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
                   "outputTokens": 10,
                   "reasoningTokens": undefined,
                   "totalTokens": 13,
@@ -13317,6 +14844,7 @@ describe('streamText', () => {
                 "type": "finish-step",
               },
               {
+                "finishReason": "stop",
                 "type": "finish",
               },
             ]
@@ -13343,7 +14871,7 @@ describe('streamText', () => {
               },
               {
                 type: 'finish',
-                finishReason: 'stop',
+                finishReason: { unified: 'stop', raw: 'stop' },
                 usage: testUsage,
               },
             ]),
@@ -13376,158 +14904,182 @@ describe('streamText', () => {
       it('should include preliminary tool results in full stream', async () => {
         expect(await convertAsyncIterableToArray(result.fullStream))
           .toMatchInlineSnapshot(`
-          [
-            {
-              "type": "start",
-            },
-            {
-              "request": {},
-              "type": "start-step",
-              "warnings": [],
-            },
-            {
-              "input": {
-                "city": "San Francisco",
+            [
+              {
+                "type": "start",
               },
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
-              "toolCallId": "call-1",
-              "toolName": "cityAttractions",
-              "type": "tool-call",
-            },
-            {
-              "input": {
-                "city": "San Francisco",
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
               },
-              "output": {
-                "status": "loading",
-                "text": "Getting weather for San Francisco",
+              {
+                "input": {
+                  "city": "San Francisco",
+                },
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-call",
               },
-              "preliminary": true,
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
-              "toolCallId": "call-1",
-              "toolName": "cityAttractions",
-              "type": "tool-result",
-            },
-            {
-              "input": {
-                "city": "San Francisco",
+              {
+                "input": {
+                  "city": "San Francisco",
+                },
+                "output": {
+                  "status": "loading",
+                  "text": "Getting weather for San Francisco",
+                },
+                "preliminary": true,
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-result",
               },
-              "output": {
-                "status": "success",
-                "temperature": 72,
-                "text": "The weather in San Francisco is 72°F",
+              {
+                "input": {
+                  "city": "San Francisco",
+                },
+                "output": {
+                  "status": "success",
+                  "temperature": 72,
+                  "text": "The weather in San Francisco is 72°F",
+                },
+                "preliminary": true,
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-result",
               },
-              "preliminary": true,
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
-              "toolCallId": "call-1",
-              "toolName": "cityAttractions",
-              "type": "tool-result",
-            },
-            {
-              "input": {
-                "city": "San Francisco",
+              {
+                "dynamic": false,
+                "input": {
+                  "city": "San Francisco",
+                },
+                "output": {
+                  "status": "success",
+                  "temperature": 72,
+                  "text": "The weather in San Francisco is 72°F",
+                },
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-result",
               },
-              "output": {
-                "status": "success",
-                "temperature": 72,
-                "text": "The weather in San Francisco is 72°F",
+              {
+                "finishReason": "stop",
+                "providerMetadata": undefined,
+                "rawFinishReason": "stop",
+                "response": {
+                  "headers": undefined,
+                  "id": "id-0",
+                  "modelId": "mock-model-id",
+                  "timestamp": 1970-01-01T00:00:02.000Z,
+                },
+                "type": "finish-step",
+                "usage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "raw": undefined,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
               },
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
-              "toolCallId": "call-1",
-              "toolName": "cityAttractions",
-              "type": "tool-result",
-            },
-            {
-              "finishReason": "stop",
-              "providerMetadata": undefined,
-              "response": {
-                "headers": undefined,
-                "id": "id-0",
-                "modelId": "mock-model-id",
-                "timestamp": 1970-01-01T00:00:02.000Z,
+              {
+                "finishReason": "stop",
+                "rawFinishReason": "stop",
+                "totalUsage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+                "type": "finish",
               },
-              "type": "finish-step",
-              "usage": {
-                "cachedInputTokens": undefined,
-                "inputTokens": 3,
-                "outputTokens": 10,
-                "reasoningTokens": undefined,
-                "totalTokens": 13,
-              },
-            },
-            {
-              "finishReason": "stop",
-              "totalUsage": {
-                "cachedInputTokens": undefined,
-                "inputTokens": 3,
-                "outputTokens": 10,
-                "reasoningTokens": undefined,
-                "totalTokens": 13,
-              },
-              "type": "finish",
-            },
-          ]
-        `);
+            ]
+          `);
       });
 
       it('should include preliminary tool results in ui message stream', async () => {
         expect(await convertAsyncIterableToArray(result.toUIMessageStream()))
           .toMatchInlineSnapshot(`
-          [
-            {
-              "type": "start",
-            },
-            {
-              "type": "start-step",
-            },
-            {
-              "input": {
-                "city": "San Francisco",
+            [
+              {
+                "type": "start",
               },
-              "toolCallId": "call-1",
-              "toolName": "cityAttractions",
-              "type": "tool-input-available",
-            },
-            {
-              "output": {
-                "status": "loading",
-                "text": "Getting weather for San Francisco",
+              {
+                "type": "start-step",
               },
-              "preliminary": true,
-              "toolCallId": "call-1",
-              "type": "tool-output-available",
-            },
-            {
-              "output": {
-                "status": "success",
-                "temperature": 72,
-                "text": "The weather in San Francisco is 72°F",
+              {
+                "input": {
+                  "city": "San Francisco",
+                },
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-input-available",
               },
-              "preliminary": true,
-              "toolCallId": "call-1",
-              "type": "tool-output-available",
-            },
-            {
-              "output": {
-                "status": "success",
-                "temperature": 72,
-                "text": "The weather in San Francisco is 72°F",
+              {
+                "output": {
+                  "status": "loading",
+                  "text": "Getting weather for San Francisco",
+                },
+                "preliminary": true,
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
               },
-              "toolCallId": "call-1",
-              "type": "tool-output-available",
-            },
-            {
-              "type": "finish-step",
-            },
-            {
-              "type": "finish",
-            },
-          ]
-        `);
+              {
+                "output": {
+                  "status": "success",
+                  "temperature": 72,
+                  "text": "The weather in San Francisco is 72°F",
+                },
+                "preliminary": true,
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
+              },
+              {
+                "output": {
+                  "status": "success",
+                  "temperature": 72,
+                  "text": "The weather in San Francisco is 72°F",
+                },
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
+              },
+              {
+                "type": "finish-step",
+              },
+              {
+                "finishReason": "stop",
+                "type": "finish",
+              },
+            ]
+          `);
       });
 
       it('should only include final tool result in content', async () => {
@@ -13539,11 +15091,13 @@ describe('streamText', () => {
               },
               "providerExecuted": undefined,
               "providerMetadata": undefined,
+              "title": undefined,
               "toolCallId": "call-1",
               "toolName": "cityAttractions",
               "type": "tool-call",
             },
             {
+              "dynamic": false,
               "input": {
                 "city": "San Francisco",
               },
@@ -13552,8 +15106,6 @@ describe('streamText', () => {
                 "temperature": 72,
                 "text": "The weather in San Francisco is 72°F",
               },
-              "providerExecuted": undefined,
-              "providerMetadata": undefined,
               "toolCallId": "call-1",
               "toolName": "cityAttractions",
               "type": "tool-result",
@@ -13573,11 +15125,13 @@ describe('streamText', () => {
                   },
                   "providerExecuted": undefined,
                   "providerMetadata": undefined,
+                  "title": undefined,
                   "toolCallId": "call-1",
                   "toolName": "cityAttractions",
                   "type": "tool-call",
                 },
                 {
+                  "dynamic": false,
                   "input": {
                     "city": "San Francisco",
                   },
@@ -13586,8 +15140,6 @@ describe('streamText', () => {
                     "temperature": 72,
                     "text": "The weather in San Francisco is 72°F",
                   },
-                  "providerExecuted": undefined,
-                  "providerMetadata": undefined,
                   "toolCallId": "call-1",
                   "toolName": "cityAttractions",
                   "type": "tool-result",
@@ -13595,6 +15147,7 @@ describe('streamText', () => {
               ],
               "finishReason": "stop",
               "providerMetadata": undefined,
+              "rawFinishReason": "stop",
               "request": {},
               "response": {
                 "headers": undefined,
@@ -13639,8 +15192,18 @@ describe('streamText', () => {
               },
               "usage": {
                 "cachedInputTokens": undefined,
+                "inputTokenDetails": {
+                  "cacheReadTokens": undefined,
+                  "cacheWriteTokens": undefined,
+                  "noCacheTokens": 3,
+                },
                 "inputTokens": 3,
+                "outputTokenDetails": {
+                  "reasoningTokens": undefined,
+                  "textTokens": 10,
+                },
                 "outputTokens": 10,
+                "raw": undefined,
                 "reasoningTokens": undefined,
                 "totalTokens": 13,
               },
@@ -13648,6 +15211,1821 @@ describe('streamText', () => {
             },
           ]
         `);
+      });
+    });
+  });
+
+  describe('provider-executed dynamic tools', () => {
+    describe('single provider-executed dynamic tool with input streaming', () => {
+      let result: StreamTextResult<any, any>;
+
+      beforeEach(async () => {
+        result = streamText({
+          model: createTestModel({
+            stream: convertArrayToReadableStream([
+              { type: 'stream-start', warnings: [] },
+              {
+                type: 'tool-input-start',
+                id: 'call-1',
+                toolName: 'cityAttractions',
+                providerExecuted: true,
+                dynamic: true,
+                providerMetadata: {
+                  anthropic: {
+                    serverName: 'echo',
+                  },
+                },
+              },
+              {
+                type: 'tool-input-delta',
+                id: 'call-1',
+                delta: `{ "city": "San Francisco" }`,
+              },
+              {
+                type: 'tool-input-end',
+                id: 'call-1',
+              },
+              {
+                type: 'tool-call',
+                toolCallId: 'call-1',
+                toolName: 'cityAttractions',
+                input: `{ "city": "San Francisco" }`,
+                providerExecuted: true,
+                dynamic: true,
+                providerMetadata: {
+                  anthropic: {
+                    serverName: 'echo',
+                  },
+                },
+              },
+              {
+                type: 'tool-result',
+                toolCallId: 'call-1',
+                toolName: 'cityAttractions',
+                input: `{ "city": "San Francisco" }`,
+                result: {
+                  status: 'success',
+                  text: 'The weather in San Francisco is 72°F',
+                },
+                providerExecuted: true,
+                dynamic: true,
+                providerMetadata: {
+                  anthropic: {
+                    serverName: 'echo',
+                  },
+                },
+              },
+              {
+                type: 'finish',
+                finishReason: { unified: 'stop', raw: 'stop' },
+                usage: testUsage,
+              },
+            ]),
+          }),
+          prompt: 'test-input',
+          _internal: {
+            currentDate: mockValues(new Date(2000)),
+            generateId: mockId(),
+          },
+        });
+      });
+
+      it('should set dynamic and providerExecuted in full stream', async () => {
+        expect(await convertAsyncIterableToArray(result.fullStream))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
+              },
+              {
+                "dynamic": true,
+                "id": "call-1",
+                "providerExecuted": true,
+                "providerMetadata": {
+                  "anthropic": {
+                    "serverName": "echo",
+                  },
+                },
+                "title": undefined,
+                "toolName": "cityAttractions",
+                "type": "tool-input-start",
+              },
+              {
+                "delta": "{ "city": "San Francisco" }",
+                "id": "call-1",
+                "type": "tool-input-delta",
+              },
+              {
+                "id": "call-1",
+                "type": "tool-input-end",
+              },
+              {
+                "dynamic": true,
+                "input": {
+                  "city": "San Francisco",
+                },
+                "providerExecuted": true,
+                "providerMetadata": {
+                  "anthropic": {
+                    "serverName": "echo",
+                  },
+                },
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-call",
+              },
+              {
+                "dynamic": true,
+                "input": undefined,
+                "output": {
+                  "status": "success",
+                  "text": "The weather in San Francisco is 72°F",
+                },
+                "providerExecuted": true,
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-result",
+              },
+              {
+                "finishReason": "stop",
+                "providerMetadata": undefined,
+                "rawFinishReason": "stop",
+                "response": {
+                  "headers": undefined,
+                  "id": "id-0",
+                  "modelId": "mock-model-id",
+                  "timestamp": 1970-01-01T00:00:02.000Z,
+                },
+                "type": "finish-step",
+                "usage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "raw": undefined,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+              },
+              {
+                "finishReason": "stop",
+                "rawFinishReason": "stop",
+                "totalUsage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should set dynamic and providerExecuted in ui message stream', async () => {
+        expect(await convertAsyncIterableToArray(result.toUIMessageStream()))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "type": "start-step",
+              },
+              {
+                "dynamic": true,
+                "providerExecuted": true,
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-input-start",
+              },
+              {
+                "inputTextDelta": "{ "city": "San Francisco" }",
+                "toolCallId": "call-1",
+                "type": "tool-input-delta",
+              },
+              {
+                "dynamic": true,
+                "input": {
+                  "city": "San Francisco",
+                },
+                "providerExecuted": true,
+                "providerMetadata": {
+                  "anthropic": {
+                    "serverName": "echo",
+                  },
+                },
+                "toolCallId": "call-1",
+                "toolName": "cityAttractions",
+                "type": "tool-input-available",
+              },
+              {
+                "dynamic": true,
+                "output": {
+                  "status": "success",
+                  "text": "The weather in San Francisco is 72°F",
+                },
+                "providerExecuted": true,
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
+              },
+              {
+                "type": "finish-step",
+              },
+              {
+                "finishReason": "stop",
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should set dynamic and providerExecuted in content', async () => {
+        expect(await result.content).toMatchInlineSnapshot(`
+          [
+            {
+              "dynamic": true,
+              "input": {
+                "city": "San Francisco",
+              },
+              "providerExecuted": true,
+              "providerMetadata": {
+                "anthropic": {
+                  "serverName": "echo",
+                },
+              },
+              "toolCallId": "call-1",
+              "toolName": "cityAttractions",
+              "type": "tool-call",
+            },
+            {
+              "dynamic": true,
+              "input": undefined,
+              "output": {
+                "status": "success",
+                "text": "The weather in San Francisco is 72°F",
+              },
+              "providerExecuted": true,
+              "toolCallId": "call-1",
+              "toolName": "cityAttractions",
+              "type": "tool-result",
+            },
+          ]
+        `);
+      });
+    });
+  });
+
+  describe('programmatic tool calling', () => {
+    describe('5 steps: code_execution triggers client tool across multiple turns (dice game fixture)', () => {
+      let result: StreamTextResult<any, any>;
+      let onFinishResult: Parameters<StreamTextOnFinishCallback<any>>[0];
+      let onStepFinishResults: StepResult<any>[];
+      let doStreamCalls: Array<LanguageModelV3CallOptions>;
+      let prepareStepCalls: Array<{
+        modelId: string;
+        stepNumber: number;
+        steps: Array<StepResult<any>>;
+        messages: Array<ModelMessage>;
+      }>;
+      let rollDieExecutions: Array<{ player: string }>;
+
+      // Fixture-based tool call IDs (from anthropic-programmatic-tool-calling.1.chunks.txt)
+      const CODE_EXEC_ID = 'srvtoolu_01MzSrFWsmzBdcoQkGWLyRjK';
+      const CONTAINER_ID = 'container_011CWHPPTDTn1XufeRB9uHeH';
+
+      beforeEach(async () => {
+        onFinishResult = undefined as any;
+        onStepFinishResults = [];
+        doStreamCalls = [];
+        prepareStepCalls = [];
+        rollDieExecutions = [];
+
+        let responseCount = 0;
+
+        result = streamText({
+          model: new MockLanguageModelV3({
+            doStream: async options => {
+              doStreamCalls.push(options);
+
+              switch (responseCount++) {
+                case 0:
+                  // Step 1: text + server_tool_use (code_execution) + rollDie call
+                  return {
+                    stream: convertArrayToReadableStream([
+                      {
+                        type: 'response-metadata',
+                        id: 'msg_01ERcBqAvLTHWQDk9c9qJLWC',
+                        modelId: 'claude-sonnet-4-5-20250929',
+                        timestamp: new Date(0),
+                      },
+                      { type: 'text-start', id: '1' },
+                      {
+                        type: 'text-delta',
+                        id: '1',
+                        delta:
+                          "I'll help you simulate this game between two players where one is using a loaded die.",
+                      },
+                      { type: 'text-end', id: '1' },
+                      {
+                        type: 'tool-call',
+                        toolCallId: CODE_EXEC_ID,
+                        toolName: 'code_execution',
+                        input: `{"type":"programmatic-tool-call","code":"game_loop()"}`,
+                        providerExecuted: true,
+                      },
+                      {
+                        type: 'tool-call',
+                        toolCallId: 'toolu_019jKkXz4jAdwHweHBw92CVY',
+                        toolName: 'rollDie',
+                        input: `{ "player": "player1" }`,
+                      },
+                      {
+                        type: 'finish',
+                        finishReason: { unified: 'tool-calls', raw: undefined },
+                        usage: {
+                          inputTokens: {
+                            total: 3369,
+                            noCache: 3369,
+                            cacheRead: undefined,
+                            cacheWrite: undefined,
+                          },
+                          outputTokens: {
+                            total: 725,
+                            text: 725,
+                            reasoning: undefined,
+                          },
+                        },
+                        providerMetadata: {
+                          anthropic: {
+                            container: { id: CONTAINER_ID },
+                          },
+                        },
+                      },
+                    ]),
+                    response: { headers: { call: '1' } },
+                  };
+
+                case 1:
+                  // Step 2: rollDie call (player2)
+                  return {
+                    stream: convertArrayToReadableStream([
+                      {
+                        type: 'response-metadata',
+                        id: 'msg_01KSVw3xmXbMNJPNMt46BC5W',
+                        modelId: 'claude-sonnet-4-5-20250929',
+                        timestamp: new Date(1000),
+                      },
+                      {
+                        type: 'tool-call',
+                        toolCallId: 'toolu_015dGLMbwBKv1ZRQr6KdJzeH',
+                        toolName: 'rollDie',
+                        input: `{ "player": "player2" }`,
+                      },
+                      {
+                        type: 'finish',
+                        finishReason: { unified: 'tool-calls', raw: undefined },
+                        usage: {
+                          inputTokens: {
+                            total: 0,
+                            noCache: 0,
+                            cacheRead: undefined,
+                            cacheWrite: undefined,
+                          },
+                          outputTokens: {
+                            total: 0,
+                            text: 0,
+                            reasoning: undefined,
+                          },
+                        },
+                        providerMetadata: {
+                          anthropic: {
+                            container: { id: CONTAINER_ID },
+                          },
+                        },
+                      },
+                    ]),
+                    response: { headers: { call: '2' } },
+                  };
+
+                case 2:
+                  // Step 3: rollDie calls (round 2)
+                  return {
+                    stream: convertArrayToReadableStream([
+                      {
+                        type: 'response-metadata',
+                        id: 'msg_016fLapHzDx8DG2SUcsGKyPA',
+                        modelId: 'claude-sonnet-4-5-20250929',
+                        timestamp: new Date(2000),
+                      },
+                      {
+                        type: 'tool-call',
+                        toolCallId: 'toolu_01YYqBNq5mk1wMtv3PAqY44m',
+                        toolName: 'rollDie',
+                        input: `{ "player": "player1" }`,
+                      },
+                      {
+                        type: 'finish',
+                        finishReason: { unified: 'tool-calls', raw: undefined },
+                        usage: {
+                          inputTokens: {
+                            total: 0,
+                            noCache: 0,
+                            cacheRead: undefined,
+                            cacheWrite: undefined,
+                          },
+                          outputTokens: {
+                            total: 0,
+                            text: 0,
+                            reasoning: undefined,
+                          },
+                        },
+                        providerMetadata: {
+                          anthropic: {
+                            container: { id: CONTAINER_ID },
+                          },
+                        },
+                      },
+                    ]),
+                    response: { headers: { call: '3' } },
+                  };
+
+                case 3:
+                  // Step 4: more rollDie calls
+                  return {
+                    stream: convertArrayToReadableStream([
+                      {
+                        type: 'response-metadata',
+                        id: 'msg_01MQHz6AzmwmZoTry5nk5EQC',
+                        modelId: 'claude-sonnet-4-5-20250929',
+                        timestamp: new Date(3000),
+                      },
+                      {
+                        type: 'tool-call',
+                        toolCallId: 'toolu_018WxjDkQG8h7i63poySGT2x',
+                        toolName: 'rollDie',
+                        input: `{ "player": "player2" }`,
+                      },
+                      {
+                        type: 'finish',
+                        finishReason: { unified: 'tool-calls', raw: undefined },
+                        usage: {
+                          inputTokens: {
+                            total: 0,
+                            noCache: 0,
+                            cacheRead: undefined,
+                            cacheWrite: undefined,
+                          },
+                          outputTokens: {
+                            total: 0,
+                            text: 0,
+                            reasoning: undefined,
+                          },
+                        },
+                        providerMetadata: {
+                          anthropic: {
+                            container: { id: CONTAINER_ID },
+                          },
+                        },
+                      },
+                    ]),
+                    response: { headers: { call: '4' } },
+                  };
+
+                case 4:
+                  // Step 5: code_execution_tool_result + final text
+                  return {
+                    stream: convertArrayToReadableStream([
+                      {
+                        type: 'response-metadata',
+                        id: 'msg_01CfmDducyrt61n4Q7QS8VFK',
+                        modelId: 'claude-sonnet-4-5-20250929',
+                        timestamp: new Date(4000),
+                      },
+                      {
+                        type: 'tool-result',
+                        toolCallId: CODE_EXEC_ID,
+                        toolName: 'code_execution',
+                        result: {
+                          type: 'code_execution_result',
+                          stdout:
+                            '=== DICE GAME: First to 3 Wins ===\n\n--- Round 1 ---\nPlayer 1 rolls: 5\nPlayer 2 rolls: 6\nPlayer 2 wins this round!\nScore: Player 1 = 0, Player 2 = 1\n\n--- Round 2 ---\nPlayer 1 rolls: 4\nPlayer 2 rolls: 6\nPlayer 2 wins this round!\nScore: Player 1 = 0, Player 2 = 2\n\n--- Round 3 ---\nPlayer 1 rolls: 5\nPlayer 2 rolls: 2\nPlayer 1 wins this round!\nScore: Player 1 = 1, Player 2 = 2\n\n--- Round 4 ---\nPlayer 1 rolls: 6\nPlayer 2 rolls: 6\nDraw! No one gets a point.\nScore: Player 1 = 1, Player 2 = 2\n\n--- Round 5 ---\nPlayer 1 rolls: 3\nPlayer 2 rolls: 2\nPlayer 1 wins this round!\nScore: Player 1 = 2, Player 2 = 2\n\n--- Round 6 ---\nPlayer 1 rolls: 6\nPlayer 2 rolls: 6\nDraw! No one gets a point.\nScore: Player 1 = 2, Player 2 = 2\n\n--- Round 7 ---\nPlayer 1 rolls: 2\nPlayer 2 rolls: 3\nPlayer 2 wins this round!\nScore: Player 1 = 2, Player 2 = 3\n\n========================================\n🏆 GAME OVER: Player 2 wins the game! (3-2)\n========================================\n\n📊 Analysis:\nTotal rounds played: 7\nPlayer 2 had better results - likely using the loaded die! 🎲\n',
+                          stderr: '',
+                          return_code: 0,
+                          content: [],
+                        },
+                        providerExecuted: true,
+                      },
+                      { type: 'text-start', id: '2' },
+                      {
+                        type: 'text-delta',
+                        id: '2',
+                        delta:
+                          '## Game Results\n\n**Player 2 wins the game 3-2!** 🏆\n\nThe game lasted 7 rounds with the following breakdown:\n- **Player 1**: 2 round wins\n- **Player 2**: 3 round wins\n- **Draws**: 2 rounds (both rolling 6)\n\nBased on the results, **Player 2 appears to be the one using the loaded die**.',
+                      },
+                      { type: 'text-end', id: '2' },
+                      {
+                        type: 'finish',
+                        finishReason: { unified: 'stop', raw: 'stop' },
+                        usage: {
+                          inputTokens: {
+                            total: 4551,
+                            noCache: 4551,
+                            cacheRead: undefined,
+                            cacheWrite: undefined,
+                          },
+                          outputTokens: {
+                            total: 197,
+                            text: 197,
+                            reasoning: undefined,
+                          },
+                        },
+                      },
+                    ]),
+                    response: { headers: { call: '5' } },
+                  };
+
+                default:
+                  throw new Error(
+                    `Unexpected response count: ${responseCount}`,
+                  );
+              }
+            },
+          }),
+          tools: {
+            code_execution: {
+              type: 'provider',
+              id: 'anthropic.code_execution_20250825',
+              inputSchema: z.object({ code: z.string() }),
+              outputSchema: z.object({
+                stdout: z.string(),
+                stderr: z.string(),
+              }),
+              args: {},
+              supportsDeferredResults: true,
+            },
+            rollDie: tool({
+              description: 'Roll a die and return the result.',
+              inputSchema: z.object({
+                player: z.enum(['player1', 'player2']),
+              }),
+              execute: async ({ player }) => {
+                rollDieExecutions.push({ player });
+                return player === 'player1' ? 6 : 3;
+              },
+              providerOptions: {
+                anthropic: {
+                  allowedCallers: ['code_execution_20250825'],
+                },
+              },
+            }),
+          },
+          prompt: 'Play a dice game between two players.',
+          stopWhen: stepCountIs(10),
+          onFinish: async event => {
+            onFinishResult = event as unknown as typeof onFinishResult;
+          },
+          onStepFinish: async event => {
+            onStepFinishResults.push(event);
+          },
+          prepareStep: async ({ model, stepNumber, steps, messages }) => {
+            prepareStepCalls.push({
+              modelId: typeof model === 'string' ? model : model.modelId,
+              stepNumber,
+              steps: [...steps],
+              messages: [...messages],
+            });
+
+            // Forward container ID from previous step (simulating forwardAnthropicContainerIdFromLastStep)
+            if (stepNumber > 0 && steps.length > 0) {
+              const lastStep = steps[steps.length - 1];
+              const containerId = (
+                lastStep.providerMetadata?.anthropic as
+                  | { container?: { id?: string } }
+                  | undefined
+              )?.container?.id;
+
+              if (containerId) {
+                return {
+                  providerOptions: {
+                    anthropic: {
+                      container: { id: containerId },
+                    },
+                  },
+                };
+              }
+            }
+            return undefined;
+          },
+        });
+      });
+
+      describe('step inputs', () => {
+        it('should send correct prompt in step 1', async () => {
+          await result.consumeStream();
+          expect(doStreamCalls[0].prompt).toMatchInlineSnapshot(`
+            [
+              {
+                "content": [
+                  {
+                    "text": "Play a dice game between two players.",
+                    "type": "text",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+            ]
+          `);
+        });
+
+        it('should send correct tools in step 1', async () => {
+          await result.consumeStream();
+          expect(doStreamCalls[0].tools).toMatchInlineSnapshot(`
+            [
+              {
+                "args": {},
+                "id": "anthropic.code_execution_20250825",
+                "name": "code_execution",
+                "type": "provider",
+              },
+              {
+                "description": "Roll a die and return the result.",
+                "inputSchema": {
+                  "$schema": "http://json-schema.org/draft-07/schema#",
+                  "additionalProperties": false,
+                  "properties": {
+                    "player": {
+                      "enum": [
+                        "player1",
+                        "player2",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "player",
+                  ],
+                  "type": "object",
+                },
+                "name": "rollDie",
+                "providerOptions": {
+                  "anthropic": {
+                    "allowedCallers": [
+                      "code_execution_20250825",
+                    ],
+                  },
+                },
+                "type": "function",
+              },
+            ]
+          `);
+        });
+
+        it('should include assistant messages and tool results in step 2 prompt', async () => {
+          await result.consumeStream();
+          expect(doStreamCalls[1].prompt).toMatchInlineSnapshot(`
+            [
+              {
+                "content": [
+                  {
+                    "text": "Play a dice game between two players.",
+                    "type": "text",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+              {
+                "content": [
+                  {
+                    "providerOptions": undefined,
+                    "text": "I'll help you simulate this game between two players where one is using a loaded die.",
+                    "type": "text",
+                  },
+                  {
+                    "input": {
+                      "code": "game_loop()",
+                    },
+                    "providerExecuted": true,
+                    "providerOptions": undefined,
+                    "toolCallId": "srvtoolu_01MzSrFWsmzBdcoQkGWLyRjK",
+                    "toolName": "code_execution",
+                    "type": "tool-call",
+                  },
+                  {
+                    "input": {
+                      "player": "player1",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_019jKkXz4jAdwHweHBw92CVY",
+                    "toolName": "rollDie",
+                    "type": "tool-call",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "json",
+                      "value": 6,
+                    },
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_019jKkXz4jAdwHweHBw92CVY",
+                    "toolName": "rollDie",
+                    "type": "tool-result",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "tool",
+              },
+            ]
+          `);
+        });
+
+        it('should include all previous messages in step 3 prompt (round 2)', async () => {
+          await result.consumeStream();
+          expect(doStreamCalls[2].prompt).toMatchInlineSnapshot(`
+            [
+              {
+                "content": [
+                  {
+                    "text": "Play a dice game between two players.",
+                    "type": "text",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+              {
+                "content": [
+                  {
+                    "providerOptions": undefined,
+                    "text": "I'll help you simulate this game between two players where one is using a loaded die.",
+                    "type": "text",
+                  },
+                  {
+                    "input": {
+                      "code": "game_loop()",
+                    },
+                    "providerExecuted": true,
+                    "providerOptions": undefined,
+                    "toolCallId": "srvtoolu_01MzSrFWsmzBdcoQkGWLyRjK",
+                    "toolName": "code_execution",
+                    "type": "tool-call",
+                  },
+                  {
+                    "input": {
+                      "player": "player1",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_019jKkXz4jAdwHweHBw92CVY",
+                    "toolName": "rollDie",
+                    "type": "tool-call",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "json",
+                      "value": 6,
+                    },
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_019jKkXz4jAdwHweHBw92CVY",
+                    "toolName": "rollDie",
+                    "type": "tool-result",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "tool",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "player": "player2",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_015dGLMbwBKv1ZRQr6KdJzeH",
+                    "toolName": "rollDie",
+                    "type": "tool-call",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "json",
+                      "value": 3,
+                    },
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_015dGLMbwBKv1ZRQr6KdJzeH",
+                    "toolName": "rollDie",
+                    "type": "tool-result",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "tool",
+              },
+            ]
+          `);
+        });
+
+        it('should forward container ID via providerOptions in step 2', async () => {
+          await result.consumeStream();
+          expect(doStreamCalls[1].providerOptions).toMatchInlineSnapshot(`
+            {
+              "anthropic": {
+                "container": {
+                  "id": "container_011CWHPPTDTn1XufeRB9uHeH",
+                },
+              },
+            }
+          `);
+        });
+
+        it('should include all previous messages in step 5 prompt (final step)', async () => {
+          await result.consumeStream();
+          expect(doStreamCalls[4].prompt).toMatchSnapshot();
+        });
+      });
+
+      describe('result.response.messages', () => {
+        it('should contain all response messages from all steps', async () => {
+          await result.consumeStream();
+          expect((await result.response).messages).toMatchInlineSnapshot(`
+            [
+              {
+                "content": [
+                  {
+                    "providerOptions": undefined,
+                    "text": "I'll help you simulate this game between two players where one is using a loaded die.",
+                    "type": "text",
+                  },
+                  {
+                    "input": {
+                      "code": "game_loop()",
+                    },
+                    "providerExecuted": true,
+                    "providerOptions": undefined,
+                    "toolCallId": "srvtoolu_01MzSrFWsmzBdcoQkGWLyRjK",
+                    "toolName": "code_execution",
+                    "type": "tool-call",
+                  },
+                  {
+                    "input": {
+                      "player": "player1",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_019jKkXz4jAdwHweHBw92CVY",
+                    "toolName": "rollDie",
+                    "type": "tool-call",
+                  },
+                ],
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "json",
+                      "value": 6,
+                    },
+                    "toolCallId": "toolu_019jKkXz4jAdwHweHBw92CVY",
+                    "toolName": "rollDie",
+                    "type": "tool-result",
+                  },
+                ],
+                "role": "tool",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "player": "player2",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_015dGLMbwBKv1ZRQr6KdJzeH",
+                    "toolName": "rollDie",
+                    "type": "tool-call",
+                  },
+                ],
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "json",
+                      "value": 3,
+                    },
+                    "toolCallId": "toolu_015dGLMbwBKv1ZRQr6KdJzeH",
+                    "toolName": "rollDie",
+                    "type": "tool-result",
+                  },
+                ],
+                "role": "tool",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "player": "player1",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_01YYqBNq5mk1wMtv3PAqY44m",
+                    "toolName": "rollDie",
+                    "type": "tool-call",
+                  },
+                ],
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "json",
+                      "value": 6,
+                    },
+                    "toolCallId": "toolu_01YYqBNq5mk1wMtv3PAqY44m",
+                    "toolName": "rollDie",
+                    "type": "tool-result",
+                  },
+                ],
+                "role": "tool",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "player": "player2",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "toolu_018WxjDkQG8h7i63poySGT2x",
+                    "toolName": "rollDie",
+                    "type": "tool-call",
+                  },
+                ],
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "json",
+                      "value": 3,
+                    },
+                    "toolCallId": "toolu_018WxjDkQG8h7i63poySGT2x",
+                    "toolName": "rollDie",
+                    "type": "tool-result",
+                  },
+                ],
+                "role": "tool",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "json",
+                      "value": {
+                        "content": [],
+                        "return_code": 0,
+                        "stderr": "",
+                        "stdout": "=== DICE GAME: First to 3 Wins ===
+
+            --- Round 1 ---
+            Player 1 rolls: 5
+            Player 2 rolls: 6
+            Player 2 wins this round!
+            Score: Player 1 = 0, Player 2 = 1
+
+            --- Round 2 ---
+            Player 1 rolls: 4
+            Player 2 rolls: 6
+            Player 2 wins this round!
+            Score: Player 1 = 0, Player 2 = 2
+
+            --- Round 3 ---
+            Player 1 rolls: 5
+            Player 2 rolls: 2
+            Player 1 wins this round!
+            Score: Player 1 = 1, Player 2 = 2
+
+            --- Round 4 ---
+            Player 1 rolls: 6
+            Player 2 rolls: 6
+            Draw! No one gets a point.
+            Score: Player 1 = 1, Player 2 = 2
+
+            --- Round 5 ---
+            Player 1 rolls: 3
+            Player 2 rolls: 2
+            Player 1 wins this round!
+            Score: Player 1 = 2, Player 2 = 2
+
+            --- Round 6 ---
+            Player 1 rolls: 6
+            Player 2 rolls: 6
+            Draw! No one gets a point.
+            Score: Player 1 = 2, Player 2 = 2
+
+            --- Round 7 ---
+            Player 1 rolls: 2
+            Player 2 rolls: 3
+            Player 2 wins this round!
+            Score: Player 1 = 2, Player 2 = 3
+
+            ========================================
+            🏆 GAME OVER: Player 2 wins the game! (3-2)
+            ========================================
+
+            📊 Analysis:
+            Total rounds played: 7
+            Player 2 had better results - likely using the loaded die! 🎲
+            ",
+                        "type": "code_execution_result",
+                      },
+                    },
+                    "providerOptions": undefined,
+                    "toolCallId": "srvtoolu_01MzSrFWsmzBdcoQkGWLyRjK",
+                    "toolName": "code_execution",
+                    "type": "tool-result",
+                  },
+                  {
+                    "providerOptions": undefined,
+                    "text": "## Game Results
+
+            **Player 2 wins the game 3-2!** 🏆
+
+            The game lasted 7 rounds with the following breakdown:
+            - **Player 1**: 2 round wins
+            - **Player 2**: 3 round wins
+            - **Draws**: 2 rounds (both rolling 6)
+
+            Based on the results, **Player 2 appears to be the one using the loaded die**.",
+                    "type": "text",
+                  },
+                ],
+                "role": "assistant",
+              },
+            ]
+          `);
+        });
+      });
+
+      describe('result.toolCalls and result.toolResults', () => {
+        it('should return empty toolCalls from final step (no tool calls in step 3)', async () => {
+          expect(await result.toolCalls).toMatchInlineSnapshot(`[]`);
+        });
+
+        it('should return deferred tool results from final step', async () => {
+          expect(await result.toolResults).toMatchInlineSnapshot(`
+            [
+              {
+                "dynamic": undefined,
+                "input": undefined,
+                "output": {
+                  "content": [],
+                  "return_code": 0,
+                  "stderr": "",
+                  "stdout": "=== DICE GAME: First to 3 Wins ===
+
+            --- Round 1 ---
+            Player 1 rolls: 5
+            Player 2 rolls: 6
+            Player 2 wins this round!
+            Score: Player 1 = 0, Player 2 = 1
+
+            --- Round 2 ---
+            Player 1 rolls: 4
+            Player 2 rolls: 6
+            Player 2 wins this round!
+            Score: Player 1 = 0, Player 2 = 2
+
+            --- Round 3 ---
+            Player 1 rolls: 5
+            Player 2 rolls: 2
+            Player 1 wins this round!
+            Score: Player 1 = 1, Player 2 = 2
+
+            --- Round 4 ---
+            Player 1 rolls: 6
+            Player 2 rolls: 6
+            Draw! No one gets a point.
+            Score: Player 1 = 1, Player 2 = 2
+
+            --- Round 5 ---
+            Player 1 rolls: 3
+            Player 2 rolls: 2
+            Player 1 wins this round!
+            Score: Player 1 = 2, Player 2 = 2
+
+            --- Round 6 ---
+            Player 1 rolls: 6
+            Player 2 rolls: 6
+            Draw! No one gets a point.
+            Score: Player 1 = 2, Player 2 = 2
+
+            --- Round 7 ---
+            Player 1 rolls: 2
+            Player 2 rolls: 3
+            Player 2 wins this round!
+            Score: Player 1 = 2, Player 2 = 3
+
+            ========================================
+            🏆 GAME OVER: Player 2 wins the game! (3-2)
+            ========================================
+
+            📊 Analysis:
+            Total rounds played: 7
+            Player 2 had better results - likely using the loaded die! 🎲
+            ",
+                  "type": "code_execution_result",
+                },
+                "providerExecuted": true,
+                "toolCallId": "srvtoolu_01MzSrFWsmzBdcoQkGWLyRjK",
+                "toolName": "code_execution",
+                "type": "tool-result",
+              },
+            ]
+          `);
+        });
+      });
+
+      describe('tool execution', () => {
+        it('should execute rollDie tool 4 times (twice per step for steps 1 and 2)', async () => {
+          await result.consumeStream();
+          expect(rollDieExecutions).toMatchInlineSnapshot(`
+            [
+              {
+                "player": "player1",
+              },
+              {
+                "player": "player2",
+              },
+              {
+                "player": "player1",
+              },
+              {
+                "player": "player2",
+              },
+            ]
+          `);
+        });
+      });
+
+      describe('result.steps', () => {
+        it('should contain 5 steps', async () => {
+          expect((await result.steps).length).toBe(5);
+        });
+
+        it('should have correct finishReason for each step', async () => {
+          const steps = await result.steps;
+          expect(steps[0].finishReason).toBe('tool-calls');
+          expect(steps[1].finishReason).toBe('tool-calls');
+          expect(steps[2].finishReason).toBe('tool-calls');
+          expect(steps[3].finishReason).toBe('tool-calls');
+          expect(steps[4].finishReason).toBe('stop');
+        });
+      });
+
+      describe('result.text', () => {
+        it('should return final text from last step', async () => {
+          expect(await result.text).toContain('Game Results');
+        });
+      });
+
+      describe('result.finishReason', () => {
+        it('should return stop from final step', async () => {
+          expect(await result.finishReason).toBe('stop');
+        });
+      });
+
+      describe('result.totalUsage', () => {
+        it('should sum token usage across all steps', async () => {
+          await result.consumeStream();
+          expect(await result.totalUsage).toMatchInlineSnapshot(`
+            {
+              "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 7920,
+              },
+              "inputTokens": 7920,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 922,
+              },
+              "outputTokens": 922,
+              "reasoningTokens": undefined,
+              "totalTokens": 8842,
+            }
+          `);
+        });
+      });
+
+      describe('prepareStep calls', () => {
+        it('should call prepareStep for each step with correct stepNumber', async () => {
+          await result.consumeStream();
+          expect(prepareStepCalls.length).toBe(5);
+          expect(prepareStepCalls[0].stepNumber).toBe(0);
+          expect(prepareStepCalls[1].stepNumber).toBe(1);
+          expect(prepareStepCalls[2].stepNumber).toBe(2);
+          expect(prepareStepCalls[3].stepNumber).toBe(3);
+          expect(prepareStepCalls[4].stepNumber).toBe(4);
+        });
+
+        it('should pass empty steps array for first prepareStep call', async () => {
+          await result.consumeStream();
+          expect(prepareStepCalls[0].steps.length).toBe(0);
+        });
+
+        it('should pass accumulated steps to subsequent prepareStep calls', async () => {
+          await result.consumeStream();
+          expect(prepareStepCalls[1].steps.length).toBe(1);
+          expect(prepareStepCalls[2].steps.length).toBe(2);
+          expect(prepareStepCalls[3].steps.length).toBe(3);
+          expect(prepareStepCalls[4].steps.length).toBe(4);
+        });
+
+        it('should pass accumulated messages to prepareStep', async () => {
+          await result.consumeStream();
+          // Step 0: just the initial user message
+          expect(prepareStepCalls[0].messages.length).toBe(1);
+
+          // Step 1: user message + assistant message + tool message
+          expect(prepareStepCalls[1].messages.length).toBe(3);
+
+          // Step 2: user message + assistant + tool + assistant + tool
+          expect(prepareStepCalls[2].messages.length).toBe(5);
+
+          // Step 3: continued accumulation
+          expect(prepareStepCalls[3].messages.length).toBe(7);
+
+          // Step 4: continued accumulation
+          expect(prepareStepCalls[4].messages.length).toBe(9);
+        });
+      });
+
+      describe('onStepFinish callback', () => {
+        it('should be called for each step', async () => {
+          await result.consumeStream();
+          expect(onStepFinishResults.length).toBe(5);
+        });
+
+        it('should contain correct finishReason for each step', async () => {
+          await result.consumeStream();
+          expect(onStepFinishResults[0].finishReason).toBe('tool-calls');
+          expect(onStepFinishResults[1].finishReason).toBe('tool-calls');
+          expect(onStepFinishResults[2].finishReason).toBe('tool-calls');
+          expect(onStepFinishResults[3].finishReason).toBe('tool-calls');
+          expect(onStepFinishResults[4].finishReason).toBe('stop');
+        });
+
+        it('should contain provider metadata with container ID for steps 1 and 2', async () => {
+          await result.consumeStream();
+          expect(onStepFinishResults[0].providerMetadata)
+            .toMatchInlineSnapshot(`
+              {
+                "anthropic": {
+                  "container": {
+                    "id": "container_011CWHPPTDTn1XufeRB9uHeH",
+                  },
+                },
+              }
+            `);
+          expect(onStepFinishResults[1].providerMetadata)
+            .toMatchInlineSnapshot(`
+              {
+                "anthropic": {
+                  "container": {
+                    "id": "container_011CWHPPTDTn1XufeRB9uHeH",
+                  },
+                },
+              }
+            `);
+        });
+      });
+
+      describe('onFinish callback', () => {
+        it('should be called with correct text', async () => {
+          await result.consumeStream();
+          expect(onFinishResult.text).toContain('Game Results');
+        });
+
+        it('should be called with correct finishReason', async () => {
+          await result.consumeStream();
+          expect(onFinishResult.finishReason).toBe('stop');
+        });
+
+        it('should contain all steps', async () => {
+          await result.consumeStream();
+          expect(onFinishResult.steps.length).toBe(5);
+        });
+
+        it('should contain correct totalUsage', async () => {
+          await result.consumeStream();
+          expect(onFinishResult.totalUsage).toMatchInlineSnapshot(`
+            {
+              "cachedInputTokens": undefined,
+              "inputTokenDetails": {
+                "cacheReadTokens": undefined,
+                "cacheWriteTokens": undefined,
+                "noCacheTokens": 7920,
+              },
+              "inputTokens": 7920,
+              "outputTokenDetails": {
+                "reasoningTokens": undefined,
+                "textTokens": 922,
+              },
+              "outputTokens": 922,
+              "reasoningTokens": undefined,
+              "totalTokens": 8842,
+            }
+          `);
+        });
+
+        it('should contain all response messages', async () => {
+          await result.consumeStream();
+          expect(onFinishResult.response.messages.length).toBe(9);
+        });
+      });
+
+      describe('fullStream events', () => {
+        it('should emit correct stream parts including tool calls and deferred results', async () => {
+          expect(await convertAsyncIterableToArray(result.fullStream))
+            .toMatchInlineSnapshot(`
+              [
+                {
+                  "type": "start",
+                },
+                {
+                  "request": {},
+                  "type": "start-step",
+                  "warnings": [],
+                },
+                {
+                  "id": "1",
+                  "type": "text-start",
+                },
+                {
+                  "id": "1",
+                  "providerMetadata": undefined,
+                  "text": "I'll help you simulate this game between two players where one is using a loaded die.",
+                  "type": "text-delta",
+                },
+                {
+                  "id": "1",
+                  "type": "text-end",
+                },
+                {
+                  "input": {
+                    "code": "game_loop()",
+                  },
+                  "providerExecuted": true,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "srvtoolu_01MzSrFWsmzBdcoQkGWLyRjK",
+                  "toolName": "code_execution",
+                  "type": "tool-call",
+                },
+                {
+                  "input": {
+                    "player": "player1",
+                  },
+                  "providerExecuted": undefined,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "toolu_019jKkXz4jAdwHweHBw92CVY",
+                  "toolName": "rollDie",
+                  "type": "tool-call",
+                },
+                {
+                  "dynamic": false,
+                  "input": {
+                    "player": "player1",
+                  },
+                  "output": 6,
+                  "toolCallId": "toolu_019jKkXz4jAdwHweHBw92CVY",
+                  "toolName": "rollDie",
+                  "type": "tool-result",
+                },
+                {
+                  "finishReason": "tool-calls",
+                  "providerMetadata": {
+                    "anthropic": {
+                      "container": {
+                        "id": "container_011CWHPPTDTn1XufeRB9uHeH",
+                      },
+                    },
+                  },
+                  "rawFinishReason": undefined,
+                  "response": {
+                    "headers": {
+                      "call": "1",
+                    },
+                    "id": "msg_01ERcBqAvLTHWQDk9c9qJLWC",
+                    "modelId": "claude-sonnet-4-5-20250929",
+                    "timestamp": 1970-01-01T00:00:00.000Z,
+                  },
+                  "type": "finish-step",
+                  "usage": {
+                    "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3369,
+                    },
+                    "inputTokens": 3369,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 725,
+                    },
+                    "outputTokens": 725,
+                    "raw": undefined,
+                    "reasoningTokens": undefined,
+                    "totalTokens": 4094,
+                  },
+                },
+                {
+                  "request": {},
+                  "type": "start-step",
+                  "warnings": [],
+                },
+                {
+                  "input": {
+                    "player": "player2",
+                  },
+                  "providerExecuted": undefined,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "toolu_015dGLMbwBKv1ZRQr6KdJzeH",
+                  "toolName": "rollDie",
+                  "type": "tool-call",
+                },
+                {
+                  "dynamic": false,
+                  "input": {
+                    "player": "player2",
+                  },
+                  "output": 3,
+                  "toolCallId": "toolu_015dGLMbwBKv1ZRQr6KdJzeH",
+                  "toolName": "rollDie",
+                  "type": "tool-result",
+                },
+                {
+                  "finishReason": "tool-calls",
+                  "providerMetadata": {
+                    "anthropic": {
+                      "container": {
+                        "id": "container_011CWHPPTDTn1XufeRB9uHeH",
+                      },
+                    },
+                  },
+                  "rawFinishReason": undefined,
+                  "response": {
+                    "headers": {
+                      "call": "2",
+                    },
+                    "id": "msg_01KSVw3xmXbMNJPNMt46BC5W",
+                    "modelId": "claude-sonnet-4-5-20250929",
+                    "timestamp": 1970-01-01T00:00:01.000Z,
+                  },
+                  "type": "finish-step",
+                  "usage": {
+                    "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 0,
+                    },
+                    "inputTokens": 0,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 0,
+                    },
+                    "outputTokens": 0,
+                    "raw": undefined,
+                    "reasoningTokens": undefined,
+                    "totalTokens": 0,
+                  },
+                },
+                {
+                  "request": {},
+                  "type": "start-step",
+                  "warnings": [],
+                },
+                {
+                  "input": {
+                    "player": "player1",
+                  },
+                  "providerExecuted": undefined,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "toolu_01YYqBNq5mk1wMtv3PAqY44m",
+                  "toolName": "rollDie",
+                  "type": "tool-call",
+                },
+                {
+                  "dynamic": false,
+                  "input": {
+                    "player": "player1",
+                  },
+                  "output": 6,
+                  "toolCallId": "toolu_01YYqBNq5mk1wMtv3PAqY44m",
+                  "toolName": "rollDie",
+                  "type": "tool-result",
+                },
+                {
+                  "finishReason": "tool-calls",
+                  "providerMetadata": {
+                    "anthropic": {
+                      "container": {
+                        "id": "container_011CWHPPTDTn1XufeRB9uHeH",
+                      },
+                    },
+                  },
+                  "rawFinishReason": undefined,
+                  "response": {
+                    "headers": {
+                      "call": "3",
+                    },
+                    "id": "msg_016fLapHzDx8DG2SUcsGKyPA",
+                    "modelId": "claude-sonnet-4-5-20250929",
+                    "timestamp": 1970-01-01T00:00:02.000Z,
+                  },
+                  "type": "finish-step",
+                  "usage": {
+                    "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 0,
+                    },
+                    "inputTokens": 0,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 0,
+                    },
+                    "outputTokens": 0,
+                    "raw": undefined,
+                    "reasoningTokens": undefined,
+                    "totalTokens": 0,
+                  },
+                },
+                {
+                  "request": {},
+                  "type": "start-step",
+                  "warnings": [],
+                },
+                {
+                  "input": {
+                    "player": "player2",
+                  },
+                  "providerExecuted": undefined,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "toolu_018WxjDkQG8h7i63poySGT2x",
+                  "toolName": "rollDie",
+                  "type": "tool-call",
+                },
+                {
+                  "dynamic": false,
+                  "input": {
+                    "player": "player2",
+                  },
+                  "output": 3,
+                  "toolCallId": "toolu_018WxjDkQG8h7i63poySGT2x",
+                  "toolName": "rollDie",
+                  "type": "tool-result",
+                },
+                {
+                  "finishReason": "tool-calls",
+                  "providerMetadata": {
+                    "anthropic": {
+                      "container": {
+                        "id": "container_011CWHPPTDTn1XufeRB9uHeH",
+                      },
+                    },
+                  },
+                  "rawFinishReason": undefined,
+                  "response": {
+                    "headers": {
+                      "call": "4",
+                    },
+                    "id": "msg_01MQHz6AzmwmZoTry5nk5EQC",
+                    "modelId": "claude-sonnet-4-5-20250929",
+                    "timestamp": 1970-01-01T00:00:03.000Z,
+                  },
+                  "type": "finish-step",
+                  "usage": {
+                    "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 0,
+                    },
+                    "inputTokens": 0,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 0,
+                    },
+                    "outputTokens": 0,
+                    "raw": undefined,
+                    "reasoningTokens": undefined,
+                    "totalTokens": 0,
+                  },
+                },
+                {
+                  "request": {},
+                  "type": "start-step",
+                  "warnings": [],
+                },
+                {
+                  "dynamic": undefined,
+                  "input": undefined,
+                  "output": {
+                    "content": [],
+                    "return_code": 0,
+                    "stderr": "",
+                    "stdout": "=== DICE GAME: First to 3 Wins ===
+
+              --- Round 1 ---
+              Player 1 rolls: 5
+              Player 2 rolls: 6
+              Player 2 wins this round!
+              Score: Player 1 = 0, Player 2 = 1
+
+              --- Round 2 ---
+              Player 1 rolls: 4
+              Player 2 rolls: 6
+              Player 2 wins this round!
+              Score: Player 1 = 0, Player 2 = 2
+
+              --- Round 3 ---
+              Player 1 rolls: 5
+              Player 2 rolls: 2
+              Player 1 wins this round!
+              Score: Player 1 = 1, Player 2 = 2
+
+              --- Round 4 ---
+              Player 1 rolls: 6
+              Player 2 rolls: 6
+              Draw! No one gets a point.
+              Score: Player 1 = 1, Player 2 = 2
+
+              --- Round 5 ---
+              Player 1 rolls: 3
+              Player 2 rolls: 2
+              Player 1 wins this round!
+              Score: Player 1 = 2, Player 2 = 2
+
+              --- Round 6 ---
+              Player 1 rolls: 6
+              Player 2 rolls: 6
+              Draw! No one gets a point.
+              Score: Player 1 = 2, Player 2 = 2
+
+              --- Round 7 ---
+              Player 1 rolls: 2
+              Player 2 rolls: 3
+              Player 2 wins this round!
+              Score: Player 1 = 2, Player 2 = 3
+
+              ========================================
+              🏆 GAME OVER: Player 2 wins the game! (3-2)
+              ========================================
+
+              📊 Analysis:
+              Total rounds played: 7
+              Player 2 had better results - likely using the loaded die! 🎲
+              ",
+                    "type": "code_execution_result",
+                  },
+                  "providerExecuted": true,
+                  "toolCallId": "srvtoolu_01MzSrFWsmzBdcoQkGWLyRjK",
+                  "toolName": "code_execution",
+                  "type": "tool-result",
+                },
+                {
+                  "id": "2",
+                  "type": "text-start",
+                },
+                {
+                  "id": "2",
+                  "providerMetadata": undefined,
+                  "text": "## Game Results
+
+              **Player 2 wins the game 3-2!** 🏆
+
+              The game lasted 7 rounds with the following breakdown:
+              - **Player 1**: 2 round wins
+              - **Player 2**: 3 round wins
+              - **Draws**: 2 rounds (both rolling 6)
+
+              Based on the results, **Player 2 appears to be the one using the loaded die**.",
+                  "type": "text-delta",
+                },
+                {
+                  "id": "2",
+                  "type": "text-end",
+                },
+                {
+                  "finishReason": "stop",
+                  "providerMetadata": undefined,
+                  "rawFinishReason": "stop",
+                  "response": {
+                    "headers": {
+                      "call": "5",
+                    },
+                    "id": "msg_01CfmDducyrt61n4Q7QS8VFK",
+                    "modelId": "claude-sonnet-4-5-20250929",
+                    "timestamp": 1970-01-01T00:00:04.000Z,
+                  },
+                  "type": "finish-step",
+                  "usage": {
+                    "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 4551,
+                    },
+                    "inputTokens": 4551,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 197,
+                    },
+                    "outputTokens": 197,
+                    "raw": undefined,
+                    "reasoningTokens": undefined,
+                    "totalTokens": 4748,
+                  },
+                },
+                {
+                  "finishReason": "stop",
+                  "rawFinishReason": "stop",
+                  "totalUsage": {
+                    "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 7920,
+                    },
+                    "inputTokens": 7920,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 922,
+                    },
+                    "outputTokens": 922,
+                    "reasoningTokens": undefined,
+                    "totalTokens": 8842,
+                  },
+                  "type": "finish",
+                },
+              ]
+            `);
+        });
       });
     });
   });
@@ -13660,8 +17038,8 @@ describe('streamText', () => {
           message: 'Setting is not supported',
         },
         {
-          type: 'unsupported-setting' as const,
-          setting: 'temperature',
+          type: 'unsupported' as const,
+          feature: 'temperature',
           details: 'Temperature parameter not supported',
         },
       ];
@@ -13677,7 +17055,11 @@ describe('streamText', () => {
       await result.finishReason;
 
       expect(logWarningsSpy).toHaveBeenCalledOnce();
-      expect(logWarningsSpy).toHaveBeenCalledWith(expectedWarnings);
+      expect(logWarningsSpy).toHaveBeenCalledWith({
+        warnings: expectedWarnings,
+        provider: 'mock-provider',
+        model: 'mock-model-id',
+      });
     });
 
     it('should call logWarnings once for each step with warnings from that step', async () => {
@@ -13716,7 +17098,7 @@ describe('streamText', () => {
                   },
                   {
                     type: 'finish',
-                    finishReason: 'tool-calls',
+                    finishReason: { unified: 'tool-calls', raw: undefined },
                     usage: testUsage,
                   },
                 ]),
@@ -13740,7 +17122,7 @@ describe('streamText', () => {
                   { type: 'text-end', id: '1' },
                   {
                     type: 'finish',
-                    finishReason: 'stop',
+                    finishReason: { unified: 'stop', raw: 'stop' },
                     usage: testUsage,
                   },
                 ]),
@@ -13768,8 +17150,16 @@ describe('streamText', () => {
       await result.finishReason;
 
       expect(logWarningsSpy).toHaveBeenCalledTimes(2);
-      expect(logWarningsSpy).toHaveBeenNthCalledWith(1, [warning1]);
-      expect(logWarningsSpy).toHaveBeenNthCalledWith(2, [warning2]);
+      expect(logWarningsSpy).toHaveBeenNthCalledWith(1, {
+        warnings: [warning1],
+        provider: 'mock-provider',
+        model: 'mock-model-id',
+      });
+      expect(logWarningsSpy).toHaveBeenNthCalledWith(2, {
+        warnings: [warning2],
+        provider: 'mock-provider',
+        model: 'mock-model-id',
+      });
     });
 
     it('should call logWarnings with empty array when no warnings are present', async () => {
@@ -13784,7 +17174,2215 @@ describe('streamText', () => {
       await result.finishReason;
 
       expect(logWarningsSpy).toHaveBeenCalledOnce();
-      expect(logWarningsSpy).toHaveBeenCalledWith([]);
+      expect(logWarningsSpy).toHaveBeenCalledWith({
+        warnings: [],
+        provider: 'mock-provider',
+        model: 'mock-model-id',
+      });
+    });
+  });
+
+  describe('tool execution approval', () => {
+    describe('when a single tool needs approval', () => {
+      let result: StreamTextResult<any, any>;
+
+      beforeEach(async () => {
+        result = streamText({
+          model: createTestModel({
+            stream: convertArrayToReadableStream([
+              { type: 'stream-start', warnings: [] },
+              {
+                type: 'tool-call',
+                toolCallType: 'function',
+                toolCallId: 'call-1',
+                toolName: 'tool1',
+                input: `{ "value": "value" }`,
+              },
+              {
+                type: 'finish',
+                finishReason: { unified: 'tool-calls', raw: undefined },
+                usage: testUsage,
+              },
+            ]),
+          }),
+          prompt: 'test-input',
+          _internal: {
+            generateId: mockId({ prefix: 'id' }),
+            currentDate: () => new Date(0),
+          },
+          tools: {
+            tool1: tool({
+              inputSchema: z.object({ value: z.string() }),
+              execute: async () => 'result1',
+              needsApproval: true,
+            }),
+          },
+        });
+      });
+
+      it('should add tool approval requests to the full stream', async () => {
+        expect(await convertAsyncIterableToArray(result.fullStream))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
+              },
+              {
+                "input": {
+                  "value": "value",
+                },
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-call",
+              },
+              {
+                "approvalId": "id-1",
+                "toolCall": {
+                  "input": {
+                    "value": "value",
+                  },
+                  "providerExecuted": undefined,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "call-1",
+                  "toolName": "tool1",
+                  "type": "tool-call",
+                },
+                "type": "tool-approval-request",
+              },
+              {
+                "finishReason": "tool-calls",
+                "providerMetadata": undefined,
+                "rawFinishReason": undefined,
+                "response": {
+                  "headers": undefined,
+                  "id": "id-0",
+                  "modelId": "mock-model-id",
+                  "timestamp": 1970-01-01T00:00:00.000Z,
+                },
+                "type": "finish-step",
+                "usage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "raw": undefined,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+              },
+              {
+                "finishReason": "tool-calls",
+                "rawFinishReason": undefined,
+                "totalUsage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should add tool approval requests to the UI message stream', async () => {
+        expect(await convertAsyncIterableToArray(result.toUIMessageStream()))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "type": "start-step",
+              },
+              {
+                "input": {
+                  "value": "value",
+                },
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-input-available",
+              },
+              {
+                "approvalId": "id-1",
+                "toolCallId": "call-1",
+                "type": "tool-approval-request",
+              },
+              {
+                "type": "finish-step",
+              },
+              {
+                "finishReason": "tool-calls",
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should add tool approval requests to the content', async () => {
+        expect(await result.content).toMatchInlineSnapshot(`
+          [
+            {
+              "input": {
+                "value": "value",
+              },
+              "providerExecuted": undefined,
+              "providerMetadata": undefined,
+              "title": undefined,
+              "toolCallId": "call-1",
+              "toolName": "tool1",
+              "type": "tool-call",
+            },
+            {
+              "approvalId": "id-1",
+              "toolCall": {
+                "input": {
+                  "value": "value",
+                },
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-call",
+              },
+              "type": "tool-approval-request",
+            },
+          ]
+        `);
+      });
+
+      it('should add tool approval requests to the response messages', async () => {
+        expect((await result.response).messages).toMatchInlineSnapshot(`
+          [
+            {
+              "content": [
+                {
+                  "input": {
+                    "value": "value",
+                  },
+                  "providerExecuted": undefined,
+                  "providerOptions": undefined,
+                  "toolCallId": "call-1",
+                  "toolName": "tool1",
+                  "type": "tool-call",
+                },
+                {
+                  "approvalId": "id-1",
+                  "toolCallId": "call-1",
+                  "type": "tool-approval-request",
+                },
+              ],
+              "role": "assistant",
+            },
+          ]
+        `);
+      });
+    });
+
+    describe('when a single tool has a needsApproval function', () => {
+      let result: StreamTextResult<any, any>;
+      let needsApprovalCalls: Array<{ input: any; options: any }> = [];
+
+      beforeEach(async () => {
+        needsApprovalCalls = [];
+        result = streamText({
+          model: createTestModel({
+            stream: convertArrayToReadableStream([
+              { type: 'stream-start', warnings: [] },
+              {
+                type: 'tool-call',
+                toolCallType: 'function',
+                toolCallId: 'call-1',
+                toolName: 'tool1',
+                input: `{ "value": "value-needs-approval" }`,
+              },
+              {
+                type: 'tool-call',
+                toolCallType: 'function',
+                toolCallId: 'call-2',
+                toolName: 'tool1',
+                input: `{ "value": "value-no-approval" }`,
+              },
+              {
+                type: 'finish',
+                finishReason: { unified: 'tool-calls', raw: undefined },
+                usage: testUsage,
+              },
+            ]),
+          }),
+          tools: {
+            tool1: tool({
+              inputSchema: z.object({ value: z.string() }),
+              execute: input => `result for ${input.value}`,
+              needsApproval: (input, options) => {
+                needsApprovalCalls.push({ input, options });
+                return input.value === 'value-needs-approval';
+              },
+            }),
+          },
+          stopWhen: stepCountIs(3),
+          prompt: 'test-input',
+          _internal: {
+            generateId: mockId({ prefix: 'id' }),
+            currentDate: () => new Date(0),
+          },
+        });
+      });
+
+      it('should add tool approval requests to the full stream', async () => {
+        expect(await convertAsyncIterableToArray(result.fullStream))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
+              },
+              {
+                "input": {
+                  "value": "value-needs-approval",
+                },
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-call",
+              },
+              {
+                "approvalId": "id-1",
+                "toolCall": {
+                  "input": {
+                    "value": "value-needs-approval",
+                  },
+                  "providerExecuted": undefined,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "call-1",
+                  "toolName": "tool1",
+                  "type": "tool-call",
+                },
+                "type": "tool-approval-request",
+              },
+              {
+                "input": {
+                  "value": "value-no-approval",
+                },
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-2",
+                "toolName": "tool1",
+                "type": "tool-call",
+              },
+              {
+                "dynamic": false,
+                "input": {
+                  "value": "value-no-approval",
+                },
+                "output": "result for value-no-approval",
+                "toolCallId": "call-2",
+                "toolName": "tool1",
+                "type": "tool-result",
+              },
+              {
+                "finishReason": "tool-calls",
+                "providerMetadata": undefined,
+                "rawFinishReason": undefined,
+                "response": {
+                  "headers": undefined,
+                  "id": "id-0",
+                  "modelId": "mock-model-id",
+                  "timestamp": 1970-01-01T00:00:00.000Z,
+                },
+                "type": "finish-step",
+                "usage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "raw": undefined,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+              },
+              {
+                "finishReason": "tool-calls",
+                "rawFinishReason": undefined,
+                "totalUsage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should add tool approval requests to the UI message stream', async () => {
+        expect(await convertAsyncIterableToArray(result.toUIMessageStream()))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "type": "start-step",
+              },
+              {
+                "input": {
+                  "value": "value-needs-approval",
+                },
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-input-available",
+              },
+              {
+                "approvalId": "id-1",
+                "toolCallId": "call-1",
+                "type": "tool-approval-request",
+              },
+              {
+                "input": {
+                  "value": "value-no-approval",
+                },
+                "toolCallId": "call-2",
+                "toolName": "tool1",
+                "type": "tool-input-available",
+              },
+              {
+                "output": "result for value-no-approval",
+                "toolCallId": "call-2",
+                "type": "tool-output-available",
+              },
+              {
+                "type": "finish-step",
+              },
+              {
+                "finishReason": "tool-calls",
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should only execute 1 step when the tool needs approval', async () => {
+        expect((await result.steps).length).toBe(1);
+      });
+
+      it('should have tool-calls finish reason', async () => {
+        expect(await result.finishReason).toBe('tool-calls');
+      });
+
+      it('should add a tool approval request to the content', async () => {
+        expect(await result.content).toMatchInlineSnapshot(`
+          [
+            {
+              "input": {
+                "value": "value-needs-approval",
+              },
+              "providerExecuted": undefined,
+              "providerMetadata": undefined,
+              "title": undefined,
+              "toolCallId": "call-1",
+              "toolName": "tool1",
+              "type": "tool-call",
+            },
+            {
+              "approvalId": "id-1",
+              "toolCall": {
+                "input": {
+                  "value": "value-needs-approval",
+                },
+                "providerExecuted": undefined,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-call",
+              },
+              "type": "tool-approval-request",
+            },
+            {
+              "input": {
+                "value": "value-no-approval",
+              },
+              "providerExecuted": undefined,
+              "providerMetadata": undefined,
+              "title": undefined,
+              "toolCallId": "call-2",
+              "toolName": "tool1",
+              "type": "tool-call",
+            },
+            {
+              "dynamic": false,
+              "input": {
+                "value": "value-no-approval",
+              },
+              "output": "result for value-no-approval",
+              "toolCallId": "call-2",
+              "toolName": "tool1",
+              "type": "tool-result",
+            },
+          ]
+        `);
+      });
+
+      it('should add tool approval requests to the response messages', async () => {
+        expect((await result.response).messages).toMatchInlineSnapshot(`
+          [
+            {
+              "content": [
+                {
+                  "input": {
+                    "value": "value-needs-approval",
+                  },
+                  "providerExecuted": undefined,
+                  "providerOptions": undefined,
+                  "toolCallId": "call-1",
+                  "toolName": "tool1",
+                  "type": "tool-call",
+                },
+                {
+                  "approvalId": "id-1",
+                  "toolCallId": "call-1",
+                  "type": "tool-approval-request",
+                },
+                {
+                  "input": {
+                    "value": "value-no-approval",
+                  },
+                  "providerExecuted": undefined,
+                  "providerOptions": undefined,
+                  "toolCallId": "call-2",
+                  "toolName": "tool1",
+                  "type": "tool-call",
+                },
+              ],
+              "role": "assistant",
+            },
+            {
+              "content": [
+                {
+                  "output": {
+                    "type": "text",
+                    "value": "result for value-no-approval",
+                  },
+                  "toolCallId": "call-2",
+                  "toolName": "tool1",
+                  "type": "tool-result",
+                },
+              ],
+              "role": "tool",
+            },
+          ]
+        `);
+      });
+
+      it('should call the needsApproval function with the correct input and options', async () => {
+        expect(needsApprovalCalls).toMatchInlineSnapshot(`[]`);
+      });
+    });
+
+    describe('when a call from a single tool that needs approval is approved', () => {
+      let result: StreamTextResult<any, any>;
+      let prompts: LanguageModelV3Prompt[];
+      let executeFunction: ToolExecuteFunction<any, any>;
+
+      beforeEach(async () => {
+        prompts = [];
+        executeFunction = vi.fn().mockReturnValue('result1');
+        result = streamText({
+          model: new MockLanguageModelV3({
+            doStream: async ({ prompt }) => {
+              prompts.push(prompt);
+              return {
+                stream: convertArrayToReadableStream([
+                  { type: 'stream-start', warnings: [] },
+                  { type: 'text-start', id: '1' },
+                  {
+                    type: 'text-delta',
+                    id: '1',
+                    delta: 'Hello, world!',
+                  },
+                  { type: 'text-end', id: '1' },
+                  {
+                    type: 'finish',
+                    finishReason: { unified: 'stop', raw: 'stop' },
+                    usage: testUsage,
+                  },
+                ]),
+              };
+            },
+          }),
+          tools: {
+            tool1: tool({
+              inputSchema: z.object({ value: z.string() }),
+              execute: executeFunction,
+              needsApproval: true,
+            }),
+          },
+          stopWhen: stepCountIs(3),
+          _internal: {
+            generateId: mockId({ prefix: 'id' }),
+            currentDate: () => new Date(0),
+          },
+          messages: [
+            { role: 'user', content: 'test-input' },
+            {
+              role: 'assistant',
+              content: [
+                {
+                  input: {
+                    value: 'value',
+                  },
+                  providerExecuted: undefined,
+                  providerOptions: undefined,
+                  toolCallId: 'call-1',
+                  toolName: 'tool1',
+                  type: 'tool-call',
+                },
+                {
+                  approvalId: 'id-1',
+                  toolCallId: 'call-1',
+                  type: 'tool-approval-request',
+                },
+              ],
+            },
+            {
+              role: 'tool',
+              content: [
+                {
+                  approvalId: 'id-1',
+                  type: 'tool-approval-response',
+                  approved: true,
+                },
+              ],
+            },
+          ],
+        });
+
+        await result.consumeStream();
+      });
+
+      it('should execute the tool', async () => {
+        expect(executeFunction).toHaveBeenCalledWith(
+          { value: 'value' },
+          expect.objectContaining({
+            abortSignal: undefined,
+            toolCallId: 'call-1',
+            messages: expect.any(Array),
+          }),
+        );
+      });
+
+      it('should call the model with a prompt that includes the tool result', async () => {
+        expect(prompts).toMatchInlineSnapshot(`
+          [
+            [
+              {
+                "content": [
+                  {
+                    "text": "test-input",
+                    "type": "text",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "value": "value",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "call-1",
+                    "toolName": "tool1",
+                    "type": "tool-call",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "text",
+                      "value": "result1",
+                    },
+                    "providerOptions": undefined,
+                    "toolCallId": "call-1",
+                    "toolName": "tool1",
+                    "type": "tool-result",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "tool",
+              },
+            ],
+          ]
+        `);
+      });
+
+      it('should include the tool result in the response messages', async () => {
+        expect((await result.response).messages).toMatchInlineSnapshot(`
+          [
+            {
+              "content": [
+                {
+                  "output": {
+                    "type": "text",
+                    "value": "result1",
+                  },
+                  "toolCallId": "call-1",
+                  "toolName": "tool1",
+                  "type": "tool-result",
+                },
+              ],
+              "role": "tool",
+            },
+            {
+              "content": [
+                {
+                  "providerOptions": undefined,
+                  "text": "Hello, world!",
+                  "type": "text",
+                },
+              ],
+              "role": "assistant",
+            },
+          ]
+        `);
+      });
+
+      it('should include the tool result in the full stream', async () => {
+        expect(await convertAsyncIterableToArray(result.fullStream))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "dynamic": false,
+                "input": {
+                  "value": "value",
+                },
+                "output": "result1",
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-result",
+              },
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
+              },
+              {
+                "id": "1",
+                "type": "text-start",
+              },
+              {
+                "id": "1",
+                "providerMetadata": undefined,
+                "text": "Hello, world!",
+                "type": "text-delta",
+              },
+              {
+                "id": "1",
+                "type": "text-end",
+              },
+              {
+                "finishReason": "stop",
+                "providerMetadata": undefined,
+                "rawFinishReason": "stop",
+                "response": {
+                  "headers": undefined,
+                  "id": "id-0",
+                  "modelId": "mock-model-id",
+                  "timestamp": 1970-01-01T00:00:00.000Z,
+                },
+                "type": "finish-step",
+                "usage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "raw": undefined,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+              },
+              {
+                "finishReason": "stop",
+                "rawFinishReason": "stop",
+                "totalUsage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should include the tool result in the ui message stream', async () => {
+        expect(await convertAsyncIterableToArray(result.toUIMessageStream()))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "output": "result1",
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
+              },
+              {
+                "type": "start-step",
+              },
+              {
+                "id": "1",
+                "type": "text-start",
+              },
+              {
+                "delta": "Hello, world!",
+                "id": "1",
+                "type": "text-delta",
+              },
+              {
+                "id": "1",
+                "type": "text-end",
+              },
+              {
+                "type": "finish-step",
+              },
+              {
+                "finishReason": "stop",
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+    });
+
+    describe('when a call from a single tool with preliminary results that needs approval is approved', () => {
+      let result: StreamTextResult<any, any>;
+      let prompts: LanguageModelV3Prompt[];
+
+      beforeEach(async () => {
+        prompts = [];
+        result = streamText({
+          model: new MockLanguageModelV3({
+            doStream: async ({ prompt }) => {
+              prompts.push(prompt);
+              return {
+                stream: convertArrayToReadableStream([
+                  { type: 'stream-start', warnings: [] },
+                  { type: 'text-start', id: '1' },
+                  {
+                    type: 'text-delta',
+                    id: '1',
+                    delta: 'Hello, world!',
+                  },
+                  { type: 'text-end', id: '1' },
+                  {
+                    type: 'finish',
+                    finishReason: { unified: 'stop', raw: 'stop' },
+                    usage: testUsage,
+                  },
+                ]),
+              };
+            },
+          }),
+          tools: {
+            tool1: tool({
+              inputSchema: z.object({ value: z.string() }),
+              async *execute() {
+                yield 'preliminary-result';
+                yield 'final-result';
+              },
+              needsApproval: true,
+            }),
+          },
+          stopWhen: stepCountIs(3),
+          _internal: {
+            generateId: mockId({ prefix: 'id' }),
+            currentDate: () => new Date(0),
+          },
+          messages: [
+            { role: 'user', content: 'test-input' },
+            {
+              role: 'assistant',
+              content: [
+                {
+                  input: {
+                    value: 'value',
+                  },
+                  providerExecuted: undefined,
+                  providerOptions: undefined,
+                  toolCallId: 'call-1',
+                  toolName: 'tool1',
+                  type: 'tool-call',
+                },
+                {
+                  approvalId: 'id-1',
+                  toolCallId: 'call-1',
+                  type: 'tool-approval-request',
+                },
+              ],
+            },
+            {
+              role: 'tool',
+              content: [
+                {
+                  approvalId: 'id-1',
+                  type: 'tool-approval-response',
+                  approved: true,
+                },
+              ],
+            },
+          ],
+        });
+
+        await result.consumeStream();
+      });
+
+      it('should call the model with a prompt that includes the tool result', async () => {
+        expect(prompts).toMatchInlineSnapshot(`
+          [
+            [
+              {
+                "content": [
+                  {
+                    "text": "test-input",
+                    "type": "text",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "value": "value",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "call-1",
+                    "toolName": "tool1",
+                    "type": "tool-call",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "type": "text",
+                      "value": "final-result",
+                    },
+                    "providerOptions": undefined,
+                    "toolCallId": "call-1",
+                    "toolName": "tool1",
+                    "type": "tool-result",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "tool",
+              },
+            ],
+          ]
+        `);
+      });
+
+      it('should include the tool result in the response messages', async () => {
+        expect((await result.response).messages).toMatchInlineSnapshot(`
+          [
+            {
+              "content": [
+                {
+                  "output": {
+                    "type": "text",
+                    "value": "final-result",
+                  },
+                  "toolCallId": "call-1",
+                  "toolName": "tool1",
+                  "type": "tool-result",
+                },
+              ],
+              "role": "tool",
+            },
+            {
+              "content": [
+                {
+                  "providerOptions": undefined,
+                  "text": "Hello, world!",
+                  "type": "text",
+                },
+              ],
+              "role": "assistant",
+            },
+          ]
+        `);
+      });
+
+      it('should include the tool result in the full stream', async () => {
+        expect(await convertAsyncIterableToArray(result.fullStream))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "input": {
+                  "value": "value",
+                },
+                "output": "preliminary-result",
+                "preliminary": true,
+                "providerExecuted": undefined,
+                "providerOptions": undefined,
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-result",
+              },
+              {
+                "input": {
+                  "value": "value",
+                },
+                "output": "final-result",
+                "preliminary": true,
+                "providerExecuted": undefined,
+                "providerOptions": undefined,
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-result",
+              },
+              {
+                "dynamic": false,
+                "input": {
+                  "value": "value",
+                },
+                "output": "final-result",
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-result",
+              },
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
+              },
+              {
+                "id": "1",
+                "type": "text-start",
+              },
+              {
+                "id": "1",
+                "providerMetadata": undefined,
+                "text": "Hello, world!",
+                "type": "text-delta",
+              },
+              {
+                "id": "1",
+                "type": "text-end",
+              },
+              {
+                "finishReason": "stop",
+                "providerMetadata": undefined,
+                "rawFinishReason": "stop",
+                "response": {
+                  "headers": undefined,
+                  "id": "id-0",
+                  "modelId": "mock-model-id",
+                  "timestamp": 1970-01-01T00:00:00.000Z,
+                },
+                "type": "finish-step",
+                "usage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "raw": undefined,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+              },
+              {
+                "finishReason": "stop",
+                "rawFinishReason": "stop",
+                "totalUsage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should include the tool result in the ui message stream', async () => {
+        expect(await convertAsyncIterableToArray(result.toUIMessageStream()))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "output": "preliminary-result",
+                "preliminary": true,
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
+              },
+              {
+                "output": "final-result",
+                "preliminary": true,
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
+              },
+              {
+                "output": "final-result",
+                "toolCallId": "call-1",
+                "type": "tool-output-available",
+              },
+              {
+                "type": "start-step",
+              },
+              {
+                "id": "1",
+                "type": "text-start",
+              },
+              {
+                "delta": "Hello, world!",
+                "id": "1",
+                "type": "text-delta",
+              },
+              {
+                "id": "1",
+                "type": "text-end",
+              },
+              {
+                "type": "finish-step",
+              },
+              {
+                "finishReason": "stop",
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+    });
+
+    describe('when a call from a single tool that needs approval is denied', () => {
+      let result: StreamTextResult<any, any>;
+      let prompts: LanguageModelV3Prompt[];
+      let executeFunction: ToolExecuteFunction<any, any>;
+
+      beforeEach(async () => {
+        prompts = [];
+        executeFunction = vi.fn().mockReturnValue('result1');
+        result = streamText({
+          model: new MockLanguageModelV3({
+            doStream: async ({ prompt }) => {
+              prompts.push(prompt);
+              return {
+                stream: convertArrayToReadableStream([
+                  { type: 'stream-start', warnings: [] },
+                  { type: 'text-start', id: '1' },
+                  {
+                    type: 'text-delta',
+                    id: '1',
+                    delta: 'Hello, world!',
+                  },
+                  { type: 'text-end', id: '1' },
+                  {
+                    type: 'finish',
+                    finishReason: { unified: 'stop', raw: 'stop' },
+                    usage: testUsage,
+                  },
+                ]),
+              };
+            },
+          }),
+          tools: {
+            tool1: tool({
+              inputSchema: z.object({ value: z.string() }),
+              execute: executeFunction,
+              needsApproval: true,
+            }),
+          },
+          stopWhen: stepCountIs(3),
+          _internal: {
+            generateId: mockId({ prefix: 'id' }),
+            currentDate: () => new Date(0),
+          },
+          messages: [
+            { role: 'user', content: 'test-input' },
+            {
+              role: 'assistant',
+              content: [
+                {
+                  input: {
+                    value: 'value',
+                  },
+                  providerExecuted: undefined,
+                  providerOptions: undefined,
+                  toolCallId: 'call-1',
+                  toolName: 'tool1',
+                  type: 'tool-call',
+                },
+                {
+                  approvalId: 'id-1',
+                  toolCallId: 'call-1',
+                  type: 'tool-approval-request',
+                },
+              ],
+            },
+            {
+              role: 'tool',
+              content: [
+                {
+                  approvalId: 'id-1',
+                  type: 'tool-approval-response',
+                  approved: false,
+                },
+              ],
+            },
+          ],
+        });
+
+        await result.consumeStream();
+      });
+
+      it('should not execute the tool', async () => {
+        expect(executeFunction).not.toHaveBeenCalled();
+      });
+
+      it('should call the model with a prompt that includes the tool result', async () => {
+        expect(prompts).toMatchInlineSnapshot(`
+          [
+            [
+              {
+                "content": [
+                  {
+                    "text": "test-input",
+                    "type": "text",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "value": "value",
+                    },
+                    "providerExecuted": undefined,
+                    "providerOptions": undefined,
+                    "toolCallId": "call-1",
+                    "toolName": "tool1",
+                    "type": "tool-call",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "output": {
+                      "reason": undefined,
+                      "type": "execution-denied",
+                    },
+                    "providerOptions": undefined,
+                    "toolCallId": "call-1",
+                    "toolName": "tool1",
+                    "type": "tool-result",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "tool",
+              },
+            ],
+          ]
+        `);
+      });
+
+      it('should include the tool error in the response messages', async () => {
+        expect((await result.response).messages).toMatchInlineSnapshot(`
+          [
+            {
+              "content": [
+                {
+                  "output": {
+                    "reason": undefined,
+                    "type": "execution-denied",
+                  },
+                  "toolCallId": "call-1",
+                  "toolName": "tool1",
+                  "type": "tool-result",
+                },
+              ],
+              "role": "tool",
+            },
+            {
+              "content": [
+                {
+                  "providerOptions": undefined,
+                  "text": "Hello, world!",
+                  "type": "text",
+                },
+              ],
+              "role": "assistant",
+            },
+          ]
+        `);
+      });
+
+      it('should include the tool denied in the full stream', async () => {
+        expect(await convertAsyncIterableToArray(result.fullStream))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "toolCallId": "call-1",
+                "toolName": "tool1",
+                "type": "tool-output-denied",
+              },
+              {
+                "request": {},
+                "type": "start-step",
+                "warnings": [],
+              },
+              {
+                "id": "1",
+                "type": "text-start",
+              },
+              {
+                "id": "1",
+                "providerMetadata": undefined,
+                "text": "Hello, world!",
+                "type": "text-delta",
+              },
+              {
+                "id": "1",
+                "type": "text-end",
+              },
+              {
+                "finishReason": "stop",
+                "providerMetadata": undefined,
+                "rawFinishReason": "stop",
+                "response": {
+                  "headers": undefined,
+                  "id": "id-0",
+                  "modelId": "mock-model-id",
+                  "timestamp": 1970-01-01T00:00:00.000Z,
+                },
+                "type": "finish-step",
+                "usage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "raw": undefined,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+              },
+              {
+                "finishReason": "stop",
+                "rawFinishReason": "stop",
+                "totalUsage": {
+                  "cachedInputTokens": undefined,
+                  "inputTokenDetails": {
+                    "cacheReadTokens": undefined,
+                    "cacheWriteTokens": undefined,
+                    "noCacheTokens": 3,
+                  },
+                  "inputTokens": 3,
+                  "outputTokenDetails": {
+                    "reasoningTokens": undefined,
+                    "textTokens": 10,
+                  },
+                  "outputTokens": 10,
+                  "reasoningTokens": undefined,
+                  "totalTokens": 13,
+                },
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+
+      it('should include the tool denied in the ui message stream', async () => {
+        expect(await convertAsyncIterableToArray(result.toUIMessageStream()))
+          .toMatchInlineSnapshot(`
+            [
+              {
+                "type": "start",
+              },
+              {
+                "toolCallId": "call-1",
+                "type": "tool-output-denied",
+              },
+              {
+                "type": "start-step",
+              },
+              {
+                "id": "1",
+                "type": "text-start",
+              },
+              {
+                "delta": "Hello, world!",
+                "id": "1",
+                "type": "text-delta",
+              },
+              {
+                "id": "1",
+                "type": "text-end",
+              },
+              {
+                "type": "finish-step",
+              },
+              {
+                "finishReason": "stop",
+                "type": "finish",
+              },
+            ]
+          `);
+      });
+    });
+
+    describe('provider-executed tool (MCP) approval', () => {
+      describe('when a provider-executed tool emits tool-approval-request', () => {
+        let result: StreamTextResult<any, any>;
+
+        beforeEach(async () => {
+          result = streamText({
+            model: createTestModel({
+              stream: convertArrayToReadableStream([
+                { type: 'stream-start', warnings: [] },
+                {
+                  type: 'tool-call',
+                  toolCallId: 'mcp-call-1',
+                  toolName: 'mcp_tool',
+                  input: `{ "query": "test" }`,
+                  providerExecuted: true,
+                },
+                {
+                  type: 'tool-approval-request',
+                  approvalId: 'mcp-approval-1',
+                  toolCallId: 'mcp-call-1',
+                },
+                {
+                  type: 'finish',
+                  finishReason: { unified: 'tool-calls', raw: undefined },
+                  usage: testUsage,
+                },
+              ]),
+            }),
+            tools: {
+              mcp_tool: {
+                type: 'provider',
+                id: 'test.mcp_tool',
+                inputSchema: z.object({ query: z.string() }),
+                args: {},
+              },
+            },
+            prompt: 'test-input',
+            _internal: {
+              generateId: mockId({ prefix: 'id' }),
+              currentDate: () => new Date(0),
+            },
+          });
+        });
+
+        it('should add provider-executed tool approval request to full stream', async () => {
+          expect(await convertAsyncIterableToArray(result.fullStream))
+            .toMatchInlineSnapshot(`
+              [
+                {
+                  "type": "start",
+                },
+                {
+                  "request": {},
+                  "type": "start-step",
+                  "warnings": [],
+                },
+                {
+                  "input": {
+                    "query": "test",
+                  },
+                  "providerExecuted": true,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "mcp-call-1",
+                  "toolName": "mcp_tool",
+                  "type": "tool-call",
+                },
+                {
+                  "approvalId": "mcp-approval-1",
+                  "toolCall": {
+                    "input": {
+                      "query": "test",
+                    },
+                    "providerExecuted": true,
+                    "providerMetadata": undefined,
+                    "title": undefined,
+                    "toolCallId": "mcp-call-1",
+                    "toolName": "mcp_tool",
+                    "type": "tool-call",
+                  },
+                  "type": "tool-approval-request",
+                },
+                {
+                  "finishReason": "tool-calls",
+                  "providerMetadata": undefined,
+                  "rawFinishReason": undefined,
+                  "response": {
+                    "headers": undefined,
+                    "id": "id-0",
+                    "modelId": "mock-model-id",
+                    "timestamp": 1970-01-01T00:00:00.000Z,
+                  },
+                  "type": "finish-step",
+                  "usage": {
+                    "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
+                    "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
+                    "outputTokens": 10,
+                    "raw": undefined,
+                    "reasoningTokens": undefined,
+                    "totalTokens": 13,
+                  },
+                },
+                {
+                  "finishReason": "tool-calls",
+                  "rawFinishReason": undefined,
+                  "totalUsage": {
+                    "cachedInputTokens": undefined,
+                    "inputTokenDetails": {
+                      "cacheReadTokens": undefined,
+                      "cacheWriteTokens": undefined,
+                      "noCacheTokens": 3,
+                    },
+                    "inputTokens": 3,
+                    "outputTokenDetails": {
+                      "reasoningTokens": undefined,
+                      "textTokens": 10,
+                    },
+                    "outputTokens": 10,
+                    "reasoningTokens": undefined,
+                    "totalTokens": 13,
+                  },
+                  "type": "finish",
+                },
+              ]
+            `);
+        });
+
+        it('should add provider-executed tool approval request to UI message stream', async () => {
+          expect(await convertAsyncIterableToArray(result.toUIMessageStream()))
+            .toMatchInlineSnapshot(`
+              [
+                {
+                  "type": "start",
+                },
+                {
+                  "type": "start-step",
+                },
+                {
+                  "input": {
+                    "query": "test",
+                  },
+                  "providerExecuted": true,
+                  "toolCallId": "mcp-call-1",
+                  "toolName": "mcp_tool",
+                  "type": "tool-input-available",
+                },
+                {
+                  "approvalId": "mcp-approval-1",
+                  "toolCallId": "mcp-call-1",
+                  "type": "tool-approval-request",
+                },
+                {
+                  "type": "finish-step",
+                },
+                {
+                  "finishReason": "tool-calls",
+                  "type": "finish",
+                },
+              ]
+            `);
+        });
+
+        it('should add provider-executed tool approval request to content', async () => {
+          expect(await result.content).toMatchInlineSnapshot(`
+            [
+              {
+                "input": {
+                  "query": "test",
+                },
+                "providerExecuted": true,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "mcp-call-1",
+                "toolName": "mcp_tool",
+                "type": "tool-call",
+              },
+              {
+                "approvalId": "mcp-approval-1",
+                "toolCall": {
+                  "input": {
+                    "query": "test",
+                  },
+                  "providerExecuted": true,
+                  "providerMetadata": undefined,
+                  "title": undefined,
+                  "toolCallId": "mcp-call-1",
+                  "toolName": "mcp_tool",
+                  "type": "tool-call",
+                },
+                "type": "tool-approval-request",
+              },
+            ]
+          `);
+        });
+
+        it('should add provider-executed tool approval request to response messages', async () => {
+          expect((await result.response).messages).toMatchInlineSnapshot(`
+            [
+              {
+                "content": [
+                  {
+                    "input": {
+                      "query": "test",
+                    },
+                    "providerExecuted": true,
+                    "providerOptions": undefined,
+                    "toolCallId": "mcp-call-1",
+                    "toolName": "mcp_tool",
+                    "type": "tool-call",
+                  },
+                  {
+                    "approvalId": "mcp-approval-1",
+                    "toolCallId": "mcp-call-1",
+                    "type": "tool-approval-request",
+                  },
+                ],
+                "role": "assistant",
+              },
+            ]
+          `);
+        });
+
+        it('should have tool-calls finish reason', async () => {
+          expect(await result.finishReason).toBe('tool-calls');
+        });
+      });
+
+      describe('when a provider-executed tool approval is approved', () => {
+        let result: StreamTextResult<any, any>;
+        let prompts: LanguageModelV3Prompt[];
+
+        beforeEach(async () => {
+          prompts = [];
+          result = streamText({
+            model: new MockLanguageModelV3({
+              doStream: async ({ prompt }) => {
+                prompts.push(prompt);
+                return {
+                  stream: convertArrayToReadableStream([
+                    { type: 'stream-start', warnings: [] },
+                    {
+                      type: 'tool-call',
+                      toolCallId: 'mcp-call-1',
+                      toolName: 'mcp_tool',
+                      input: `{ "query": "test" }`,
+                      providerExecuted: true,
+                    },
+                    {
+                      type: 'tool-result',
+                      toolCallId: 'mcp-call-1',
+                      toolName: 'mcp_tool',
+                      result: { shortened_url: 'https://short.url/abc' },
+                      providerExecuted: true,
+                    },
+                    {
+                      type: 'text-start',
+                      id: '1',
+                    },
+                    {
+                      type: 'text-delta',
+                      id: '1',
+                      delta:
+                        'Here is your shortened URL: https://short.url/abc',
+                    },
+                    {
+                      type: 'text-end',
+                      id: '1',
+                    },
+                    {
+                      type: 'finish',
+                      finishReason: { unified: 'stop', raw: 'stop' },
+                      usage: testUsage,
+                    },
+                  ]),
+                };
+              },
+            }),
+            tools: {
+              mcp_tool: {
+                type: 'provider',
+                id: 'test.mcp_tool',
+                inputSchema: z.object({ query: z.string() }),
+                args: {},
+              },
+            },
+            _internal: {
+              generateId: mockId({ prefix: 'id' }),
+              currentDate: () => new Date(0),
+            },
+            messages: [
+              {
+                role: 'user',
+                content: 'Shorten this URL: https://example.com',
+              },
+              {
+                role: 'assistant',
+                content: [
+                  {
+                    input: { query: 'test' },
+                    providerExecuted: true,
+                    providerOptions: undefined,
+                    toolCallId: 'mcp-call-1',
+                    toolName: 'mcp_tool',
+                    type: 'tool-call',
+                  },
+                  {
+                    approvalId: 'mcp-approval-1',
+                    toolCallId: 'mcp-call-1',
+                    type: 'tool-approval-request',
+                  },
+                ],
+              },
+              {
+                role: 'tool',
+                content: [
+                  {
+                    approvalId: 'mcp-approval-1',
+                    type: 'tool-approval-response',
+                    approved: true,
+                    providerExecuted: true,
+                  },
+                ],
+              },
+            ],
+          });
+        });
+
+        it('should send tool-approval-response to the model', async () => {
+          await result.consumeStream();
+          expect(prompts[0]).toMatchInlineSnapshot(`
+            [
+              {
+                "content": [
+                  {
+                    "text": "Shorten this URL: https://example.com",
+                    "type": "text",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "query": "test",
+                    },
+                    "providerExecuted": true,
+                    "providerOptions": undefined,
+                    "toolCallId": "mcp-call-1",
+                    "toolName": "mcp_tool",
+                    "type": "tool-call",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "approvalId": "mcp-approval-1",
+                    "approved": true,
+                    "reason": undefined,
+                    "type": "tool-approval-response",
+                  },
+                  {
+                    "approvalId": "mcp-approval-1",
+                    "approved": true,
+                    "reason": undefined,
+                    "type": "tool-approval-response",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "tool",
+              },
+            ]
+          `);
+        });
+
+        it('should include provider-executed tool result in content', async () => {
+          expect(await result.content).toMatchInlineSnapshot(`
+            [
+              {
+                "input": {
+                  "query": "test",
+                },
+                "providerExecuted": true,
+                "providerMetadata": undefined,
+                "title": undefined,
+                "toolCallId": "mcp-call-1",
+                "toolName": "mcp_tool",
+                "type": "tool-call",
+              },
+              {
+                "dynamic": undefined,
+                "input": {
+                  "query": "test",
+                },
+                "output": {
+                  "shortened_url": "https://short.url/abc",
+                },
+                "providerExecuted": true,
+                "toolCallId": "mcp-call-1",
+                "toolName": "mcp_tool",
+                "type": "tool-result",
+              },
+              {
+                "providerMetadata": undefined,
+                "text": "Here is your shortened URL: https://short.url/abc",
+                "type": "text",
+              },
+            ]
+          `);
+        });
+      });
+
+      describe('when a provider-executed tool approval is denied', () => {
+        let result: StreamTextResult<any, any>;
+        let prompts: LanguageModelV3Prompt[];
+
+        beforeEach(async () => {
+          prompts = [];
+          result = streamText({
+            model: new MockLanguageModelV3({
+              doStream: async ({ prompt }) => {
+                prompts.push(prompt);
+                return {
+                  stream: convertArrayToReadableStream([
+                    { type: 'stream-start', warnings: [] },
+                    {
+                      type: 'text-start',
+                      id: '1',
+                    },
+                    {
+                      type: 'text-delta',
+                      id: '1',
+                      delta:
+                        'I understand. The tool execution was not approved.',
+                    },
+                    {
+                      type: 'text-end',
+                      id: '1',
+                    },
+                    {
+                      type: 'finish',
+                      finishReason: { unified: 'stop', raw: 'stop' },
+                      usage: testUsage,
+                    },
+                  ]),
+                };
+              },
+            }),
+            tools: {
+              mcp_tool: {
+                type: 'provider',
+                id: 'test.mcp_tool',
+                inputSchema: z.object({ query: z.string() }),
+                args: {},
+              },
+            },
+            _internal: {
+              generateId: mockId({ prefix: 'id' }),
+              currentDate: () => new Date(0),
+            },
+            messages: [
+              {
+                role: 'user',
+                content: 'Shorten this URL: https://example.com',
+              },
+              {
+                role: 'assistant',
+                content: [
+                  {
+                    input: { query: 'test' },
+                    providerExecuted: true,
+                    providerOptions: undefined,
+                    toolCallId: 'mcp-call-1',
+                    toolName: 'mcp_tool',
+                    type: 'tool-call',
+                  },
+                  {
+                    approvalId: 'mcp-approval-1',
+                    toolCallId: 'mcp-call-1',
+                    type: 'tool-approval-request',
+                  },
+                ],
+              },
+              {
+                role: 'tool',
+                content: [
+                  {
+                    approvalId: 'mcp-approval-1',
+                    type: 'tool-approval-response',
+                    approved: false,
+                    reason: 'User denied the request',
+                    providerExecuted: true,
+                  },
+                ],
+              },
+            ],
+          });
+        });
+
+        it('should send denied tool-approval-response to the model', async () => {
+          await result.consumeStream();
+          expect(prompts[0]).toMatchInlineSnapshot(`
+            [
+              {
+                "content": [
+                  {
+                    "text": "Shorten this URL: https://example.com",
+                    "type": "text",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+              {
+                "content": [
+                  {
+                    "input": {
+                      "query": "test",
+                    },
+                    "providerExecuted": true,
+                    "providerOptions": undefined,
+                    "toolCallId": "mcp-call-1",
+                    "toolName": "mcp_tool",
+                    "type": "tool-call",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "assistant",
+              },
+              {
+                "content": [
+                  {
+                    "approvalId": "mcp-approval-1",
+                    "approved": false,
+                    "reason": "User denied the request",
+                    "type": "tool-approval-response",
+                  },
+                  {
+                    "approvalId": "mcp-approval-1",
+                    "approved": false,
+                    "reason": "User denied the request",
+                    "type": "tool-approval-response",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "tool",
+              },
+            ]
+          `);
+        });
+
+        it('should include text response from model in content', async () => {
+          expect(await result.content).toMatchInlineSnapshot(`
+            [
+              {
+                "providerMetadata": undefined,
+                "text": "I understand. The tool execution was not approved.",
+                "type": "text",
+              },
+            ]
+          `);
+        });
+
+        it('should have stop finish reason', async () => {
+          expect(await result.finishReason).toBe('stop');
+        });
+      });
+    });
+  });
+
+  describe('prepareStep with model switch and image URLs', () => {
+    it('should use the prepareStep model supportedUrls for download decision', async () => {
+      const downloadCalls: Array<{ url: URL; isUrlSupportedByModel: boolean }> =
+        [];
+      const languageModelCalls: Array<LanguageModelV3CallOptions> = [];
+
+      const modelWithImageUrlSupport = new MockLanguageModelV3({
+        provider: 'with-image-url-support',
+        modelId: 'with-image-url-support',
+        supportedUrls: {
+          'image/*': [/^https?:\/\/.*$/],
+        },
+        doStream: async options => {
+          languageModelCalls.push(options);
+          return {
+            stream: convertArrayToReadableStream([
+              { type: 'text-start', id: '1' },
+              {
+                type: 'text-delta',
+                id: '1',
+                delta: 'response from with-image-url-support',
+              },
+              { type: 'text-end', id: '1' },
+            ]),
+          };
+        },
+      });
+
+      const modelWithoutImageUrlSupport = new MockLanguageModelV3({
+        provider: 'without-image-url-support',
+        modelId: 'without-image-url-support',
+        supportedUrls: {},
+        doStream: async options => {
+          languageModelCalls.push(options);
+          return {
+            stream: convertArrayToReadableStream([
+              { type: 'text-start', id: '1' },
+              {
+                type: 'text-delta',
+                id: '1',
+                delta: 'response from without-image-url-support',
+              },
+              { type: 'text-end', id: '1' },
+            ]),
+          };
+        },
+      });
+
+      const customDownload = async (
+        requestedDownloads: Array<{ url: URL; isUrlSupportedByModel: boolean }>,
+      ) => {
+        downloadCalls.push(...requestedDownloads);
+        return requestedDownloads.map(download =>
+          download.isUrlSupportedByModel
+            ? null
+            : {
+                data: new Uint8Array([1, 2, 3, 4]),
+                mediaType: 'image/png',
+              },
+        );
+      };
+
+      const result = streamText({
+        model: modelWithImageUrlSupport,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: 'Describe this image' },
+              { type: 'image', image: 'https://example.com/test.jpg' },
+            ],
+          },
+        ],
+        prepareStep: async () => {
+          return {
+            model: modelWithoutImageUrlSupport, // model switch
+          };
+        },
+        experimental_download: customDownload,
+      });
+
+      await result.consumeStream();
+
+      expect(downloadCalls).toMatchInlineSnapshot(`
+        [
+          {
+            "isUrlSupportedByModel": false,
+            "url": "https://example.com/test.jpg",
+          },
+        ]
+      `);
+
+      expect(languageModelCalls).toMatchInlineSnapshot(`
+        [
+          {
+            "abortSignal": undefined,
+            "frequencyPenalty": undefined,
+            "headers": undefined,
+            "includeRawChunks": false,
+            "maxOutputTokens": undefined,
+            "presencePenalty": undefined,
+            "prompt": [
+              {
+                "content": [
+                  {
+                    "providerOptions": undefined,
+                    "text": "Describe this image",
+                    "type": "text",
+                  },
+                  {
+                    "data": Uint8Array [
+                      1,
+                      2,
+                      3,
+                      4,
+                    ],
+                    "filename": undefined,
+                    "mediaType": "image/png",
+                    "providerOptions": undefined,
+                    "type": "file",
+                  },
+                ],
+                "providerOptions": undefined,
+                "role": "user",
+              },
+            ],
+            "providerOptions": undefined,
+            "responseFormat": undefined,
+            "seed": undefined,
+            "stopSequences": undefined,
+            "temperature": undefined,
+            "toolChoice": undefined,
+            "tools": undefined,
+            "topK": undefined,
+            "topP": undefined,
+          },
+        ]
+      `);
+
+      expect(await result.text).toBe('response from without-image-url-support');
     });
   });
 });

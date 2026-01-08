@@ -1,4 +1,4 @@
-import { createUIMessageStreamResponse, simulateReadableStream } from 'ai';
+import { createUIMessageStreamResponse, simulateReadableStream } from '@zenning/ai';
 
 export async function POST(req: Request) {
   return createUIMessageStreamResponse({

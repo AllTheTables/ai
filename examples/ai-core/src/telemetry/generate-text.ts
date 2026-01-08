@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { generateText } from 'ai';
+import { openai } from '@zenning/openai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 import { NodeSDK } from '@opentelemetry/sdk-node';

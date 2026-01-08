@@ -1,5 +1,5 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
-import { generateText } from 'ai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

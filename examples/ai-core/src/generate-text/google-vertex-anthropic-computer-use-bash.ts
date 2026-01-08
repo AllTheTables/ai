@@ -1,5 +1,5 @@
-import { vertexAnthropic } from '@ai-sdk/google-vertex/anthropic';
-import { generateText, stepCountIs } from 'ai';
+import { vertexAnthropic } from '@zenning/google-vertex/anthropic';
+import { generateText, stepCountIs } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

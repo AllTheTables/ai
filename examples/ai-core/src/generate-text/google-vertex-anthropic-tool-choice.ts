@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { vertexAnthropic } from '@ai-sdk/google-vertex/anthropic';
-import { generateText, tool } from 'ai';
+import { vertexAnthropic } from '@zenning/google-vertex/anthropic';
+import { generateText, tool } from '@zenning/ai';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';
 

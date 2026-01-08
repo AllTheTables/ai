@@ -1,5 +1,5 @@
-import { fireworks } from '@ai-sdk/fireworks';
-import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from 'ai';
+import { fireworks } from '@zenning/fireworks';
+import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from '@zenning/ai';
 import 'dotenv/config';
 import { weatherTool } from '../tools/weather-tool';
 

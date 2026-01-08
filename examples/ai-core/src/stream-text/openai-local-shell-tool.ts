@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { stepCountIs, streamText } from 'ai';
+import { openai } from '@zenning/openai';
+import { stepCountIs, streamText } from '@zenning/ai';
 import { run } from '../lib/run';
 
 run(async () => {

@@ -1,5 +1,5 @@
-import { google } from '@ai-sdk/google';
-import { generateText } from 'ai';
+import { google } from '@zenning/google';
+import { generateText } from '@zenning/ai';
 import fs from 'node:fs';
 import 'dotenv/config';
 
@@ -21,6 +21,10 @@ async function main() {
       console.log(`Generated and saved image: output/${fileName}`);
     }
   }
+
+  console.log();
+  console.log('token usage:', result.usage);
+  console.log('finish reason:', result.finishReason);
 }
 
 main().catch(console.error);

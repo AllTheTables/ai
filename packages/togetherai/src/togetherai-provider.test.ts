@@ -2,25 +2,30 @@ import {
   OpenAICompatibleChatLanguageModel,
   OpenAICompatibleCompletionLanguageModel,
   OpenAICompatibleEmbeddingModel,
-} from '@ai-sdk/openai-compatible';
-import { LanguageModelV3, EmbeddingModelV3 } from '@ai-sdk/provider';
-import { loadApiKey, withUserAgentSuffix } from '@ai-sdk/provider-utils';
+} from '@zenning/openai-compatible';
+import {
+  EmbeddingModelV3,
+  LanguageModelV3,
+  RerankingModelV3,
+} from '@zenning/provider';
+import { loadApiKey } from '@zenning/provider-utils';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { TogetherAIRerankingModel } from './reranking/togetherai-reranking-model';
 import { TogetherAIImageModel } from './togetherai-image-model';
 import { createTogetherAI } from './togetherai-provider';
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 
 // Add type assertion for the mocked class
 const OpenAICompatibleChatLanguageModelMock =
   OpenAICompatibleChatLanguageModel as unknown as Mock;
 
-vi.mock('@ai-sdk/openai-compatible', () => ({
+vi.mock('@zenning/openai-compatible', () => ({
   OpenAICompatibleChatLanguageModel: vi.fn(),
   OpenAICompatibleCompletionLanguageModel: vi.fn(),
   OpenAICompatibleEmbeddingModel: vi.fn(),
 }));
 
-vi.mock('@ai-sdk/provider-utils', async () => {
-  const actual = await vi.importActual('@ai-sdk/provider-utils');
+vi.mock('@zenning/provider-utils', async () => {
+  const actual = await vi.importActual('@zenning/provider-utils');
   return {
     ...actual,
     loadApiKey: vi.fn().mockReturnValue('mock-api-key'),
@@ -32,10 +37,14 @@ vi.mock('./togetherai-image-model', () => ({
   TogetherAIImageModel: vi.fn(),
 }));
 
+vi.mock('./reranking/togetherai-reranking-model', () => ({
+  TogetherAIRerankingModel: vi.fn(),
+}));
+
 describe('TogetherAIProvider', () => {
   let mockLanguageModel: LanguageModelV3;
-  let mockEmbeddingModel: EmbeddingModelV3<string>;
-  let createOpenAICompatibleMock: Mock;
+  let mockEmbeddingModel: EmbeddingModelV3;
+  let mockRerankingModel: RerankingModelV3;
 
   beforeEach(() => {
     // Mock implementations of models
@@ -44,7 +53,10 @@ describe('TogetherAIProvider', () => {
     } as LanguageModelV3;
     mockEmbeddingModel = {
       // Add any required methods for EmbeddingModelV3
-    } as EmbeddingModelV3<string>;
+    } as EmbeddingModelV3;
+    mockRerankingModel = {
+      // Add any required methods for RerankingModelV3
+    } as RerankingModelV3;
 
     // Reset mocks
     vi.clearAllMocks();
@@ -120,12 +132,12 @@ describe('TogetherAIProvider', () => {
     });
   });
 
-  describe('textEmbeddingModel', () => {
+  describe('embeddingModel', () => {
     it('should construct a text embedding model with correct configuration', () => {
       const provider = createTogetherAI();
       const modelId = 'together-embedding-model';
 
-      const model = provider.textEmbeddingModel(modelId);
+      const model = provider.embeddingModel(modelId);
 
       expect(model).toBeInstanceOf(OpenAICompatibleEmbeddingModel);
     });
@@ -162,6 +174,23 @@ describe('TogetherAIProvider', () => {
           baseURL: 'https://custom.url/',
         }),
       );
+    });
+  });
+
+  describe('rerankingModel', () => {
+    it('should construct a reranking model with correct configuration', () => {
+      const provider = createTogetherAI();
+      const modelId = 'Salesforce/Llama-Rank-v1';
+      0;
+      const model = provider.rerankingModel(modelId);
+
+      expect(TogetherAIRerankingModel).toHaveBeenCalledWith(
+        modelId,
+        expect.objectContaining({
+          baseURL: 'https://api.together.xyz/v1/',
+        }),
+      );
+      expect(model).toBeInstanceOf(TogetherAIRerankingModel);
     });
   });
 });

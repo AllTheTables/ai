@@ -3,10 +3,10 @@ import { createTransformer } from '../lib/create-transformer';
 export default createTransformer((fileInfo, api, options, context) => {
   const { j, root } = context;
 
-  // Track imports from 'ai' package only
+  // Track imports from '@zenning/ai' package only
   const targetImports = new Set<string>();
 
-  // First pass - collect imports from 'ai' package
+  // First pass - collect imports from '@zenning/ai' package
   root
     .find(j.ImportDeclaration)
     .filter(path => path.node.source.value === 'ai')
@@ -24,7 +24,7 @@ export default createTransformer((fileInfo, api, options, context) => {
       });
     });
 
-  // Second pass - replace imports from 'ai' package only
+  // Second pass - replace imports from '@zenning/ai' package only
   root
     .find(j.ImportDeclaration)
     .filter(path => path.node.source.value === 'ai')
@@ -51,7 +51,7 @@ export default createTransformer((fileInfo, api, options, context) => {
     .find(j.Identifier)
     .filter(path => {
       // Only replace if:
-      // 1. It's one of our tracked imports from 'ai'
+      // 1. It's one of our tracked imports from '@zenning/ai'
       // 2. It's not part of an import declaration (to avoid replacing other imports)
       return (
         targetImports.has(path.node.name) &&

@@ -1,4 +1,4 @@
 // @ts-nocheck
-import { formatDataStreamPart } from 'ai';
+import { formatDataStreamPart } from '@zenning/ai';
 
 const response = new Response(formatDataStreamPart('text', cached));

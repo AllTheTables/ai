@@ -1,5 +1,5 @@
-import { google } from '@ai-sdk/google';
-import { streamText } from 'ai';
+import { google } from '@zenning/google';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 import { presentImages } from '../lib/present-image';
 

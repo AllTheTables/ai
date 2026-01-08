@@ -1,20 +1,20 @@
-import type { GoogleGenerativeAIProviderMetadata } from '@ai-sdk/google';
+import type { GoogleGenerativeAIProviderMetadata } from '@zenning/google';
 import type {
   EmbeddingModelV3,
   ImageModelV3,
   LanguageModelV3,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   APICallError,
   embed,
   embedMany,
-  experimental_generateImage as generateImage,
+  generateImage,
   generateObject,
   generateText,
   stepCountIs,
   streamObject,
   streamText,
-} from 'ai';
+} from '@zenning/ai';
 import fs from 'fs';
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
@@ -58,9 +58,9 @@ export const createLanguageModelWithCapabilities = (
 });
 
 export const createEmbeddingModelWithCapabilities = (
-  model: EmbeddingModelV3<string>,
+  model: EmbeddingModelV3,
   capabilities: ModelCapabilities = ['embedding'],
-): ModelWithCapabilities<EmbeddingModelV3<string>> => ({
+): ModelWithCapabilities<EmbeddingModelV3> => ({
   model,
   capabilities,
 });
@@ -76,7 +76,7 @@ export const createImageModelWithCapabilities = (
 export interface ModelVariants {
   invalidModel?: LanguageModelV3;
   languageModels?: ModelWithCapabilities<LanguageModelV3>[];
-  embeddingModels?: ModelWithCapabilities<EmbeddingModelV3<string>>[];
+  embeddingModels?: ModelWithCapabilities<EmbeddingModelV3>[];
   invalidImageModel?: ImageModelV3;
   imageModels?: ModelWithCapabilities<ImageModelV3>[];
 }

@@ -1,5 +1,5 @@
-import { fireworks } from '@ai-sdk/fireworks';
-import { streamObject } from 'ai';
+import { fireworks } from '@zenning/fireworks';
+import { streamObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

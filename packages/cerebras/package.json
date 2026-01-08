@@ -1,6 +1,6 @@
 {
-  "name": "@ai-sdk/cerebras",
-  "version": "1.1.0-beta.7",
+  "name": "@zenning/cerebras",
+  "version": "2.0.7",
   "license": "Apache-2.0",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -8,12 +8,13 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**/*",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "README.md"
   ],
   "scripts": {
     "build": "pnpm clean && tsup --tsconfig tsconfig.build.json",
     "build:watch": "pnpm clean && tsup --watch",
-    "clean": "rm -rf dist *.tsbuildinfo",
+    "clean": "del-cli dist *.tsbuildinfo",
     "lint": "eslint \"./**/*.ts*\"",
     "type-check": "tsc --build",
     "prettier-check": "prettier --check \"./**/*.ts*\"",
@@ -32,9 +33,9 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "workspace:*",
-    "@ai-sdk/provider": "workspace:*",
-    "@ai-sdk/provider-utils": "workspace:*"
+    "@zenning/openai-compatible": "workspace:*",
+    "@zenning/provider": "workspace:*",
+    "@zenning/provider-utils": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "20.17.24",
@@ -62,5 +63,8 @@
   },
   "keywords": [
     "ai"
-  ]
+  ],
+  "description": "The **Cerebras provider** for the [AI SDK](https://ai-sdk.dev/docs) contains language model support for [Cerebras](https://cerebras.ai), offering high-speed AI model inference powered by Cerebras Wafer-Scale Engines and CS-3 systems.",
+  "author": "",
+  "type": "commonjs"
 }

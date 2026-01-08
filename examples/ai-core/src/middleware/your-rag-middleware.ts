@@ -1,8 +1,9 @@
-import { LanguageModelV3Middleware } from '@ai-sdk/provider';
+import { LanguageModelV3Middleware } from '@zenning/provider';
 import { addToLastUserMessage } from './add-to-last-user-message';
 import { getLastUserMessageText } from './get-last-user-message-text';
 
 export const yourRagMiddleware: LanguageModelV3Middleware = {
+  specificationVersion: 'v3',
   transformParams: async ({ params }) => {
     const lastUserMessageText = getLastUserMessageText({
       prompt: params.prompt,

@@ -1,7 +1,7 @@
-import { openai } from '@ai-sdk/openai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { google } from '@ai-sdk/google';
-import { streamText } from 'ai';
+import { openai } from '@zenning/openai';
+import { anthropic } from '@zenning/anthropic';
+import { google } from '@zenning/google';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 import { describe, expect, it, vi } from 'vitest';
 

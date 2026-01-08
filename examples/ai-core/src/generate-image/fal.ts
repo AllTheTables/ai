@@ -1,5 +1,5 @@
-import { fal } from '@ai-sdk/fal';
-import { experimental_generateImage as generateImage } from 'ai';
+import { fal } from '@zenning/fal';
+import { generateImage } from '@zenning/ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';
 

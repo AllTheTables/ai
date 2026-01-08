@@ -1,5 +1,5 @@
-import { mistral, type MistralLanguageModelOptions } from '@ai-sdk/mistral';
-import { generateText } from 'ai';
+import { mistral, type MistralLanguageModelOptions } from '@zenning/mistral';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

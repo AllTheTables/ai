@@ -1,11 +1,11 @@
-import { anthropic } from '@ai-sdk/anthropic';
+import { anthropic } from '@zenning/anthropic';
 import {
   convertToModelMessages,
   InferUITool,
   streamText,
   UIDataTypes,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 export type SourcesChatMessage = UIMessage<
   never,
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     tools: {
       web_search: anthropic.tools.webSearch_20250305(),
     },
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
 
   return result.toUIMessageStreamResponse({

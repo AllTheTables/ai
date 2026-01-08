@@ -1,9 +1,9 @@
 'use client';
 
-import ChatInput from '@/component/chat-input';
-import { zodSchema } from '@ai-sdk/provider-utils';
-import { UIMessage, useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import ChatInput from '@/components/chat-input';
+import { zodSchema } from '@zenning/provider-utils';
+import { UIMessage, useChat } from '@zenning/react';
+import { DefaultChatTransport } from '@zenning/ai';
 import { z } from 'zod';
 
 export default function Chat({

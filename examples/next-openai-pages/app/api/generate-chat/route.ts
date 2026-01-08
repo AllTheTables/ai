@@ -1,5 +1,5 @@
-import { ModelMessage, generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { ModelMessage, generateText } from '@zenning/ai';
+import { openai } from '@zenning/openai';
 
 export async function POST(req: Request) {
   const { messages }: { messages: ModelMessage[] } = await req.json();

@@ -1,7 +1,7 @@
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import { describe, expect, it, vi } from 'vitest';
 import { GatewayFetchMetadata } from './gateway-fetch-metadata';
-import type { FetchFunction } from '@ai-sdk/provider-utils';
+import type { FetchFunction } from '@zenning/provider-utils';
 import {
   GatewayAuthenticationError,
   GatewayInternalServerError,

@@ -1,5 +1,5 @@
-import { huggingface } from '@ai-sdk/huggingface';
-import { streamText } from 'ai';
+import { huggingface } from '@zenning/huggingface';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

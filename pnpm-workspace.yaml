@@ -1,8 +1,5 @@
 packages:
-- 'apps/*'
-- 'packages/openai'
-- 'packages/provider'
-- 'packages/react'
-- 'packages/ai'
-- 'packages/provider-utils'
-- 'tools/*'
+  - 'packages/*'
+  - 'tools/*'
+  - 'examples/*'
+  - 'packages/rsc/tests/e2e/next-server'

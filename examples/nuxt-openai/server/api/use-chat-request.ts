@@ -1,5 +1,5 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { convertToModelMessages, streamText, type UIMessage } from 'ai';
+import { createOpenAI } from '@zenning/openai';
+import { convertToModelMessages, streamText, type UIMessage } from '@zenning/ai';
 
 export default defineLazyEventHandler(async () => {
   const openai = createOpenAI({
@@ -17,7 +17,7 @@ export default defineLazyEventHandler(async () => {
     // Call the language model
     const result = streamText({
       model: openai('gpt-4o-mini'),
-      messages: convertToModelMessages(messages),
+      messages: await convertToModelMessages(messages),
       async onFinish({ text, toolCalls, toolResults, usage, finishReason }) {
         // Implement your own logic here, e.g. for storing messages
       },

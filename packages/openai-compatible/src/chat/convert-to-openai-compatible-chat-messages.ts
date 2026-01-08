@@ -2,9 +2,9 @@ import {
   LanguageModelV3Prompt,
   SharedV3ProviderMetadata,
   UnsupportedFunctionalityError,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { OpenAICompatibleChatPrompt } from './openai-compatible-api-types';
-import { convertToBase64 } from '@ai-sdk/provider-utils';
+import { convertToBase64 } from '@zenning/provider-utils';
 
 function getOpenAIMetadata(message: {
   providerOptions?: SharedV3ProviderMetadata;
@@ -115,6 +115,10 @@ export function convertToOpenAICompatibleChatMessages(
 
       case 'tool': {
         for (const toolResponse of content) {
+          if (toolResponse.type === 'tool-approval-response') {
+            continue;
+          }
+
           const output = toolResponse.output;
 
           let contentValue: string;
@@ -122,6 +126,9 @@ export function convertToOpenAICompatibleChatMessages(
             case 'text':
             case 'error-text':
               contentValue = output.value;
+              break;
+            case 'execution-denied':
+              contentValue = output.reason ?? 'Tool execution denied.';
               break;
             case 'content':
             case 'json':

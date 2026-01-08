@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { generateText, tool } from 'ai';
+import { openai } from '@zenning/openai';
+import { generateText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';

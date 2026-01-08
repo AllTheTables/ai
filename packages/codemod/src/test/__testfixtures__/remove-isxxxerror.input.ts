@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { APICallError, TypeValidationError } from 'ai';
-import { NoSuchModelError } from '@ai-sdk/provider';
+import { APICallError, TypeValidationError } from '@zenning/ai';
+import { NoSuchModelError } from '@zenning/provider';
 import { CustomError } from 'other-pkg';
 
 if (APICallError.isInstance(error)) {

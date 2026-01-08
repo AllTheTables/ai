@@ -1,9 +1,9 @@
 'use client';
 
 /* eslint-disable @next/next/no-img-element */
-import { useChat } from '@ai-sdk/react';
+import { useChat } from '@zenning/react';
 import { upload } from '@vercel/blob/client';
-import { FileUIPart } from 'ai';
+import { FileUIPart } from '@zenning/ai';
 import { useRef, useState } from 'react';
 
 export default function Page() {

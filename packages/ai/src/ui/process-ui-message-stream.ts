@@ -1,9 +1,6 @@
-import {
-  StandardSchemaV1,
-  validateTypes,
-  Validator,
-} from '@zenning/provider-utils';
+import { FlexibleSchema, validateTypes } from '@zenning/provider-utils';
 import { ProviderMetadata } from '../types';
+import { FinishReason } from '../types/language-model';
 import {
   DataUIMessageChunk,
   InferUIMessageChunk,
@@ -17,11 +14,12 @@ import { UIDataTypesToSchemas } from './chat';
 import {
   DataUIPart,
   DynamicToolUIPart,
-  getToolName,
+  getStaticToolName,
   InferUIMessageData,
   InferUIMessageMetadata,
   InferUIMessageToolCall,
   InferUIMessageTools,
+  isStaticToolUIPart,
   isToolUIPart,
   ReasoningUIPart,
   TextUIPart,
@@ -36,13 +34,17 @@ export type StreamingUIMessageState<UI_MESSAGE extends UIMessage> = {
   activeReasoningParts: Record<string, ReasoningUIPart>;
   partialToolCalls: Record<
     string,
-    { text: string; index: number; toolName: string; dynamic?: boolean }
+    {
+      text: string;
+      index: number;
+      toolName: string;
+      dynamic?: boolean;
+      title?: string;
+    }
   >;
-  // Support for multiple messages in a single stream
+  finishReason?: FinishReason;
   isFinalized?: boolean;
   messageQueue?: UI_MESSAGE[];
-  // Track annotations to prevent duplication
-  seenAnnotations?: Set<string>;
 };
 
 export function createStreamingUIMessageState<UI_MESSAGE extends UIMessage>({
@@ -70,7 +72,6 @@ export function createStreamingUIMessageState<UI_MESSAGE extends UIMessage>({
     partialToolCalls: {},
     isFinalized: false,
     messageQueue: [],
-    seenAnnotations: new Set<string>(),
   };
 }
 
@@ -85,9 +86,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
 }: {
   // input stream is not fully typed yet:
   stream: ReadableStream<UIMessageChunk>;
-  messageMetadataSchema?:
-    | Validator<InferUIMessageMetadata<UI_MESSAGE>>
-    | StandardSchemaV1<InferUIMessageMetadata<UI_MESSAGE>>;
+  messageMetadataSchema?: FlexibleSchema<InferUIMessageMetadata<UI_MESSAGE>>;
   dataPartSchemas?: UIDataTypesToSchemas<InferUIMessageData<UI_MESSAGE>>;
   onToolCall?: (options: {
     toolCall: InferUIMessageToolCall<UI_MESSAGE>;
@@ -114,25 +113,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
 
             if (toolInvocation == null) {
               throw new Error(
-                'tool-output-error must be preceded by a tool-input-available',
-              );
-            }
-
-            return toolInvocation;
-          }
-
-          function getDynamicToolInvocation(toolCallId: string) {
-            const toolInvocations = state.message.parts.filter(
-              part => part.type === 'dynamic-tool',
-            ) as DynamicToolUIPart[];
-
-            const toolInvocation = toolInvocations.find(
-              invocation => invocation.toolCallId === toolCallId,
-            );
-
-            if (toolInvocation == null) {
-              throw new Error(
-                'tool-output-error must be preceded by a tool-input-available',
+                `no tool invocation found for tool call ${toolCallId}`,
               );
             }
 
@@ -144,6 +125,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
               toolName: keyof InferUIMessageTools<UI_MESSAGE> & string;
               toolCallId: string;
               providerExecuted?: boolean;
+              title?: string;
             } & (
               | {
                   state: 'input-streaming';
@@ -175,7 +157,8 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
           ) {
             const part = state.message.parts.find(
               part =>
-                isToolUIPart(part) && part.toolCallId === options.toolCallId,
+                isStaticToolUIPart(part) &&
+                part.toolCallId === options.toolCallId,
             ) as ToolUIPart<InferUIMessageTools<UI_MESSAGE>> | undefined;
 
             const anyOptions = options as any;
@@ -188,7 +171,9 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
               anyPart.errorText = anyOptions.errorText;
               anyPart.rawInput = anyOptions.rawInput;
               anyPart.preliminary = anyOptions.preliminary;
-
+              if (options.title !== undefined) {
+                anyPart.title = options.title;
+              }
               // once providerExecuted is set, it stays for streaming
               anyPart.providerExecuted =
                 anyOptions.providerExecuted ?? part.providerExecuted;
@@ -204,6 +189,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                 type: `tool-${options.toolName}`,
                 toolCallId: options.toolCallId,
                 state: options.state,
+                title: options.title,
                 input: anyOptions.input,
                 output: anyOptions.output,
                 rawInput: anyOptions.rawInput,
@@ -222,6 +208,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
               toolName: keyof InferUIMessageTools<UI_MESSAGE> & string;
               toolCallId: string;
               providerExecuted?: boolean;
+              title?: string;
             } & (
               | {
                   state: 'input-streaming';
@@ -263,6 +250,12 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
               anyPart.errorText = anyOptions.errorText;
               anyPart.rawInput = anyOptions.rawInput ?? anyPart.rawInput;
               anyPart.preliminary = anyOptions.preliminary;
+              if (options.title !== undefined) {
+                anyPart.title = options.title;
+              }
+              // once providerExecuted is set, it stays for streaming
+              anyPart.providerExecuted =
+                anyOptions.providerExecuted ?? part.providerExecuted;
 
               if (
                 anyOptions.providerMetadata != null &&
@@ -280,6 +273,8 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                 output: anyOptions.output,
                 errorText: anyOptions.errorText,
                 preliminary: anyOptions.preliminary,
+                providerExecuted: anyOptions.providerExecuted,
+                title: options.title,
                 ...(anyOptions.providerMetadata != null
                   ? { callProviderMetadata: anyOptions.providerMetadata }
                   : {}),
@@ -306,49 +301,12 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
           }
 
-          // Helper to filter duplicate OpenAI annotations
-          function filterDuplicateAnnotations(providerMetadata: any): any {
-            if (!providerMetadata?.openai?.annotations || !state.seenAnnotations) {
-              return providerMetadata;
-            }
-            
-            const filtered = { ...providerMetadata };
-            if (filtered.openai) {
-              filtered.openai = { ...filtered.openai };
-              
-              // Filter out annotations we've already seen
-              const uniqueAnnotations = filtered.openai.annotations.filter((annotation: any) => {
-                // Create a unique key for this annotation
-                const key = JSON.stringify(annotation);
-                if (state.seenAnnotations!.has(key)) {
-                  return false; // Skip duplicate
-                }
-                state.seenAnnotations!.add(key);
-                return true; // Include new annotation
-              });
-              
-              // Only keep annotations if there are unique ones
-              if (uniqueAnnotations.length > 0) {
-                filtered.openai.annotations = uniqueAnnotations;
-              } else {
-                // Remove annotations array if all were duplicates
-                delete filtered.openai.annotations;
-                // If openai object is now empty, remove it
-                if (Object.keys(filtered.openai).length === 0) {
-                  delete filtered.openai;
-                }
-              }
-            }
-            
-            return Object.keys(filtered).length > 0 ? filtered : undefined;
-          }
-
           switch (chunk.type) {
             case 'text-start': {
               const textPart: TextUIPart = {
                 type: 'text',
                 text: '',
-                providerMetadata: filterDuplicateAnnotations(chunk.providerMetadata),
+                providerMetadata: chunk.providerMetadata,
                 state: 'streaming',
               };
               state.activeTextParts[chunk.id] = textPart;
@@ -360,13 +318,8 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             case 'text-delta': {
               const textPart = state.activeTextParts[chunk.id];
               textPart.text += chunk.delta;
-              
-              // Filter annotations to prevent duplicates
-              const filteredMetadata = filterDuplicateAnnotations(chunk.providerMetadata);
-              if (filteredMetadata && !textPart.providerMetadata) {
-                textPart.providerMetadata = filteredMetadata;
-              }
-              
+              textPart.providerMetadata =
+                chunk.providerMetadata ?? textPart.providerMetadata;
               write();
               break;
             }
@@ -374,13 +327,8 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             case 'text-end': {
               const textPart = state.activeTextParts[chunk.id];
               textPart.state = 'done';
-              
-              // Filter annotations to prevent duplicates
-              const filteredMetadata = filterDuplicateAnnotations(chunk.providerMetadata);
-              if (filteredMetadata && !textPart.providerMetadata) {
-                textPart.providerMetadata = filteredMetadata;
-              }
-              
+              textPart.providerMetadata =
+                chunk.providerMetadata ?? textPart.providerMetadata;
               delete state.activeTextParts[chunk.id];
               write();
               break;
@@ -431,78 +379,35 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'source-url': {
-              // Check if this source URL already exists to prevent duplicates
-              const existingSource = state.message.parts.find(
-                part => 
-                  part.type === 'source-url' && 
-                  (part as any).sourceId === chunk.sourceId
-              );
+              state.message.parts.push({
+                type: 'source-url',
+                sourceId: chunk.sourceId,
+                url: chunk.url,
+                title: chunk.title,
+                providerMetadata: chunk.providerMetadata,
+              });
 
-              // Only add if it doesn't already exist
-              if (!existingSource) {
-                state.message.parts.push({
-                  type: 'source-url',
-                  sourceId: chunk.sourceId,
-                  url: chunk.url,
-                  title: chunk.title,
-                  providerMetadata: chunk.providerMetadata,
-                });
-
-                write();
-              }
+              write();
               break;
             }
 
-            case 'source-execution-file': {
-              // Check if this source execution file already exists to prevent duplicates
-              const existingSource = state.message.parts.find(
-                part => 
-                  part.type === 'source-execution-file' && 
-                  (part as any).sourceId === chunk.sourceId
-              );
-
-              // Only add if it doesn't already exist  
-              if (!existingSource) {
-                state.message.parts.push({
-                  type: 'source-execution-file',
-                  sourceId: chunk.sourceId,
-                  providerMetadata: chunk.providerMetadata,
-                });
-
-                write();
-              }
-              break;
-            }
-            
             case 'source-document': {
-              // Check if this source document already exists to prevent duplicates
-              const existingSource = state.message.parts.find(
-                part => 
-                  part.type === 'source-document' && 
-                  (part as any).sourceId === chunk.sourceId
-              );
+              state.message.parts.push({
+                type: 'source-document',
+                sourceId: chunk.sourceId,
+                mediaType: chunk.mediaType,
+                title: chunk.title,
+                filename: chunk.filename,
+                providerMetadata: chunk.providerMetadata,
+              });
 
-              // Only add if it doesn't already exist
-              if (!existingSource) {
-                state.message.parts.push({
-                  type: 'source-document',
-                  sourceId: chunk.sourceId,
-                  mediaType: chunk.mediaType,
-                  title: chunk.title,
-                  filename: chunk.filename,
-                  fileId: chunk.fileId,
-                  startIndex: chunk.startIndex,
-                  endIndex: chunk.endIndex,
-                  providerMetadata: chunk.providerMetadata,
-                });
-
-                write();
-              }
+              write();
               break;
             }
 
             case 'tool-input-start': {
-              const toolInvocations = state.message.parts.filter(isToolUIPart);
+              const toolInvocations =
+                state.message.parts.filter(isStaticToolUIPart);
 
               // add the partial tool call to the map
               state.partialToolCalls[chunk.toolCallId] = {
@@ -510,6 +415,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                 toolName: chunk.toolName,
                 index: toolInvocations.length,
                 dynamic: chunk.dynamic,
+                title: chunk.title,
               };
 
               if (chunk.dynamic) {
@@ -518,6 +424,8 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   toolName: chunk.toolName,
                   state: 'input-streaming',
                   input: undefined,
+                  providerExecuted: chunk.providerExecuted,
+                  title: chunk.title,
                 });
               } else {
                 updateToolPart({
@@ -526,6 +434,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   state: 'input-streaming',
                   input: undefined,
                   providerExecuted: chunk.providerExecuted,
+                  title: chunk.title,
                 });
               }
 
@@ -548,6 +457,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   toolName: partialToolCall.toolName,
                   state: 'input-streaming',
                   input: partialArgs,
+                  title: partialToolCall.title,
                 });
               } else {
                 updateToolPart({
@@ -555,6 +465,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   toolName: partialToolCall.toolName,
                   state: 'input-streaming',
                   input: partialArgs,
+                  title: partialToolCall.title,
                 });
               }
 
@@ -569,7 +480,9 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   toolName: chunk.toolName,
                   state: 'input-available',
                   input: chunk.input,
+                  providerExecuted: chunk.providerExecuted,
                   providerMetadata: chunk.providerMetadata,
+                  title: chunk.title,
                 });
               } else {
                 updateToolPart({
@@ -579,6 +492,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   input: chunk.input,
                   providerExecuted: chunk.providerExecuted,
                   providerMetadata: chunk.providerMetadata,
+                  title: chunk.title,
                 });
               }
 
@@ -604,6 +518,7 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   state: 'output-error',
                   input: chunk.input,
                   errorText: chunk.errorText,
+                  providerExecuted: chunk.providerExecuted,
                   providerMetadata: chunk.providerMetadata,
                 });
               } else {
@@ -623,12 +538,25 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
               break;
             }
 
-            case 'tool-output-available': {
-              if (chunk.dynamic) {
-                const toolInvocation = getDynamicToolInvocation(
-                  chunk.toolCallId,
-                );
+            case 'tool-approval-request': {
+              const toolInvocation = getToolInvocation(chunk.toolCallId);
+              toolInvocation.state = 'approval-requested';
+              toolInvocation.approval = { id: chunk.approvalId };
+              write();
+              break;
+            }
 
+            case 'tool-output-denied': {
+              const toolInvocation = getToolInvocation(chunk.toolCallId);
+              toolInvocation.state = 'output-denied';
+              write();
+              break;
+            }
+
+            case 'tool-output-available': {
+              const toolInvocation = getToolInvocation(chunk.toolCallId);
+
+              if (toolInvocation.type === 'dynamic-tool') {
                 updateDynamicToolPart({
                   toolCallId: chunk.toolCallId,
                   toolName: toolInvocation.toolName,
@@ -636,18 +564,19 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                   input: (toolInvocation as any).input,
                   output: chunk.output,
                   preliminary: chunk.preliminary,
+                  providerExecuted: chunk.providerExecuted,
+                  title: toolInvocation.title,
                 });
               } else {
-                const toolInvocation = getToolInvocation(chunk.toolCallId);
-
                 updateToolPart({
                   toolCallId: chunk.toolCallId,
-                  toolName: getToolName(toolInvocation),
+                  toolName: getStaticToolName(toolInvocation),
                   state: 'output-available',
                   input: (toolInvocation as any).input,
                   output: chunk.output,
                   providerExecuted: chunk.providerExecuted,
                   preliminary: chunk.preliminary,
+                  title: toolInvocation.title,
                 });
               }
 
@@ -656,28 +585,28 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'tool-output-error': {
-              if (chunk.dynamic) {
-                const toolInvocation = getDynamicToolInvocation(
-                  chunk.toolCallId,
-                );
+              const toolInvocation = getToolInvocation(chunk.toolCallId);
 
+              if (toolInvocation.type === 'dynamic-tool') {
                 updateDynamicToolPart({
                   toolCallId: chunk.toolCallId,
                   toolName: toolInvocation.toolName,
                   state: 'output-error',
                   input: (toolInvocation as any).input,
                   errorText: chunk.errorText,
+                  providerExecuted: chunk.providerExecuted,
+                  title: toolInvocation.title,
                 });
               } else {
-                const toolInvocation = getToolInvocation(chunk.toolCallId);
-
                 updateToolPart({
                   toolCallId: chunk.toolCallId,
-                  toolName: getToolName(toolInvocation),
+                  toolName: getStaticToolName(toolInvocation),
                   state: 'output-error',
                   input: (toolInvocation as any).input,
                   rawInput: (toolInvocation as any).rawInput,
                   errorText: chunk.errorText,
+                  providerExecuted: chunk.providerExecuted,
+                  title: toolInvocation.title,
                 });
               }
 
@@ -699,18 +628,10 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'start': {
-              // Handle multiple messages in a single stream
               if (chunk.messageId != null) {
-                // Check if this is a new message (different ID than current)
-                const isNewMessage = state.isFinalized && state.message.id !== chunk.messageId;
-                
-                if (isNewMessage) {
-                  // Save the current message to the queue (deep clone to prevent mutations)
-                  if (state.message.parts.length > 0 || state.message.id) {
-                    state.messageQueue!.push(structuredClone(state.message));
-                  }
+                if (state.isFinalized && state.message.parts.length > 0) {
+                  state.messageQueue!.push(state.message);
                   
-                  // Create a completely new message for the new messageId
                   state.message = {
                     id: chunk.messageId,
                     metadata: chunk.messageMetadata as InferUIMessageMetadata<UI_MESSAGE>,
@@ -721,48 +642,32 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
                     >[],
                   } as UI_MESSAGE;
                   
-                  // Reset ALL state for the new message
                   state.activeTextParts = {};
                   state.activeReasoningParts = {};
                   state.partialToolCalls = {};
                   state.isFinalized = false;
-                  state.seenAnnotations = new Set<string>();
-                  
-                  // Write to trigger UI update with the new message
-                  write();
-                } else if (!state.message.id) {
-                  // First message in the stream
+                } else {
                   state.message.id = chunk.messageId;
                   await updateMessageMetadata(chunk.messageMetadata);
-                  
-                  if (chunk.messageId != null || chunk.messageMetadata != null) {
-                    write();
-                  }
-                } else {
-                  // Same message, just update metadata if provided
-                  await updateMessageMetadata(chunk.messageMetadata);
-                  
-                  if (chunk.messageMetadata != null) {
-                    write();
-                  }
                 }
               } else {
-                // No messageId in chunk, just update metadata
                 await updateMessageMetadata(chunk.messageMetadata);
-                if (chunk.messageMetadata != null) {
-                  write();
-                }
+              }
+
+              if (chunk.messageId != null || chunk.messageMetadata != null) {
+                write();
               }
               break;
             }
 
             case 'finish': {
+              if (chunk.finishReason != null) {
+                state.finishReason = chunk.finishReason;
+              }
               await updateMessageMetadata(chunk.messageMetadata);
               if (chunk.messageMetadata != null) {
                 write();
               }
-              // Mark the current message as finalized for multi-message support
-              // This allows the next 'start' event with a new messageId to create a new message
               state.isFinalized = true;
               break;
             }

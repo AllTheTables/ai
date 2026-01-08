@@ -1,5 +1,5 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { createOpenAI } from '@zenning/openai';
+import { streamText } from '@zenning/ai';
 import { env } from '$env/dynamic/private';
 
 const openai = createOpenAI({

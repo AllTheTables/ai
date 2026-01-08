@@ -1,5 +1,5 @@
-import { fireworks } from '@ai-sdk/fireworks';
-import { experimental_generateImage as generateImage } from 'ai';
+import { fireworks } from '@zenning/fireworks';
+import { generateImage } from '@zenning/ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';
 

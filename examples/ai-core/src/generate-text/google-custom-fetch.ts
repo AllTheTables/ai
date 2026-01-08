@@ -1,5 +1,5 @@
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { generateText } from 'ai';
+import { createGoogleGenerativeAI } from '@zenning/google';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 const google = createGoogleGenerativeAI({

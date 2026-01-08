@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { tool } from 'ai';
+import { tool } from '@zenning/ai';
 import { z } from 'zod';
 
 // Using tool() function

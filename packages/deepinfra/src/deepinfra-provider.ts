@@ -3,18 +3,18 @@ import {
   EmbeddingModelV3,
   ProviderV3,
   ImageModelV3,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import {
   OpenAICompatibleChatLanguageModel,
   OpenAICompatibleCompletionLanguageModel,
   OpenAICompatibleEmbeddingModel,
-} from '@ai-sdk/openai-compatible';
+} from '@zenning/openai-compatible';
 import {
   FetchFunction,
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { DeepInfraChatModelId } from './deepinfra-chat-options';
 import { DeepInfraEmbeddingModelId } from './deepinfra-embedding-options';
 import { DeepInfraCompletionModelId } from './deepinfra-completion-options';
@@ -74,11 +74,14 @@ Creates a completion model for text generation.
   completionModel(modelId: DeepInfraCompletionModelId): LanguageModelV3;
 
   /**
-Creates a text embedding model for text generation.
+Creates a embedding model for text generation.
 */
-  textEmbeddingModel(
-    modelId: DeepInfraEmbeddingModelId,
-  ): EmbeddingModelV3<string>;
+  embeddingModel(modelId: DeepInfraEmbeddingModelId): EmbeddingModelV3;
+
+  /**
+   * @deprecated Use `embeddingModel` instead.
+   */
+  textEmbeddingModel(modelId: DeepInfraEmbeddingModelId): EmbeddingModelV3;
 }
 
 export function createDeepInfra(
@@ -127,7 +130,7 @@ export function createDeepInfra(
       getCommonModelConfig('completion'),
     );
 
-  const createTextEmbeddingModel = (modelId: DeepInfraEmbeddingModelId) =>
+  const createEmbeddingModel = (modelId: DeepInfraEmbeddingModelId) =>
     new OpenAICompatibleEmbeddingModel(
       modelId,
       getCommonModelConfig('embedding'),
@@ -143,12 +146,14 @@ export function createDeepInfra(
 
   const provider = (modelId: DeepInfraChatModelId) => createChatModel(modelId);
 
+  provider.specificationVersion = 'v3' as const;
   provider.completionModel = createCompletionModel;
   provider.chatModel = createChatModel;
   provider.image = createImageModel;
   provider.imageModel = createImageModel;
   provider.languageModel = createChatModel;
-  provider.textEmbeddingModel = createTextEmbeddingModel;
+  provider.embeddingModel = createEmbeddingModel;
+  provider.textEmbeddingModel = createEmbeddingModel;
 
   return provider;
 }

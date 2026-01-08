@@ -1,10 +1,10 @@
-import { google } from '@ai-sdk/google';
-import { embedMany } from 'ai';
+import { google } from '@zenning/google';
+import { embedMany } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
-  const { embeddings, usage } = await embedMany({
-    model: google.textEmbeddingModel('gemini-embedding-001'),
+  const { embeddings, usage, warnings } = await embedMany({
+    model: google.embeddingModel('gemini-embedding-001'),
     values: [
       'sunny day at the beach',
       'rainy afternoon in the city',
@@ -14,6 +14,7 @@ async function main() {
 
   console.log(embeddings);
   console.log(usage);
+  console.log(warnings);
 }
 
 main().catch(console.error);

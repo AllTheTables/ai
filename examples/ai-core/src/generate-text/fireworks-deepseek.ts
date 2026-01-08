@@ -1,5 +1,5 @@
-import { fireworks } from '@ai-sdk/fireworks';
-import { generateText } from 'ai';
+import { fireworks } from '@zenning/fireworks';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

@@ -1,4 +1,4 @@
-import { experimental_useObject } from '@ai-sdk/react';
+import { experimental_useObject } from '@zenning/react';
 import { z } from 'zod';
 
 export default function Page() {

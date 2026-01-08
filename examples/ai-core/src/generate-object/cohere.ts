@@ -1,5 +1,5 @@
-import { cohere } from '@ai-sdk/cohere';
-import { generateObject } from 'ai';
+import { cohere } from '@zenning/cohere';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

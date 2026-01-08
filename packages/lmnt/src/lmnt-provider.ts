@@ -1,9 +1,9 @@
-import { SpeechModelV2, ProviderV3 } from '@ai-sdk/provider';
+import { SpeechModelV3, ProviderV3 } from '@zenning/provider';
 import {
   FetchFunction,
   loadApiKey,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { LMNTSpeechModel } from './lmnt-speech-model';
 import { LMNTSpeechModelId } from './lmnt-speech-options';
 import { VERSION } from './version';
@@ -19,7 +19,7 @@ export interface LMNTProvider extends Pick<ProviderV3, 'speechModel'> {
   /**
 Creates a model for speech synthesis.
    */
-  speech(modelId: LMNTSpeechModelId): SpeechModelV2;
+  speech(modelId: LMNTSpeechModelId): SpeechModelV3;
 }
 
 export interface LMNTProviderSettings {

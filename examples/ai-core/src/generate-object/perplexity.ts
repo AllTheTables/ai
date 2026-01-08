@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { perplexity } from '@ai-sdk/perplexity';
-import { generateObject, generateText } from 'ai';
+import { perplexity } from '@zenning/perplexity';
+import { generateObject, generateText } from '@zenning/ai';
 import { z } from 'zod';
 
 async function main() {

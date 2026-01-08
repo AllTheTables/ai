@@ -1,11 +1,11 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
 import {
   convertToModelMessages,
   InferUITools,
   streamText,
   UIDataTypes,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 const tools = {
   web_search: openai.tools.webSearch({
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-5'),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     tools,
     providerOptions: {
       openai: {

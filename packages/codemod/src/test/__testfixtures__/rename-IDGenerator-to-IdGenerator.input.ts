@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { IDGenerator } from 'ai';
-import { type IDGenerator as GeneratorType, someFunction, otherFunction } from 'ai';
+import { IDGenerator } from '@zenning/ai';
+import { type IDGenerator as GeneratorType, someFunction, otherFunction } from '@zenning/ai';
 
 // Variable declarations with type annotations
 const generator1: IDGenerator = createGenerator();

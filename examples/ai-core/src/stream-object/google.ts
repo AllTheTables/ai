@@ -1,5 +1,5 @@
-import { google } from '@ai-sdk/google';
-import { streamObject } from 'ai';
+import { google } from '@zenning/google';
+import { streamObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

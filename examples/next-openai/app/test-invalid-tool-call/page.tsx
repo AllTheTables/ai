@@ -1,8 +1,8 @@
 'use client';
 
-import ChatInput from '@/component/chat-input';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import ChatInput from '@/components/chat-input';
+import { useChat } from '@zenning/react';
+import { DefaultChatTransport } from '@zenning/ai';
 import { UseChatToolsMessage } from '../api/test-invalid-tool-call/route';
 
 export default function Chat() {

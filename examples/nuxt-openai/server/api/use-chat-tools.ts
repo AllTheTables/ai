@@ -1,5 +1,5 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { convertToModelMessages, stepCountIs, streamText } from 'ai';
+import { createOpenAI } from '@zenning/openai';
+import { convertToModelMessages, stepCountIs, streamText } from '@zenning/ai';
 import { z } from 'zod';
 
 export default defineLazyEventHandler(async () => {
@@ -12,7 +12,7 @@ export default defineLazyEventHandler(async () => {
 
     const result = streamText({
       model: openai('gpt-4o'),
-      messages: convertToModelMessages(messages),
+      messages: await convertToModelMessages(messages),
       stopWhen: stepCountIs(5), // multi-steps for server-side tools
       tools: {
         // server-side tool with execute function:

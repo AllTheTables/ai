@@ -4,12 +4,12 @@ import {
   LanguageModelV3,
   EmbeddingModelV3,
   NoSuchModelError,
-} from '@ai-sdk/provider';
-import { loadApiKey } from '@ai-sdk/provider-utils';
+} from '@zenning/provider';
+import { loadApiKey } from '@zenning/provider-utils';
 import {
   OpenAICompatibleChatLanguageModel,
   OpenAICompatibleEmbeddingModel,
-} from '@ai-sdk/openai-compatible';
+} from '@zenning/openai-compatible';
 
 // Mock the OpenAI-compatible classes
 const OpenAICompatibleChatLanguageModelMock =
@@ -17,7 +17,7 @@ const OpenAICompatibleChatLanguageModelMock =
 const OpenAICompatibleEmbeddingModelMock =
   OpenAICompatibleEmbeddingModel as unknown as Mock;
 
-vi.mock('@ai-sdk/openai-compatible', () => {
+vi.mock('@zenning/openai-compatible', () => {
   const createMockConstructor = (providerName: string) => {
     const mockConstructor = vi.fn().mockImplementation(function (
       this: any,
@@ -39,8 +39,8 @@ vi.mock('@ai-sdk/openai-compatible', () => {
   };
 });
 
-vi.mock('@ai-sdk/provider-utils', async () => {
-  const actual = await vi.importActual('@ai-sdk/provider-utils');
+vi.mock('@zenning/provider-utils', async () => {
+  const actual = await vi.importActual('@zenning/provider-utils');
   return {
     ...actual,
     loadApiKey: vi.fn().mockReturnValue('mock-api-key'),
@@ -221,7 +221,7 @@ describe('BasetenProvider', () => {
       const provider = createBaseten();
 
       expect(() => {
-        provider.textEmbeddingModel();
+        provider.embeddingModel();
       }).toThrow(
         'No model URL provided for embeddings. Please set modelURL option for embeddings.',
       );
@@ -233,7 +233,7 @@ describe('BasetenProvider', () => {
           'https://model-123.api.baseten.co/environments/production/sync',
       });
 
-      const model = provider.textEmbeddingModel();
+      const model = provider.embeddingModel();
 
       expect(model).toBeInstanceOf(OpenAICompatibleEmbeddingModel);
       expect(OpenAICompatibleEmbeddingModelMock).toHaveBeenCalledWith(
@@ -261,7 +261,7 @@ describe('BasetenProvider', () => {
       });
 
       expect(() => {
-        provider.textEmbeddingModel();
+        provider.embeddingModel();
       }).toThrow(
         'Not supported. You must use a /sync or /sync/v1 endpoint for embeddings.',
       );
@@ -273,7 +273,7 @@ describe('BasetenProvider', () => {
           'https://model-123.api.baseten.co/environments/production/sync/v1',
       });
 
-      const model = provider.textEmbeddingModel();
+      const model = provider.embeddingModel();
 
       expect(model).toBeInstanceOf(OpenAICompatibleEmbeddingModel);
       expect(OpenAICompatibleEmbeddingModelMock).toHaveBeenCalledWith(
@@ -288,7 +288,7 @@ describe('BasetenProvider', () => {
           'https://model-123.api.baseten.co/environments/production/sync',
       });
 
-      const model = provider.textEmbeddingModel();
+      const model = provider.embeddingModel();
 
       expect(model).toBeInstanceOf(OpenAICompatibleEmbeddingModel);
       expect(OpenAICompatibleEmbeddingModelMock).toHaveBeenCalledWith(
@@ -407,7 +407,7 @@ describe('BasetenProvider', () => {
       const provider = createBaseten();
 
       expect(() => {
-        provider.textEmbeddingModel();
+        provider.embeddingModel();
       }).toThrow(
         'No model URL provided for embeddings. Please set modelURL option for embeddings.',
       );
@@ -429,7 +429,7 @@ describe('BasetenProvider', () => {
       expect(typeof provider).toBe('function');
       expect(typeof provider.chatModel).toBe('function');
       expect(typeof provider.languageModel).toBe('function');
-      expect(typeof provider.textEmbeddingModel).toBe('function');
+      expect(typeof provider.embeddingModel).toBe('function');
       expect(typeof provider.imageModel).toBe('function');
     });
 

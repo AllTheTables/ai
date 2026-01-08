@@ -1,16 +1,14 @@
-import { openai } from '@ai-sdk/openai';
-import { convertToModelMessages, streamText, UIMessage } from 'ai';
+import { openai } from '@zenning/openai';
+import { convertToModelMessages, streamText, UIMessage } from '@zenning/ai';
 
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
-  const prompt = convertToModelMessages(messages);
-
   const result = streamText({
     model: openai.responses('o3-mini'),
-    prompt,
+    messages: await convertToModelMessages(messages),
     providerOptions: {
       openai: {
         reasoningEffort: 'low',

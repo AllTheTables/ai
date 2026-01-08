@@ -1,5 +1,5 @@
-import { mistral } from '@ai-sdk/mistral';
-import { generateObject } from 'ai';
+import { mistral } from '@zenning/mistral';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

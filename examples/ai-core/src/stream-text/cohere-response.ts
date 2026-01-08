@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { cohere } from '@ai-sdk/cohere';
-import { streamText } from 'ai';
+import { cohere } from '@zenning/cohere';
+import { streamText } from '@zenning/ai';
 
 async function main() {
   const result = streamText({

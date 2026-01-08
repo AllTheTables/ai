@@ -1,5 +1,5 @@
-import { elevenlabs } from '@ai-sdk/elevenlabs';
-import { experimental_generateSpeech as generateSpeech } from 'ai';
+import { elevenlabs } from '@zenning/elevenlabs';
+import { experimental_generateSpeech as generateSpeech } from '@zenning/ai';
 import 'dotenv/config';
 import { saveAudioFile } from '../lib/save-audio';
 

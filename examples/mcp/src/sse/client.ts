@@ -1,9 +1,11 @@
-import { openai } from '@ai-sdk/openai';
-import { experimental_createMCPClient, generateText, stepCountIs } from 'ai';
+import { openai } from '@zenning/openai';
+import { generateText, stepCountIs } from '@zenning/ai';
+import { createMCPClient } from '@zenning/mcp';
+
 import 'dotenv/config';
 
 async function main() {
-  const mcpClient = await experimental_createMCPClient({
+  const mcpClient = await createMCPClient({
     transport: {
       type: 'sse',
       url: 'http://localhost:8080/sse',

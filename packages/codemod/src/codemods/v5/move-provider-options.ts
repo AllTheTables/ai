@@ -15,7 +15,7 @@ export default createTransformer((fileInfo, api, options, context) => {
     'transcribe',
   ];
 
-  // Common provider function names (these typically come from @ai-sdk/* packages)
+  // Common provider function names (these typically come from @zenning/* packages)
   const providerFunctions = [
     'openai',
     'anthropic',

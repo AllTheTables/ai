@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { streamText, wrapLanguageModel } from 'ai';
+import { openai } from '@zenning/openai';
+import { streamText, wrapLanguageModel } from '@zenning/ai';
 import 'dotenv/config';
 import { yourRagMiddleware } from './your-rag-middleware';
 

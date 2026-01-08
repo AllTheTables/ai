@@ -1,4 +1,4 @@
-import { anthropic } from '@ai-sdk/anthropic';
+import { anthropic } from '@zenning/anthropic';
 import {
   extractReasoningMiddleware,
   stepCountIs,
@@ -6,7 +6,7 @@ import {
   ToolCallPart,
   ToolResultPart,
   wrapLanguageModel,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 import { weatherTool } from '../tools/weather-tool';
 

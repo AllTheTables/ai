@@ -1,5 +1,5 @@
-import { baseten } from '@ai-sdk/baseten';
-import { generateText } from 'ai';
+import { baseten } from '@zenning/baseten';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

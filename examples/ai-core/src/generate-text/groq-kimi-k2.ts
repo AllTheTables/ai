@@ -1,10 +1,10 @@
-import { groq } from '@ai-sdk/groq';
-import { generateText } from 'ai';
+import { groq } from '@zenning/groq';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
   const result = await generateText({
-    model: groq('moonshotai/kimi-k2-instruct'),
+    model: groq('moonshotai/kimi-k2-instruct-0905'),
     prompt: 'Invent a new holiday and describe its traditions.',
   });
 

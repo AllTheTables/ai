@@ -1,9 +1,9 @@
-import { mistral } from '@ai-sdk/mistral';
+import { mistral } from '@zenning/mistral';
 import {
   extractReasoningMiddleware,
   generateText,
   wrapLanguageModel,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

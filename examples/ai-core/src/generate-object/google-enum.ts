@@ -1,5 +1,5 @@
-import { google } from '@ai-sdk/google';
-import { generateObject } from 'ai';
+import { google } from '@zenning/google';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

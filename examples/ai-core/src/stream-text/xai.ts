@@ -1,5 +1,5 @@
-import { xai } from '@ai-sdk/xai';
-import { streamText } from 'ai';
+import { xai } from '@zenning/xai';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

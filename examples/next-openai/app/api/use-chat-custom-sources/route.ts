@@ -1,17 +1,19 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
   streamText,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
+  const modelMessages = await convertToModelMessages(messages);
+
   const stream = createUIMessageStream({
-    execute: ({ writer }) => {
+    execute: async ({ writer }) => {
       writer.write({ type: 'start' });
 
       // write a custom url source to the stream:
@@ -24,7 +26,7 @@ export async function POST(req: Request) {
 
       const result = streamText({
         model: openai('gpt-4o'),
-        messages: convertToModelMessages(messages),
+        messages: modelMessages,
       });
 
       writer.merge(result.toUIMessageStream({ sendStart: false }));

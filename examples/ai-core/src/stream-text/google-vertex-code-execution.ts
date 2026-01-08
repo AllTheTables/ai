@@ -1,5 +1,5 @@
-import { vertex } from '@ai-sdk/google-vertex';
-import { ModelMessage, streamText, ToolCallPart, ToolResultPart } from 'ai';
+import { vertex } from '@zenning/google-vertex';
+import { ModelMessage, streamText, ToolCallPart, ToolResultPart } from '@zenning/ai';
 import 'dotenv/config';
 import * as process from 'process';
 

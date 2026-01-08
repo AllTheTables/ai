@@ -1,5 +1,5 @@
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { generateText } from 'ai';
+import { createOpenAICompatible } from '@zenning/openai-compatible';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

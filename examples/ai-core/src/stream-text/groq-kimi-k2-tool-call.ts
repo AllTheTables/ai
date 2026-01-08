@@ -1,5 +1,5 @@
-import { groq } from '@ai-sdk/groq';
-import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from 'ai';
+import { groq } from '@zenning/groq';
+import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from '@zenning/ai';
 import 'dotenv/config';
 import { weatherTool } from '../tools/weather-tool';
 
@@ -9,7 +9,7 @@ async function main() {
   let toolResponseAvailable = false;
 
   const result = streamText({
-    model: groq('moonshotai/kimi-k2-instruct'),
+    model: groq('moonshotai/kimi-k2-instruct-0905'),
     maxOutputTokens: 512,
     tools: {
       weather: weatherTool,

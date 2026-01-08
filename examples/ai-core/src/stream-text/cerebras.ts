@@ -1,5 +1,5 @@
-import { cerebras } from '@ai-sdk/cerebras';
-import { streamText } from 'ai';
+import { cerebras } from '@zenning/cerebras';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { stepCountIs, ModelMessage, streamText, tool } from 'ai';
+import { openai } from '@zenning/openai';
+import { stepCountIs, ModelMessage, streamText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 import { z } from 'zod';

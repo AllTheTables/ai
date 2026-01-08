@@ -1,9 +1,9 @@
-import { mistral } from '@ai-sdk/mistral';
-import { embedMany } from 'ai';
+import { mistral } from '@zenning/mistral';
+import { embedMany } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
-  const { embeddings, usage } = await embedMany({
+  const { embeddings, usage, warnings } = await embedMany({
     model: mistral.embedding('mistral-embed'),
     values: [
       'sunny day at the beach',
@@ -14,6 +14,7 @@ async function main() {
 
   console.log(embeddings);
   console.log(usage);
+  console.log(warnings);
 }
 
 main().catch(console.error);

@@ -1,5 +1,5 @@
-import { google } from '@ai-sdk/google';
-import { ModelMessage, streamText } from 'ai';
+import { google } from '@zenning/google';
+import { ModelMessage, streamText } from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 import { presentImages } from '../lib/present-image';

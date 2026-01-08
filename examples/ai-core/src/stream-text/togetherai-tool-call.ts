@@ -1,5 +1,5 @@
-import { togetherai } from '@ai-sdk/togetherai';
-import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from 'ai';
+import { togetherai } from '@zenning/togetherai';
+import { streamText, ModelMessage, ToolCallPart, ToolResultPart } from '@zenning/ai';
 import 'dotenv/config';
 import { weatherTool } from '../tools/weather-tool';
 

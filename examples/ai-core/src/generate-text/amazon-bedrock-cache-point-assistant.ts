@@ -1,5 +1,5 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
-import { generateText } from 'ai';
+import { bedrock } from '@zenning/amazon-bedrock';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 

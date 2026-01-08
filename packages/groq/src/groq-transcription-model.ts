@@ -1,7 +1,4 @@
-import {
-  TranscriptionModelV2,
-  TranscriptionModelV2CallWarning,
-} from '@ai-sdk/provider';
+import { TranscriptionModelV3, SharedV3Warning } from '@zenning/provider';
 import {
   combineHeaders,
   convertBase64ToUint8Array,
@@ -9,7 +6,7 @@ import {
   mediaTypeToExtension,
   parseProviderOptions,
   postFormDataToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { GroqConfig } from './groq-config';
 import { groqFailedResponseHandler } from './groq-error';
@@ -35,8 +32,8 @@ interface GroqTranscriptionModelConfig extends GroqConfig {
   };
 }
 
-export class GroqTranscriptionModel implements TranscriptionModelV2 {
-  readonly specificationVersion = 'v2';
+export class GroqTranscriptionModel implements TranscriptionModelV3 {
+  readonly specificationVersion = 'v3';
 
   get provider(): string {
     return this.config.provider;
@@ -51,8 +48,8 @@ export class GroqTranscriptionModel implements TranscriptionModelV2 {
     audio,
     mediaType,
     providerOptions,
-  }: Parameters<TranscriptionModelV2['doGenerate']>[0]) {
-    const warnings: TranscriptionModelV2CallWarning[] = [];
+  }: Parameters<TranscriptionModelV3['doGenerate']>[0]) {
+    const warnings: SharedV3Warning[] = [];
 
     // Parse provider options
     const groqOptions = await parseProviderOptions({
@@ -108,8 +105,8 @@ export class GroqTranscriptionModel implements TranscriptionModelV2 {
   }
 
   async doGenerate(
-    options: Parameters<TranscriptionModelV2['doGenerate']>[0],
-  ): Promise<Awaited<ReturnType<TranscriptionModelV2['doGenerate']>>> {
+    options: Parameters<TranscriptionModelV3['doGenerate']>[0],
+  ): Promise<Awaited<ReturnType<TranscriptionModelV3['doGenerate']>>> {
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
     const { formData, warnings } = await this.getArgs(options);
 

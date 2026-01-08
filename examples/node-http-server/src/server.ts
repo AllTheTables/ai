@@ -1,9 +1,9 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import {
   createUIMessageStream,
   pipeUIMessageStreamToResponse,
   streamText,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 import { createServer } from 'http';
 

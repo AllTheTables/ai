@@ -1,5 +1,5 @@
-import { huggingface } from '@ai-sdk/huggingface';
-import { stepCountIs, streamText, tool } from 'ai';
+import { huggingface } from '@zenning/huggingface';
+import { stepCountIs, streamText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod/v4';
 

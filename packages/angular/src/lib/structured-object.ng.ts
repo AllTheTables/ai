@@ -4,20 +4,18 @@ import {
   safeValidateTypes,
   type FetchFunction,
   type InferSchema,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { signal } from '@angular/core';
 import {
+  FlexibleSchema,
   asSchema,
   isDeepEqualData,
   parsePartialJson,
   type DeepPartial,
-  type Schema,
-} from 'ai';
-import type * as z3 from 'zod/v3';
-import type * as z4 from 'zod/v4';
+} from '@zenning/ai';
 
 export type StructuredObjectOptions<
-  SCHEMA extends z3.Schema | z4.core.$ZodType | Schema,
+  SCHEMA extends FlexibleSchema,
   RESULT = InferSchema<SCHEMA>,
 > = {
   /**
@@ -26,7 +24,7 @@ export type StructuredObjectOptions<
   api: string;
 
   /**
-   * A Zod schema that defines the shape of the complete object.
+   * A schema that defines the shape of the complete object.
    */
   schema: SCHEMA;
 
@@ -83,7 +81,7 @@ export type StructuredObjectOptions<
 };
 
 export class StructuredObject<
-  SCHEMA extends z3.Schema | z4.core.$ZodType | Schema,
+  SCHEMA extends FlexibleSchema,
   RESULT = InferSchema<SCHEMA>,
   INPUT = unknown,
 > {

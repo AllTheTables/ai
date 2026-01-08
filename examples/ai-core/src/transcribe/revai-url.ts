@@ -1,5 +1,5 @@
-import { revai } from '@ai-sdk/revai';
-import { experimental_transcribe as transcribe } from 'ai';
+import { revai } from '@zenning/revai';
+import { experimental_transcribe as transcribe } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

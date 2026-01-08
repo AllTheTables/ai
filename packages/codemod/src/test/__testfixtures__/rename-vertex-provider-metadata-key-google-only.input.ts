@@ -1,0 +1,19 @@
+// @ts-nocheck
+// This file uses @zenning/google (NOT vertex) - should NOT be transformed
+import { google } from '@zenning/google';
+import { generateText } from '@zenning/ai';
+
+const result = await generateText({
+  model: google('gemini-2.5-flash'),
+  providerOptions: {
+    google: {
+      safetySettings: [],
+    },
+  },
+  prompt: 'Hello',
+});
+
+// These should stay as 'google' since we're using @zenning/google
+console.log(result.providerMetadata?.google?.safetyRatings);
+const { google: metadata } = result.providerMetadata ?? {};
+

@@ -1,10 +1,10 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { Controller, Post, Res } from '@nestjs/common';
 import {
   createUIMessageStream,
   streamText,
   pipeUIMessageStreamToResponse,
-} from 'ai';
+} from '@zenning/ai';
 import { Response } from 'express';
 
 @Controller()

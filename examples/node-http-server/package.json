@@ -1,10 +1,10 @@
 {
   "name": "@example/node-http-server",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
-    "@ai-sdk/openai": "workspace:*",
-    "ai": "workspace:*",
+    "@zenning/openai": "3.0.7",
+    "@zenning/ai": "workspace:*",
     "dotenv": "16.4.5",
     "zod": "3.25.76"
   },
@@ -15,7 +15,6 @@
   "devDependencies": {
     "@types/node": "20.17.24",
     "tsx": "4.19.2",
-    "typescript": "5.8.3",
-    "@vercel/ai-tsconfig": "workspace:*"
+    "typescript": "5.8.3"
   }
 }

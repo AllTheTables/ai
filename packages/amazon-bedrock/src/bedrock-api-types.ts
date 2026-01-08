@@ -1,4 +1,4 @@
-import { JSONObject } from '@ai-sdk/provider';
+import { JSONObject } from '@zenning/provider';
 
 export interface BedrockConverseInput {
   system?: BedrockSystemMessages;
@@ -12,6 +12,7 @@ export interface BedrockConverseInput {
     stopSequences?: string[];
   };
   additionalModelRequestFields?: Record<string, unknown>;
+  additionalModelResponseFieldPaths?: string[];
   guardrailConfig?:
     | BedrockGuardrailConfiguration
     | BedrockGuardrailStreamConfiguration

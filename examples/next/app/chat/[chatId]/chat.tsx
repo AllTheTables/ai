@@ -2,8 +2,8 @@
 
 import { invalidateRouterCache } from '@/app/actions';
 import type { MyUIMessage } from '@/util/chat-schema';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import { useChat } from '@zenning/react';
+import { DefaultChatTransport } from '@zenning/ai';
 import { useEffect, useRef } from 'react';
 import ChatInput from './chat-input';
 import Message from './message';

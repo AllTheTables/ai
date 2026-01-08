@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { google } from '@ai-sdk/google';
-import { generateObject } from 'ai';
+import { google } from '@zenning/google';
+import { generateObject } from '@zenning/ai';
 import fs from 'node:fs';
 import { z } from 'zod';
 

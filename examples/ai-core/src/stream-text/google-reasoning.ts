@@ -1,5 +1,5 @@
-import { google, GoogleGenerativeAIProviderOptions } from '@ai-sdk/google';
-import { stepCountIs, streamText } from 'ai';
+import { google, GoogleGenerativeAIProviderOptions } from '@zenning/google';
+import { stepCountIs, streamText } from '@zenning/ai';
 import 'dotenv/config';
 import { weatherTool } from '../tools/weather-tool';
 

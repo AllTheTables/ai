@@ -1,5 +1,5 @@
-import { fal } from '@ai-sdk/fal';
-import { experimental_transcribe as transcribe } from 'ai';
+import { fal } from '@zenning/fal';
+import { experimental_transcribe as transcribe } from '@zenning/ai';
 import 'dotenv/config';
 import { readFile } from 'fs/promises';
 

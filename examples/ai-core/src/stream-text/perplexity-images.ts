@@ -1,5 +1,5 @@
-import { perplexity } from '@ai-sdk/perplexity';
-import { streamText } from 'ai';
+import { perplexity } from '@zenning/perplexity';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

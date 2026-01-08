@@ -1,11 +1,11 @@
-import { cohere } from '@ai-sdk/cohere';
+import { cohere } from '@zenning/cohere';
 import {
   streamText,
   ModelMessage,
   ToolCallPart,
   ToolResultPart,
   tool,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

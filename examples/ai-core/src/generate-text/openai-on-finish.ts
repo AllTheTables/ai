@@ -1,0 +1,13 @@
+import { openai } from '@zenning/openai';
+import { generateText } from '@zenning/ai';
+import { run } from '../lib/run';
+
+run(async () => {
+  await generateText({
+    model: openai('gpt-4o'),
+    prompt: 'Invent a new holiday and describe its traditions.',
+    onFinish(event) {
+      console.dir(event, { depth: Infinity });
+    },
+  });
+});

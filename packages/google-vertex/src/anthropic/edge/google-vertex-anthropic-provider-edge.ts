@@ -1,4 +1,4 @@
-import { resolve } from '@ai-sdk/provider-utils';
+import { resolve } from '@zenning/provider-utils';
 import {
   generateAuthToken,
   GoogleCredentials,

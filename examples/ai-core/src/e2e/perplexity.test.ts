@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import { expect } from 'vitest';
-import { perplexity as provider } from '@ai-sdk/perplexity';
+import { perplexity as provider } from '@zenning/perplexity';
 import {
   createFeatureTestSuite,
   createLanguageModelWithCapabilities,
 } from './feature-test-suite';
-import { APICallError } from '@ai-sdk/provider';
+import { APICallError } from '@zenning/provider';
 
 const createChatModel = (modelId: string) =>
   createLanguageModelWithCapabilities(provider(modelId));

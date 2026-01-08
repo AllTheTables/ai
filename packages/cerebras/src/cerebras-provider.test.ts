@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { createCerebras } from './cerebras-provider';
-import { loadApiKey } from '@ai-sdk/provider-utils';
-import { OpenAICompatibleChatLanguageModel } from '@ai-sdk/openai-compatible';
+import { loadApiKey } from '@zenning/provider-utils';
+import { OpenAICompatibleChatLanguageModel } from '@zenning/openai-compatible';
 
 // Add type assertion for the mocked class
 const OpenAICompatibleChatLanguageModelMock =
   OpenAICompatibleChatLanguageModel as unknown as Mock;
 
-vi.mock('@ai-sdk/openai-compatible', () => ({
+vi.mock('@zenning/openai-compatible', () => ({
   OpenAICompatibleChatLanguageModel: vi.fn(),
 }));
 
@@ -15,8 +15,8 @@ vi.mock('./version', () => ({
   VERSION: '0.0.0-test',
 }));
 
-vi.mock('@ai-sdk/provider-utils', async () => {
-  const actual = await vi.importActual('@ai-sdk/provider-utils');
+vi.mock('@zenning/provider-utils', async () => {
+  const actual = await vi.importActual('@zenning/provider-utils');
   return {
     ...actual,
     loadApiKey: vi.fn().mockReturnValue('mock-api-key'),
@@ -110,12 +110,12 @@ describe('CerebrasProvider', () => {
     });
   });
 
-  describe('textEmbeddingModel', () => {
+  describe('embeddingModel', () => {
     it('should throw NoSuchModelError when attempting to create embedding model', () => {
       const provider = createCerebras();
 
-      expect(() => provider.textEmbeddingModel('any-model')).toThrow(
-        'No such textEmbeddingModel: any-model',
+      expect(() => provider.embeddingModel('any-model')).toThrow(
+        'No such embeddingModel: any-model',
       );
     });
   });

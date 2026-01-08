@@ -1,5 +1,5 @@
-import { simulateReadableStream, smoothStream, streamText } from 'ai';
-import { MockLanguageModelV3 } from 'ai/test';
+import { simulateReadableStream, smoothStream, streamText } from '@zenning/ai';
+import { MockLanguageModelV3 } from '@zenning/ai/test';
 
 async function main() {
   const result = streamText({
@@ -16,12 +16,20 @@ async function main() {
             { type: 'text-end', id: '0' },
             {
               type: 'finish',
-              finishReason: 'stop',
+              finishReason: { raw: undefined, unified: 'stop' },
               logprobs: undefined,
               usage: {
-                inputTokens: 3,
-                outputTokens: 10,
-                totalTokens: 13,
+                inputTokens: {
+                  total: 3,
+                  noCache: 3,
+                  cacheRead: undefined,
+                  cacheWrite: undefined,
+                },
+                outputTokens: {
+                  total: 10,
+                  text: 10,
+                  reasoning: undefined,
+                },
               },
             },
           ],

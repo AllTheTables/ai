@@ -1,5 +1,5 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
-import { convertToModelMessages, streamText } from 'ai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
+import { convertToModelMessages, streamText } from '@zenning/ai';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-5-nano'),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     providerOptions: {
       openai: {
         reasoningSummary: 'detailed', // 'auto' for condensed or 'detailed' for comprehensive

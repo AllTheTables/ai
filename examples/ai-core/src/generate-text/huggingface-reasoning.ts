@@ -1,9 +1,9 @@
-import { huggingface } from '@ai-sdk/huggingface';
+import { huggingface } from '@zenning/huggingface';
 import {
   extractReasoningMiddleware,
   generateText,
   wrapLanguageModel,
-} from 'ai';
+} from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

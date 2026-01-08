@@ -1,5 +1,5 @@
-import { anthropic, AnthropicProviderOptions } from '@ai-sdk/anthropic';
-import { streamText } from 'ai';
+import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

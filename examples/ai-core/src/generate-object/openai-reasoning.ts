@@ -1,5 +1,5 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
-import { generateObject } from 'ai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

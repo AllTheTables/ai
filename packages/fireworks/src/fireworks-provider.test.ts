@@ -1,19 +1,19 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { createFireworks } from './fireworks-provider';
-import { LanguageModelV3, EmbeddingModelV3 } from '@ai-sdk/provider';
-import { loadApiKey } from '@ai-sdk/provider-utils';
+import { LanguageModelV3, EmbeddingModelV3 } from '@zenning/provider';
+import { loadApiKey } from '@zenning/provider-utils';
 import {
   OpenAICompatibleChatLanguageModel,
   OpenAICompatibleCompletionLanguageModel,
   OpenAICompatibleEmbeddingModel,
-} from '@ai-sdk/openai-compatible';
+} from '@zenning/openai-compatible';
 import { FireworksImageModel } from './fireworks-image-model';
 
 // Add type assertion for the mocked class
 const OpenAICompatibleChatLanguageModelMock =
   OpenAICompatibleChatLanguageModel as unknown as Mock;
 
-vi.mock('@ai-sdk/openai-compatible', () => {
+vi.mock('@zenning/openai-compatible', () => {
   // Create mock constructor functions that behave like classes
   const createMockConstructor = (providerName: string) => {
     const mockConstructor = vi.fn().mockImplementation(function (
@@ -39,8 +39,8 @@ vi.mock('@ai-sdk/openai-compatible', () => {
   };
 });
 
-vi.mock('@ai-sdk/provider-utils', async () => {
-  const actual = await vi.importActual('@ai-sdk/provider-utils');
+vi.mock('@zenning/provider-utils', async () => {
+  const actual = await vi.importActual('@zenning/provider-utils');
   return {
     ...actual,
     loadApiKey: vi.fn().mockReturnValue('mock-api-key'),
@@ -54,7 +54,7 @@ vi.mock('./fireworks-image-model', () => ({
 
 describe('FireworksProvider', () => {
   let mockLanguageModel: LanguageModelV3;
-  let mockEmbeddingModel: EmbeddingModelV3<string>;
+  let mockEmbeddingModel: EmbeddingModelV3;
 
   beforeEach(() => {
     // Mock implementations of models
@@ -63,7 +63,7 @@ describe('FireworksProvider', () => {
     } as LanguageModelV3;
     mockEmbeddingModel = {
       // Add any required methods for EmbeddingModelV3
-    } as EmbeddingModelV3<string>;
+    } as EmbeddingModelV3;
 
     // Reset mocks
     vi.clearAllMocks();
@@ -139,12 +139,12 @@ describe('FireworksProvider', () => {
     });
   });
 
-  describe('textEmbeddingModel', () => {
+  describe('embeddingModel', () => {
     it('should construct a text embedding model with correct configuration', () => {
       const provider = createFireworks();
       const modelId = 'fireworks-embedding-model';
 
-      const model = provider.textEmbeddingModel(modelId);
+      const model = provider.embeddingModel(modelId);
 
       expect(model).toBeInstanceOf(OpenAICompatibleEmbeddingModel);
     });

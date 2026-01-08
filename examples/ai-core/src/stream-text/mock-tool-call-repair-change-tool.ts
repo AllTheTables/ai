@@ -1,5 +1,5 @@
-import { streamText, tool } from 'ai';
-import { convertArrayToReadableStream, MockLanguageModelV3 } from 'ai/test';
+import { streamText, tool } from '@zenning/ai';
+import { convertArrayToReadableStream, MockLanguageModelV3 } from '@zenning/ai/test';
 import 'dotenv/config';
 import { z } from 'zod';
 
@@ -17,12 +17,20 @@ async function main() {
           },
           {
             type: 'finish',
-            finishReason: 'tool-calls',
+            finishReason: { raw: undefined, unified: 'tool-calls' },
             logprobs: undefined,
             usage: {
-              inputTokens: 3,
-              outputTokens: 10,
-              totalTokens: 13,
+              inputTokens: {
+                total: 3,
+                noCache: 3,
+                cacheRead: undefined,
+                cacheWrite: undefined,
+              },
+              outputTokens: {
+                total: 10,
+                text: 10,
+                reasoning: undefined,
+              },
             },
           },
         ]),

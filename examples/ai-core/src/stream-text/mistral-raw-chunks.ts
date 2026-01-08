@@ -1,5 +1,5 @@
-import { mistral } from '@ai-sdk/mistral';
-import { streamText } from 'ai';
+import { mistral } from '@zenning/mistral';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

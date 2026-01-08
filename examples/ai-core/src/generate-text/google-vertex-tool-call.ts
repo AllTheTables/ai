@@ -1,11 +1,11 @@
-import { vertex } from '@ai-sdk/google-vertex';
-import { generateText, stepCountIs, tool } from 'ai';
+import { vertex } from '@zenning/google-vertex';
+import { generateText, stepCountIs, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 
 async function main() {
   const { text } = await generateText({
-    model: vertex('gemini-1.5-pro'),
+    model: vertex('gemini-3-pro-preview'),
     prompt: 'What is the weather in New York City? ',
     tools: {
       weather: tool({

@@ -1,8 +1,8 @@
 'use client';
 
 import { Card } from '@/app/components';
-import { useChat } from '@ai-sdk/react';
-import { TextStreamChatTransport } from 'ai';
+import { useChat } from '@zenning/react';
+import { TextStreamChatTransport } from '@zenning/ai';
 import { useState } from 'react';
 
 export default function Page() {

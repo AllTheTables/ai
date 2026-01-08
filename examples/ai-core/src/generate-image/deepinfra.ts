@@ -1,5 +1,5 @@
-import { deepinfra } from '@ai-sdk/deepinfra';
-import { experimental_generateImage as generateImage } from 'ai';
+import { deepinfra } from '@zenning/deepinfra';
+import { generateImage } from '@zenning/ai';
 import { presentImages } from '../lib/present-image';
 import 'dotenv/config';
 

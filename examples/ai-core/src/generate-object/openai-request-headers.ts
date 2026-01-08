@@ -1,5 +1,5 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { generateObject } from 'ai';
+import { createOpenAI } from '@zenning/openai';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

@@ -1,12 +1,12 @@
-import { xai } from '@ai-sdk/xai';
-import { generateText, tool } from 'ai';
+import { xai } from '@zenning/xai';
+import { generateText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';
 
 async function main() {
   const result = await generateText({
-    model: xai('grok-3-beta'),
+    model: xai('grok-4-1-fast-reasoning'),
     maxOutputTokens: 512,
     tools: {
       weather: weatherTool,

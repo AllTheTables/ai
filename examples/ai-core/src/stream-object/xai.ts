@@ -1,5 +1,5 @@
-import { xai } from '@ai-sdk/xai';
-import { streamObject } from 'ai';
+import { xai } from '@zenning/xai';
+import { streamObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

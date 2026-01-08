@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { streamObject } from 'ai';
+import { openai } from '@zenning/openai';
+import { streamObject } from '@zenning/ai';
 import { z } from 'zod';
 
 export const maxDuration = 30;

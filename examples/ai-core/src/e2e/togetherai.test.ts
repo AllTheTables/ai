@@ -3,8 +3,8 @@ import { expect } from 'vitest';
 import {
   togetherai as provider,
   TogetherAIErrorData,
-} from '@ai-sdk/togetherai';
-import { APICallError } from 'ai';
+} from '@zenning/togetherai';
+import { APICallError } from '@zenning/ai';
 import {
   createEmbeddingModelWithCapabilities,
   createFeatureTestSuite,
@@ -36,12 +36,10 @@ createFeatureTestSuite({
     ],
     embeddingModels: [
       createEmbeddingModelWithCapabilities(
-        provider.textEmbeddingModel(
-          'togethercomputer/m2-bert-80M-8k-retrieval',
-        ),
+        provider.embeddingModel('togethercomputer/m2-bert-80M-8k-retrieval'),
       ),
       createEmbeddingModelWithCapabilities(
-        provider.textEmbeddingModel('BAAI/bge-base-en-v1.5'),
+        provider.embeddingModel('BAAI/bge-base-en-v1.5'),
       ),
     ],
   },

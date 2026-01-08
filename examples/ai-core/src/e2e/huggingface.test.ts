@@ -1,5 +1,5 @@
-import { huggingface } from '@ai-sdk/huggingface';
-import { generateText, streamText, generateObject, streamObject } from 'ai';
+import { huggingface } from '@zenning/huggingface';
+import { generateText, streamText, generateObject, streamObject } from '@zenning/ai';
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod/v4';
 import 'dotenv/config';

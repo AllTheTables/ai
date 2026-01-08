@@ -1,5 +1,5 @@
-import { deepgram } from '@ai-sdk/deepgram';
-import { experimental_transcribe as transcribe } from 'ai';
+import { deepgram } from '@zenning/deepgram';
+import { experimental_transcribe as transcribe } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

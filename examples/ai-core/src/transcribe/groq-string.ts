@@ -1,5 +1,5 @@
-import { groq } from '@ai-sdk/groq';
-import { experimental_transcribe as transcribe } from 'ai';
+import { groq } from '@zenning/groq';
+import { experimental_transcribe as transcribe } from '@zenning/ai';
 import 'dotenv/config';
 import { readFile } from 'fs/promises';
 

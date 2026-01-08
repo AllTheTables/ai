@@ -1,5 +1,5 @@
-import { anthropic } from '@ai-sdk/anthropic';
-import { generateText } from 'ai';
+import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 
@@ -21,8 +21,8 @@ async function main() {
             text: `Error message: ${errorMessage}`,
             providerOptions: {
               anthropic: {
-                cacheControl: { type: 'ephemeral' },
-              },
+                cacheControl: { type: 'ephemeral', ttl: '1h' },
+              } satisfies AnthropicProviderOptions,
             },
           },
           {

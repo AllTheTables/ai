@@ -3,10 +3,10 @@ import { createTransformer } from '../lib/create-transformer';
 export default createTransformer((fileInfo, api, options, context) => {
   const { j, root } = context;
 
-  // Track ExperimentalTool imports from 'ai' package
+  // Track ExperimentalTool imports from '@zenning/ai' package
   const targetImports = new Set<string>();
 
-  // First pass - collect imports from 'ai' package
+  // First pass - collect imports from '@zenning/ai' package
   root
     .find(j.ImportDeclaration)
     .filter(path => path.node.source.value === 'ai')
@@ -27,7 +27,7 @@ export default createTransformer((fileInfo, api, options, context) => {
       });
     });
 
-  // Only replace type references from 'ai' package
+  // Only replace type references from '@zenning/ai' package
   root
     .find(j.TSTypeReference)
     .filter(

@@ -5,10 +5,10 @@
     "dev": "next"
   },
   "dependencies": {
-    "next": "canary",
+    "next": "15.5.9",
     "react": "rc",
     "react-dom": "rc",
-    "ai": "workspace:*"
+    "@zenning/ai": "workspace:*"
   },
-  "version": "0.0.0"
+  "version": "0.0.2"
 }

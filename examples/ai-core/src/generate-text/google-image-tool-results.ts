@@ -1,5 +1,5 @@
-import { google } from '@ai-sdk/google';
-import { generateText, stepCountIs, tool } from 'ai';
+import { google } from '@zenning/google';
+import { generateText, stepCountIs, tool } from '@zenning/ai';
 import { z } from 'zod';
 import 'dotenv/config';
 import * as fs from 'fs';
@@ -31,12 +31,12 @@ const imageAnalysisTool = tool({
     }
   },
 
-  toModelOutput(output: { base64Image?: string }) {
+  toModelOutput({ output }) {
     return {
       type: 'content',
       value: [
         {
-          type: 'media',
+          type: 'image-data',
           mediaType: 'image/png',
           data: output.base64Image!,
         },

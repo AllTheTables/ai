@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { generateText } from 'ai';
+import { openai } from '@zenning/openai';
+import { generateText } from '@zenning/ai';
 import { run } from '../lib/run';
 
 run(async () => {
@@ -9,7 +9,7 @@ run(async () => {
       code_interpreter: openai.tools.codeInterpreter(),
     },
     prompt:
-      'Simulate rolling two dice 10000 times and and return the sum all the results.',
+      'Simulate rolling two dice 10000 times and, return the sum of all the results, and upload the result to a file.',
   });
 
   console.dir(result.content, { depth: Infinity });

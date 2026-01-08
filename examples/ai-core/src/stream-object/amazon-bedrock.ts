@@ -1,5 +1,5 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
-import { streamObject } from 'ai';
+import { bedrock } from '@zenning/amazon-bedrock';
+import { streamObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

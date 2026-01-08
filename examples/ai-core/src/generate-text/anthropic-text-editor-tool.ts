@@ -1,5 +1,5 @@
-import { anthropic } from '@ai-sdk/anthropic';
-import { generateText, stepCountIs } from 'ai';
+import { anthropic } from '@zenning/anthropic';
+import { generateText, stepCountIs } from '@zenning/ai';
 import { run } from '../lib/run';
 
 run(async () => {

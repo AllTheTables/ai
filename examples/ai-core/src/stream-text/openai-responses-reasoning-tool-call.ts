@@ -1,5 +1,5 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
-import { stepCountIs, streamText, tool } from 'ai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
+import { stepCountIs, streamText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 
@@ -39,7 +39,6 @@ async function main() {
         store: false,
         reasoningEffort: 'medium',
         reasoningSummary: 'auto',
-        include: ['reasoning.encrypted_content'],
       } satisfies OpenAIResponsesProviderOptions,
     },
   });

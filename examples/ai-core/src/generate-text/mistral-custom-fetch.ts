@@ -1,5 +1,5 @@
-import { createMistral } from '@ai-sdk/mistral';
-import { generateText } from 'ai';
+import { createMistral } from '@zenning/mistral';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 const mistral = createMistral({

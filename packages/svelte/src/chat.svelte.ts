@@ -5,7 +5,7 @@ import {
   type ChatStatus,
   type CreateUIMessage,
   type UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 export type { CreateUIMessage, UIMessage };
 

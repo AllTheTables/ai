@@ -2,13 +2,13 @@ import {
   createVertexAnthropic as createVertexAnthropicNode,
   vertexAnthropic,
   vertexAnthropic as vertexAnthropicNode,
-} from '@ai-sdk/google-vertex/anthropic';
+} from '@zenning/google-vertex/anthropic';
 import {
   createVertexAnthropic as createVertexAnthropicEdge,
   vertexAnthropic as vertexAnthropicEdge,
-} from '@ai-sdk/google-vertex/anthropic/edge';
-import { LanguageModelV3 } from '@ai-sdk/provider';
-import { APICallError, generateText, stepCountIs } from 'ai';
+} from '@zenning/google-vertex/anthropic/edge';
+import { LanguageModelV3 } from '@zenning/provider';
+import { APICallError, generateText, stepCountIs } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'fs';
 import { describe, expect, it } from 'vitest';
@@ -138,15 +138,15 @@ const toolTests = (model: LanguageModelV3) => {
                 }
               }
             },
-            toModelOutput(result) {
+            toModelOutput({ output }) {
               return {
                 type: 'content',
                 value: [
-                  typeof result === 'string'
-                    ? { type: 'text', text: result }
+                  typeof output === 'string'
+                    ? { type: 'text', text: output }
                     : {
-                        type: 'media',
-                        data: result.data,
+                        type: 'image-data',
+                        data: output.data,
                         mediaType: 'image/png',
                       },
                 ],

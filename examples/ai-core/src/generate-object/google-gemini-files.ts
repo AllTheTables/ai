@@ -1,6 +1,6 @@
 import { GoogleAIFileManager } from '@google/generative-ai/server';
-import { google } from '@ai-sdk/google';
-import { generateObject } from 'ai';
+import { google } from '@zenning/google';
+import { generateObject } from '@zenning/ai';
 import path from 'path';
 import 'dotenv/config';
 import { z } from 'zod';

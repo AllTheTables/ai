@@ -1,11 +1,11 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import {
   createUIMessageStreamResponse,
   streamText,
   createUIMessageStream,
   convertToModelMessages,
   stepCountIs,
-} from 'ai';
+} from '@zenning/ai';
 import { processToolCalls } from './utils';
 import { tools } from './tools';
 import { HumanInTheLoopUIMessage } from './types';
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
       const result = streamText({
         model: openai('gpt-4o'),
-        messages: convertToModelMessages(processedMessages),
+        messages: await convertToModelMessages(processedMessages),
         tools,
         stopWhen: stepCountIs(5),
       });

@@ -1,6 +1,6 @@
 {
-  "name": "@ai-sdk/google-vertex",
-  "version": "3.1.0-beta.12",
+  "name": "@zenning/google-vertex",
+  "version": "4.0.9",
   "license": "Apache-2.0",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -9,6 +9,7 @@
   "files": [
     "dist/**/*",
     "CHANGELOG.md",
+    "README.md",
     "edge.d.ts",
     "anthropic/edge.d.ts",
     "anthropic/index.d.ts"
@@ -16,7 +17,7 @@
   "scripts": {
     "build": "pnpm clean && tsup --tsconfig tsconfig.build.json",
     "build:watch": "pnpm clean && tsup --watch",
-    "clean": "rm -rf dist *.tsbuildinfo",
+    "clean": "del-cli dist *.tsbuildinfo",
     "lint": "eslint \"./**/*.ts*\"",
     "type-check": "tsc --build",
     "prettier-check": "prettier --check \"./**/*.ts*\"",
@@ -50,14 +51,14 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "workspace:*",
-    "@ai-sdk/google": "workspace:*",
-    "@ai-sdk/provider": "workspace:*",
-    "@ai-sdk/provider-utils": "workspace:*",
-    "google-auth-library": "^9.15.0"
+    "@zenning/anthropic": "workspace:*",
+    "@zenning/google": "workspace:*",
+    "@zenning/provider": "workspace:*",
+    "@zenning/provider-utils": "workspace:*",
+    "google-auth-library": "^10.5.0"
   },
   "devDependencies": {
-    "@ai-sdk/test-server": "latest",
+    "@zenning/test-server": "latest",
     "@types/node": "20.17.24",
     "@vercel/ai-tsconfig": "workspace:*",
     "tsup": "^8",

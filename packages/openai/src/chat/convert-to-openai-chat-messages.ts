@@ -1,5 +1,5 @@
 import {
-  LanguageModelV3CallWarning,
+  SharedV3Warning,
   LanguageModelV3Prompt,
   UnsupportedFunctionalityError,
 } from '@zenning/provider';
@@ -14,10 +14,10 @@ export function convertToOpenAIChatMessages({
   systemMessageMode?: 'system' | 'developer' | 'remove';
 }): {
   messages: OpenAIChatPrompt;
-  warnings: Array<LanguageModelV3CallWarning>;
+  warnings: Array<SharedV3Warning>;
 } {
   const messages: OpenAIChatPrompt = [];
-  const warnings: Array<LanguageModelV3CallWarning> = [];
+  const warnings: Array<SharedV3Warning> = [];
 
   for (const { role, content } of prompt) {
     switch (role) {
@@ -184,6 +184,9 @@ export function convertToOpenAIChatMessages({
 
       case 'tool': {
         for (const toolResponse of content) {
+          if (toolResponse.type === 'tool-approval-response') {
+            continue;
+          }
           const output = toolResponse.output;
 
           let contentValue: string;
@@ -191,6 +194,9 @@ export function convertToOpenAIChatMessages({
             case 'text':
             case 'error-text':
               contentValue = output.value;
+              break;
+            case 'execution-denied':
+              contentValue = output.reason ?? 'Tool execution denied.';
               break;
             case 'content':
             case 'json':

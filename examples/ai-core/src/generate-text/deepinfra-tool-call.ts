@@ -1,5 +1,5 @@
-import { deepinfra } from '@ai-sdk/deepinfra';
-import { generateText, tool } from 'ai';
+import { deepinfra } from '@zenning/deepinfra';
+import { generateText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';

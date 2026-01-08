@@ -2,10 +2,10 @@
 
 import { Fragment, useState } from 'react';
 import type { AI } from './ai';
-import { useActions } from '@ai-sdk/rsc';
+import { useActions } from '@zenning/rsc';
 
-import { useAIState, useUIState } from '@ai-sdk/rsc';
-import { generateId } from 'ai';
+import { useAIState, useUIState } from '@zenning/rsc';
+import { generateId } from '@zenning/ai';
 import { Message } from './message';
 
 export default function Home() {

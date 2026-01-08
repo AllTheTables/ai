@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { CoreTool } from 'ai';
+import { CoreTool } from '@zenning/ai';
 
 interface Config {
   tool: CoreTool;

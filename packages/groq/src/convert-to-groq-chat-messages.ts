@@ -1,9 +1,9 @@
 import {
   LanguageModelV3Prompt,
   UnsupportedFunctionalityError,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 import { GroqChatPrompt } from './groq-api-types';
-import { convertToBase64 } from '@ai-sdk/provider-utils';
+import { convertToBase64 } from '@zenning/provider-utils';
 
 export function convertToGroqChatMessages(
   prompt: LanguageModelV3Prompt,
@@ -106,6 +106,9 @@ export function convertToGroqChatMessages(
 
       case 'tool': {
         for (const toolResponse of content) {
+          if (toolResponse.type === 'tool-approval-response') {
+            continue;
+          }
           const output = toolResponse.output;
 
           let contentValue: string;
@@ -113,6 +116,9 @@ export function convertToGroqChatMessages(
             case 'text':
             case 'error-text':
               contentValue = output.value;
+              break;
+            case 'execution-denied':
+              contentValue = output.reason ?? 'Tool execution denied.';
               break;
             case 'content':
             case 'json':

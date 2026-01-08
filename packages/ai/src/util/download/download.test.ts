@@ -1,6 +1,6 @@
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { createTestServer } from '@zenning/test-server/with-vitest';
+import { DownloadError } from '@zenning/provider-utils';
 import { download } from './download';
-import { DownloadError } from './download-error';
 import { describe, it, expect } from 'vitest';
 
 const server = createTestServer({

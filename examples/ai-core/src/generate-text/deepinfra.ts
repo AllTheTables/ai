@@ -1,5 +1,5 @@
-import { deepinfra } from '@ai-sdk/deepinfra';
-import { generateText } from 'ai';
+import { deepinfra } from '@zenning/deepinfra';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

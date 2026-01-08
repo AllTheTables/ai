@@ -1,5 +1,5 @@
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { generateText } from 'ai';
+import { createAnthropic } from '@zenning/anthropic';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 const anthropic = createAnthropic({

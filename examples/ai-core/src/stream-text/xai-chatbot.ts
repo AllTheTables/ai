@@ -1,5 +1,5 @@
-import { xai } from '@ai-sdk/xai';
-import { stepCountIs, ModelMessage, streamText, tool } from 'ai';
+import { xai } from '@zenning/xai';
+import { stepCountIs, ModelMessage, streamText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import * as readline from 'node:readline/promises';
 import { z } from 'zod';

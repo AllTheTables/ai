@@ -1,5 +1,5 @@
-import { anthropic } from '@ai-sdk/anthropic';
-import { generateText, stepCountIs } from 'ai';
+import { anthropic } from '@zenning/anthropic';
+import { generateText, stepCountIs } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 
@@ -33,13 +33,17 @@ async function main() {
         },
 
         // map to tool result content for LLM consumption:
-        toModelOutput(result) {
+        toModelOutput({ output }) {
           return {
             type: 'content',
             value: [
-              typeof result === 'string'
-                ? { type: 'text', text: result }
-                : { type: 'media', data: result.data, mediaType: 'image/png' },
+              typeof output === 'string'
+                ? { type: 'text', text: output }
+                : {
+                    type: 'image-data',
+                    data: output.data,
+                    mediaType: 'image/png',
+                  },
             ],
           };
         },

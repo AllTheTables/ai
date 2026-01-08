@@ -1,5 +1,5 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
-import { generateText, stepCountIs, tool } from 'ai';
+import { bedrock } from '@zenning/amazon-bedrock';
+import { generateText, stepCountIs, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 
@@ -29,13 +29,13 @@ async function main() {
           const bytes = new Uint8Array(arrayBuffer);
           return { bytes };
         },
-        toModelOutput(result) {
+        toModelOutput({ output }) {
           return {
             type: 'content',
             value: [
               {
-                type: 'media',
-                data: Buffer.from(result.bytes).toString('base64'),
+                type: 'image-data',
+                data: Buffer.from(output.bytes).toString('base64'),
                 mediaType: 'image/jpeg',
               },
             ],

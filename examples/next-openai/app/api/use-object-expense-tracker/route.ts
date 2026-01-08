@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { streamObject } from 'ai';
+import { openai } from '@zenning/openai';
+import { streamObject } from '@zenning/ai';
 import { expenseSchema } from './schema';
 
 // Allow streaming responses up to 30 seconds

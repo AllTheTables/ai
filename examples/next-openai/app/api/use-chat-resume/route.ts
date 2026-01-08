@@ -3,7 +3,7 @@ import {
   appendStreamId,
   saveChat,
 } from '@/util/chat-store';
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -11,7 +11,7 @@ import {
   JsonToSseTransformStream,
   streamText,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 import { after } from 'next/server';
 import { createResumableStreamContext } from 'resumable-stream';
 
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-4o'),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
 
   return result.toUIMessageStreamResponse({

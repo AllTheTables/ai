@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { streamObject, LanguageModelUsage } from 'ai';
+import { openai } from '@zenning/openai';
+import { streamObject, LanguageModelUsage } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

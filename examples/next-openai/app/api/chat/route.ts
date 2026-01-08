@@ -1,21 +1,19 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import {
   consumeStream,
   convertToModelMessages,
   streamText,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
-  const prompt = convertToModelMessages(messages);
-
   const result = streamText({
     model: openai('gpt-4o'),
-    prompt,
+    messages: await convertToModelMessages(messages),
     abortSignal: req.signal,
   });
 

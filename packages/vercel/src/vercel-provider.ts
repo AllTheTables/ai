@@ -2,14 +2,14 @@ import {
   LanguageModelV3,
   NoSuchModelError,
   ProviderV3,
-} from '@ai-sdk/provider';
-import { OpenAICompatibleChatLanguageModel } from '@ai-sdk/openai-compatible';
+} from '@zenning/provider';
+import { OpenAICompatibleChatLanguageModel } from '@zenning/openai-compatible';
 import {
   FetchFunction,
   loadApiKey,
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { VercelChatModelId } from './vercel-chat-options';
 import { VERSION } from './version';
 
@@ -43,6 +43,11 @@ Creates a model for text generation.
 Creates a language model for text generation.
 */
   languageModel(modelId: VercelChatModelId): LanguageModelV3;
+
+  /**
+   * @deprecated Use `embeddingModel` instead.
+   */
+  textEmbeddingModel(modelId: string): never;
 }
 
 export function createVercel(
@@ -86,10 +91,12 @@ export function createVercel(
 
   const provider = (modelId: VercelChatModelId) => createChatModel(modelId);
 
+  provider.specificationVersion = 'v3' as const;
   provider.languageModel = createChatModel;
-  provider.textEmbeddingModel = (modelId: string) => {
-    throw new NoSuchModelError({ modelId, modelType: 'textEmbeddingModel' });
+  provider.embeddingModel = (modelId: string) => {
+    throw new NoSuchModelError({ modelId, modelType: 'embeddingModel' });
   };
+  provider.textEmbeddingModel = provider.embeddingModel;
   provider.imageModel = (modelId: string) => {
     throw new NoSuchModelError({ modelId, modelType: 'imageModel' });
   };

@@ -1,5 +1,5 @@
-import { convertToModelMessages, streamText, UIMessage } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { convertToModelMessages, streamText, UIMessage } from '@zenning/ai';
+import { openai } from '@zenning/openai';
 import { z } from 'zod';
 
 export async function POST(req: Request) {
@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai('gpt-4'),
     system: 'You are a helpful assistant.',
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     tools: {
       celsiusToFahrenheit: {
         description: 'Converts celsius to fahrenheit',

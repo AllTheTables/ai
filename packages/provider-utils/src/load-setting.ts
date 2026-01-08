@@ -1,4 +1,4 @@
-import { LoadSettingError } from '@ai-sdk/provider';
+import { LoadSettingError } from '@zenning/provider';
 
 /**
  * Loads a `string` setting from the environment or a parameter.

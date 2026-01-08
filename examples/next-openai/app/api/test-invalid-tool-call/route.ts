@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import {
   convertToModelMessages,
   InferUITools,
@@ -7,8 +7,8 @@ import {
   tool,
   UIDataTypes,
   UIMessage,
-} from 'ai';
-import { convertArrayToReadableStream, MockLanguageModelV3 } from 'ai/test';
+} from '@zenning/ai';
+import { convertArrayToReadableStream, MockLanguageModelV3 } from '@zenning/ai/test';
 import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-4o'),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     stopWhen: stepCountIs(5), // multi-steps for server-side tools
     tools,
     prepareStep: async ({ stepNumber }) => {
@@ -80,11 +80,19 @@ export async function POST(req: Request) {
                 },
                 {
                   type: 'finish',
-                  finishReason: 'stop',
+                  finishReason: { raw: undefined, unified: 'stop' },
                   usage: {
-                    inputTokens: 10,
-                    outputTokens: 20,
-                    totalTokens: 30,
+                    inputTokens: {
+                      total: 10,
+                      noCache: 10,
+                      cacheRead: undefined,
+                      cacheWrite: undefined,
+                    },
+                    outputTokens: {
+                      total: 20,
+                      text: 20,
+                      reasoning: undefined,
+                    },
                   },
                 },
               ]),

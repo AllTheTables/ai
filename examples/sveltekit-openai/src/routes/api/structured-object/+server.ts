@@ -1,6 +1,6 @@
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import { notificationSchema } from '../../structured-object/schema.js';
-import { createOpenAI } from '@ai-sdk/openai';
+import { createOpenAI } from '@zenning/openai';
 import { env } from '$env/dynamic/private';
 
 const openai = createOpenAI({

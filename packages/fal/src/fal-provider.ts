@@ -2,14 +2,14 @@ import {
   ImageModelV3,
   NoSuchModelError,
   ProviderV3,
-  SpeechModelV2,
-  TranscriptionModelV2,
-} from '@ai-sdk/provider';
-import type { FetchFunction } from '@ai-sdk/provider-utils';
+  SpeechModelV3,
+  TranscriptionModelV3,
+} from '@zenning/provider';
+import type { FetchFunction } from '@zenning/provider-utils';
 import {
   withoutTrailingSlash,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { FalImageModel } from './fal-image-model';
 import { FalImageModelId } from './fal-image-settings';
 import { FalTranscriptionModelId } from './fal-transcription-options';
@@ -57,12 +57,17 @@ Creates a model for image generation.
   /**
 Creates a model for transcription.
    */
-  transcription(modelId: FalTranscriptionModelId): TranscriptionModelV2;
+  transcription(modelId: FalTranscriptionModelId): TranscriptionModelV3;
 
   /**
 Creates a model for speech generation.
    */
-  speech(modelId: FalSpeechModelId): SpeechModelV2;
+  speech(modelId: FalSpeechModelId): SpeechModelV3;
+
+  /**
+   * @deprecated Use `embeddingModel` instead.
+   */
+  textEmbeddingModel(modelId: string): never;
 }
 
 const defaultBaseURL = 'https://fal.run';
@@ -148,22 +153,26 @@ export function createFal(options: FalProviderSettings = {}): FalProvider {
       fetch: options.fetch,
     });
 
+  const embeddingModel = (modelId: string) => {
+    throw new NoSuchModelError({
+      modelId,
+      modelType: 'embeddingModel',
+    });
+  };
+
   return {
+    specificationVersion: 'v3' as const,
     imageModel: createImageModel,
     image: createImageModel,
-    languageModel: () => {
+    languageModel: (modelId: string) => {
       throw new NoSuchModelError({
-        modelId: 'languageModel',
+        modelId,
         modelType: 'languageModel',
       });
     },
     speech: createSpeechModel,
-    textEmbeddingModel: () => {
-      throw new NoSuchModelError({
-        modelId: 'textEmbeddingModel',
-        modelType: 'textEmbeddingModel',
-      });
-    },
+    embeddingModel,
+    textEmbeddingModel: embeddingModel,
     transcription: createTranscriptionModel,
   };
 }

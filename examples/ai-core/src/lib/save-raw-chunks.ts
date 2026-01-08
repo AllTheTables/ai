@@ -1,4 +1,4 @@
-import { StreamTextResult } from 'ai';
+import { StreamTextResult } from '@zenning/ai';
 import fs from 'fs';
 
 export async function saveRawChunks({

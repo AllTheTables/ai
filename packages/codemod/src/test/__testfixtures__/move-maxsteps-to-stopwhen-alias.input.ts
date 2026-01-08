@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { generateText as GT } from 'ai';
-import { useChat as UC } from '@ai-sdk/react';
+import { generateText as GT } from '@zenning/ai';
+import { useChat as UC } from '@zenning/react';
 
 async function foo() {
   const result = await GT({

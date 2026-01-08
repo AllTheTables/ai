@@ -1,5 +1,5 @@
-import { togetherai } from '@ai-sdk/togetherai';
-import { streamText } from 'ai';
+import { togetherai } from '@zenning/togetherai';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

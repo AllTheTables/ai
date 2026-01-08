@@ -1,5 +1,5 @@
-import { vertex } from '@ai-sdk/google-vertex';
-import { generateText } from 'ai';
+import { vertex } from '@zenning/google-vertex';
+import { generateText } from '@zenning/ai';
 
 export async function GET() {
   const model = vertex('gemini-1.5-flash');

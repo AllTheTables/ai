@@ -1,8 +1,8 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
-import ChatInput from '@/component/chat-input';
+import { useChat } from '@zenning/react';
+import { DefaultChatTransport } from '@zenning/ai';
+import ChatInput from '@/components/chat-input';
 
 export default function TestGoogle() {
   const { error, status, sendMessage, messages, regenerate, stop } = useChat({

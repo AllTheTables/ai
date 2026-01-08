@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { expect } from 'vitest';
-import { fireworks as provider, FireworksErrorData } from '@ai-sdk/fireworks';
-import { APICallError } from '@ai-sdk/provider';
+import { fireworks as provider, FireworksErrorData } from '@zenning/fireworks';
+import { APICallError } from '@zenning/provider';
 import {
   createEmbeddingModelWithCapabilities,
   createFeatureTestSuite,
@@ -33,7 +33,7 @@ createFeatureTestSuite({
     ],
     embeddingModels: [
       createEmbeddingModelWithCapabilities(
-        provider.textEmbeddingModel('nomic-ai/nomic-embed-text-v1.5'),
+        provider.embeddingModel('nomic-ai/nomic-embed-text-v1.5'),
       ),
     ],
     imageModels: [

@@ -1,5 +1,5 @@
-import { createBaseten } from '@ai-sdk/baseten';
-import { embed } from 'ai';
+import { createBaseten } from '@zenning/baseten';
+import { embed } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
@@ -12,14 +12,15 @@ async function main() {
     modelURL: EMBEDDING_MODEL_URL,
   });
 
-  const { embedding, usage } = await embed({
-    model: baseten.textEmbeddingModel(),
+  const { embedding, usage, warnings } = await embed({
+    model: baseten.embeddingModel(),
     value: 'sunny day at the beach',
   });
 
   console.log('Embedding dimension:', embedding.length);
   console.log('First 5 values:', embedding.slice(0, 5));
   console.log('Usage:', usage);
+  console.log('Warnings:', warnings);
 }
 
 main().catch(console.error);

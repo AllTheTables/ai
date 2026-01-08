@@ -1,9 +1,9 @@
-import { SpeechModelV2, ProviderV3 } from '@ai-sdk/provider';
+import { SpeechModelV3, ProviderV3 } from '@zenning/provider';
 import {
   FetchFunction,
   loadApiKey,
   withUserAgentSuffix,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { HumeSpeechModel } from './hume-speech-model';
 import { VERSION } from './version';
 
@@ -15,7 +15,7 @@ export interface HumeProvider extends Pick<ProviderV3, 'speechModel'> {
   /**
 Creates a model for speech synthesis.
    */
-  speech(): SpeechModelV2;
+  speech(): SpeechModelV3;
 }
 
 export interface HumeProviderSettings {

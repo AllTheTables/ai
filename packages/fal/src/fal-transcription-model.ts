@@ -1,8 +1,8 @@
 import {
   AISDKError,
-  TranscriptionModelV2,
-  TranscriptionModelV2CallWarning,
-} from '@ai-sdk/provider';
+  TranscriptionModelV3,
+  SharedV3Warning,
+} from '@zenning/provider';
 import {
   combineHeaders,
   convertUint8ArrayToBase64,
@@ -12,7 +12,7 @@ import {
   getFromApi,
   parseProviderOptions,
   postJsonToApi,
-} from '@ai-sdk/provider-utils';
+} from '@zenning/provider-utils';
 import { z } from 'zod/v4';
 import { FalConfig } from './fal-config';
 import { falErrorDataSchema, falFailedResponseHandler } from './fal-error';
@@ -67,8 +67,8 @@ interface FalTranscriptionModelConfig extends FalConfig {
   };
 }
 
-export class FalTranscriptionModel implements TranscriptionModelV2 {
-  readonly specificationVersion = 'v2';
+export class FalTranscriptionModel implements TranscriptionModelV3 {
+  readonly specificationVersion = 'v3';
 
   get provider(): string {
     return this.config.provider;
@@ -81,8 +81,8 @@ export class FalTranscriptionModel implements TranscriptionModelV2 {
 
   private async getArgs({
     providerOptions,
-  }: Parameters<TranscriptionModelV2['doGenerate']>[0]) {
-    const warnings: TranscriptionModelV2CallWarning[] = [];
+  }: Parameters<TranscriptionModelV3['doGenerate']>[0]) {
+    const warnings: SharedV3Warning[] = [];
 
     // Parse provider options
     const falOptions = await parseProviderOptions({
@@ -121,8 +121,8 @@ export class FalTranscriptionModel implements TranscriptionModelV2 {
   }
 
   async doGenerate(
-    options: Parameters<TranscriptionModelV2['doGenerate']>[0],
-  ): Promise<Awaited<ReturnType<TranscriptionModelV2['doGenerate']>>> {
+    options: Parameters<TranscriptionModelV3['doGenerate']>[0],
+  ): Promise<Awaited<ReturnType<TranscriptionModelV3['doGenerate']>>> {
     const currentDate = this.config._internal?.currentDate?.() ?? new Date();
     const { body, warnings } = await this.getArgs(options);
 

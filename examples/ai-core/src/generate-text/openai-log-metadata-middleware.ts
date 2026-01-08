@@ -1,9 +1,10 @@
-import { openai } from '@ai-sdk/openai';
-import { LanguageModelV3Middleware } from '@ai-sdk/provider';
-import { generateText, wrapLanguageModel } from 'ai';
+import { openai } from '@zenning/openai';
+import { LanguageModelV3Middleware } from '@zenning/provider';
+import { generateText, wrapLanguageModel } from '@zenning/ai';
 import 'dotenv/config';
 
 const logProviderMetadataMiddleware: LanguageModelV3Middleware = {
+  specificationVersion: 'v3',
   transformParams: async ({ params }) => {
     console.log(
       'providerOptions: ' + JSON.stringify(params.providerOptions, null, 2),

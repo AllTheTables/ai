@@ -1,6 +1,6 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import 'dotenv/config';
-import { stepCountIs, streamText, tool } from 'ai';
+import { stepCountIs, streamText, tool } from '@zenning/ai';
 import { z } from 'zod';
 
 async function main() {

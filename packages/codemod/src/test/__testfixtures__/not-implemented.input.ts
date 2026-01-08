@@ -5,8 +5,8 @@ import {
   appendClientMessage,
   appendResponseMessages,
   StreamData,
-} from 'ai';
-import { openai } from '@ai-sdk/openai';
+} from '@zenning/ai';
+import { openai } from '@zenning/openai';
 
 const updatedMessages = appendClientMessage({
   messages,

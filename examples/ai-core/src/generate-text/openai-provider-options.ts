@@ -1,5 +1,5 @@
-import { openai, type OpenAIChatLanguageModelOptions } from '@ai-sdk/openai';
-import { generateText } from 'ai';
+import { openai, type OpenAIChatLanguageModelOptions } from '@zenning/openai';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
@@ -13,7 +13,6 @@ async function main() {
         user: '<user_id>',
         maxCompletionTokens: 100,
         store: false,
-        structuredOutputs: false,
         serviceTier: 'auto',
         strictJsonSchema: false,
         textVerbosity: 'medium',

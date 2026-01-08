@@ -1,5 +1,5 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
-import { generateText, stepCountIs } from 'ai';
+import { bedrock } from '@zenning/amazon-bedrock';
+import { generateText, stepCountIs } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

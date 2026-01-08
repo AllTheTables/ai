@@ -1,18 +1,15 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import {
-  convertToModelMessages,
-  experimental_createMCPClient,
-  stepCountIs,
-  streamText,
-} from 'ai';
+import { convertToModelMessages, stepCountIs, streamText } from '@zenning/ai';
+import { createMCPClient } from '@zenning/mcp';
 
 export async function POST(req: Request) {
-  const url = new URL('http://localhost:3000/mcp/server');
+  const requestUrl = new URL(req.url);
+  const url = new URL('/mcp/server', requestUrl.origin);
   const transport = new StreamableHTTPClientTransport(url);
 
   const [client, { messages }] = await Promise.all([
-    experimental_createMCPClient({
+    createMCPClient({
       transport,
     }),
     req.json(),
@@ -29,7 +26,7 @@ export async function POST(req: Request) {
         console.log(`STEP RESULTS: ${JSON.stringify(toolResults, null, 2)}`);
       },
       system: 'You are a helpful chatbot capable of basic arithmetic problems',
-      messages: convertToModelMessages(messages),
+      messages: await convertToModelMessages(messages),
       onFinish: async () => {
         await client.close();
       },

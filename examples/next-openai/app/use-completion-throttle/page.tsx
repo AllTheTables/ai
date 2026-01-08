@@ -1,6 +1,6 @@
 'use client';
 
-import { useCompletion } from '@ai-sdk/react';
+import { useCompletion } from '@zenning/react';
 import { useLayoutEffect, useRef } from 'react';
 
 export default function Chat() {

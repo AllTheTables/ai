@@ -1,5 +1,5 @@
-import { gladia } from '@ai-sdk/gladia';
-import { experimental_transcribe as transcribe } from 'ai';
+import { gladia } from '@zenning/gladia';
+import { experimental_transcribe as transcribe } from '@zenning/ai';
 import 'dotenv/config';
 import { readFile } from 'fs/promises';
 

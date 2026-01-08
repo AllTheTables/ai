@@ -1,6 +1,6 @@
 {
-  "name": "@ai-sdk/baseten",
-  "version": "1.0.0-beta.7",
+  "name": "@zenning/baseten",
+  "version": "1.0.7",
   "license": "Apache-2.0",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -8,7 +8,8 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**/*",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "README.md"
   ],
   "scripts": {
     "build": "pnpm clean && tsup --tsconfig tsconfig.build.json",
@@ -32,9 +33,9 @@
     }
   },
   "dependencies": {
-    "@ai-sdk/openai-compatible": "workspace:*",
-    "@ai-sdk/provider": "workspace:*",
-    "@ai-sdk/provider-utils": "workspace:*",
+    "@zenning/openai-compatible": "workspace:*",
+    "@zenning/provider": "workspace:*",
+    "@zenning/provider-utils": "workspace:*",
     "@basetenlabs/performance-client": "^0.0.10"
   },
   "devDependencies": {

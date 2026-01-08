@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useChat } from 'ai/react';
+import { useChat } from '@zenning/ai/react';
 
 export function ChatWithApiString() {
   const { messages, sendMessage } = useChat({
@@ -54,7 +54,7 @@ export function EmptyUseChat() {
 }
 
 // Test with new import syntax
-import { useChat as useChatNew } from '@ai-sdk/react';
+import { useChat as useChatNew } from '@zenning/react';
 
 export function ChatWithNewImportSyntax() {
   const { messages, sendMessage } = useChatNew({

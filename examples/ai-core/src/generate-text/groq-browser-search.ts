@@ -1,5 +1,5 @@
-import { groq } from '@ai-sdk/groq';
-import { generateText } from 'ai';
+import { groq } from '@zenning/groq';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

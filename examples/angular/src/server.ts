@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { convertToModelMessages, streamObject, streamText } from 'ai';
+import { openai } from '@zenning/openai';
+import { convertToModelMessages, streamObject, streamText } from '@zenning/ai';
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import z from 'zod';
@@ -11,7 +11,7 @@ app.post('/api/chat', async (req: Request, res: Response) => {
   const { messages, selectedModel } = req.body;
   const result = streamText({
     model: openai(selectedModel),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
   });
 
   result.pipeUIMessageStreamToResponse(res);

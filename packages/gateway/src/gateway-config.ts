@@ -1,4 +1,4 @@
-import type { FetchFunction, Resolvable } from '@ai-sdk/provider-utils';
+import type { FetchFunction, Resolvable } from '@zenning/provider-utils';
 
 export type GatewayConfig = {
   baseURL: string;

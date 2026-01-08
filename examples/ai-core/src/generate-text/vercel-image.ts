@@ -1,5 +1,5 @@
-import { vercel } from '@ai-sdk/vercel';
-import { generateText } from 'ai';
+import { vercel } from '@zenning/vercel';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 

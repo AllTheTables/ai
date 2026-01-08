@@ -1,4 +1,4 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
 import {
   convertToModelMessages,
   InferUITools,
@@ -7,7 +7,7 @@ import {
   UIDataTypes,
   UIMessage,
   validateUIMessages,
-} from 'ai';
+} from '@zenning/ai';
 
 export const maxDuration = 30;
 
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai('gpt-5-nano'),
     tools,
-    messages: convertToModelMessages(uiMessages),
+    messages: await convertToModelMessages(uiMessages),
     onStepFinish: ({ request }) => {
       console.log(JSON.stringify(request.body, null, 2));
     },

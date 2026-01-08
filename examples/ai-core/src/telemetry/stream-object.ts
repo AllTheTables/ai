@@ -1,10 +1,10 @@
 import 'dotenv/config';
 
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node';
-import { streamObject } from 'ai';
+import { streamObject } from '@zenning/ai';
 import { z } from 'zod';
 
 const sdk = new NodeSDK({

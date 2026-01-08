@@ -1,3 +1,8 @@
+export type {
+  OpenAIResponsesProviderOptions,
+  OpenAIChatLanguageModelOptions,
+} from '@zenning/openai';
+
 export { azure, createAzure } from './azure-openai-provider';
 export type {
   AzureOpenAIProvider,

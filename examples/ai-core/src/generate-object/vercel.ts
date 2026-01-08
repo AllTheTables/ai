@@ -1,5 +1,5 @@
-import { vercel } from '@ai-sdk/vercel';
-import { generateObject } from 'ai';
+import { vercel } from '@zenning/vercel';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

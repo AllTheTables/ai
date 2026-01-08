@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { google } from '@ai-sdk/google';
-import { generateText } from 'ai';
+import { google } from '@zenning/google';
+import { generateText } from '@zenning/ai';
 import fs from 'node:fs';
 
 const errorMessage = fs.readFileSync('data/error-message.txt', 'utf8');

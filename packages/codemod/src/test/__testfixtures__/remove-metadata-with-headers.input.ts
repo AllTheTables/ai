@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { generateObject, LanguageModelResponseMetadata } from 'ai';
+import { generateObject, LanguageModelResponseMetadata } from '@zenning/ai';
 import { LanguageModelResponseMetadataWithHeaders as MetadataWithHeaders } from 'other-pkg';
 
 // Direct type usage

@@ -1,5 +1,5 @@
-import { xai } from '@ai-sdk/xai';
-import { generateObject } from 'ai';
+import { xai } from '@zenning/xai';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

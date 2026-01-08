@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createIdGenerator } from 'ai';
+import { createIdGenerator } from '@zenning/ai';
 
 // Case 1: createIdGenerator() with size passed to generator call
 const generator = createIdGenerator({ prefix: 'msg' });

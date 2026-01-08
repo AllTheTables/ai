@@ -1,5 +1,5 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
-import { generateText } from 'ai';
+import { bedrock } from '@zenning/amazon-bedrock';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
@@ -39,7 +39,7 @@ async function main() {
 
   try {
     // Create provider with explicit API key
-    const { createAmazonBedrock } = await import('@ai-sdk/amazon-bedrock');
+    const { createAmazonBedrock } = await import('@zenning/amazon-bedrock');
     const bedrockWithApiKey = createAmazonBedrock({
       apiKey: exampleApiKey,
       region: 'us-east-1', // Optional: specify region

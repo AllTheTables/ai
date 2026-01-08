@@ -1,4 +1,4 @@
-import { streamText } from 'ai';
+import { streamText } from '@zenning/ai';
 import { registry } from './setup-registry';
 
 async function main() {

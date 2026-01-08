@@ -34,9 +34,9 @@ export default createTransformer(
             context.hasChanges = true;
           }
         });
-        path.node.source.value = '@ai-sdk/langchain';
+        path.node.source.value = '@zenning/langchain';
         context.messages.push(
-          "Updated import of LangChainAdapter from 'ai' to '@ai-sdk/langchain' and renamed to toDataStreamResponse",
+          "Updated import of LangChainAdapter from '@zenning/ai' to '@zenning/langchain' and renamed to toDataStreamResponse",
         );
       });
 

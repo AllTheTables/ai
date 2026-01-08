@@ -1,5 +1,5 @@
-import { groq } from '@ai-sdk/groq';
-import { generateObject } from 'ai';
+import { groq } from '@zenning/groq';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

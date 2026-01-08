@@ -1,4 +1,4 @@
-import { DownloadError } from './download-error';
+import { DownloadError } from '@zenning/provider-utils';
 import {
   withUserAgentSuffix,
   getRuntimeEnvironmentUserAgent,

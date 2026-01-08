@@ -8,20 +8,20 @@ const ImportMappings: Record<string, string> = {
 };
 
 /**
- * Codemod to update imports of LanguageModelV2 and related types from 'ai' to '@ai-sdk/provider'.
+ * Codemod to update imports of LanguageModelV2 and related types from '@zenning/ai' to '@zenning/provider'.
  * @see https://ai-sdk.dev/docs/migration-guides/migration-guide-5-0#language-model-v2-import
  */
 export default createTransformer((fileInfo, api, options, context) => {
   const { j, root } = context;
 
-  // Find all import declarations from 'ai'
+  // Find all import declarations from '@zenning/ai'
   root.find(j.ImportDeclaration).forEach(importPath => {
     const node = importPath.node;
 
     // Check if the source value is exactly 'ai'
     if (node.source.value !== 'ai') return;
 
-    // Find specifiers that should be moved to '@ai-sdk/provider'
+    // Find specifiers that should be moved to '@zenning/provider'
     const targetSpecifiers =
       node.specifiers?.filter(
         s =>
@@ -51,15 +51,15 @@ export default createTransformer((fileInfo, api, options, context) => {
 
     if (remainingSpecifiers.length === 0) {
       // All specifiers should be moved, just change the source
-      node.source.value = '@ai-sdk/provider';
-      context.messages.push(`Updated import from 'ai' to '@ai-sdk/provider'`);
+      node.source.value = '@zenning/provider';
+      context.messages.push(`Updated import from '@zenning/ai' to '@zenning/provider'`);
     } else {
       // Mixed imports: need to split them
       // The current import (with comments) should become the moved import
       // and we need to create a new import for the remaining specifiers
 
       // Change the current import to use the new source and target specifiers
-      node.source.value = '@ai-sdk/provider';
+      node.source.value = '@zenning/provider';
       node.specifiers = targetSpecifiers;
 
       // Create new import for remaining specifiers after the current one
@@ -72,7 +72,7 @@ export default createTransformer((fileInfo, api, options, context) => {
       importPath.insertAfter(remainingImport);
 
       context.messages.push(
-        `Split import: moved some imports from 'ai' to '@ai-sdk/provider'`,
+        `Split import: moved some imports from '@zenning/ai' to '@zenning/provider'`,
       );
     }
   });

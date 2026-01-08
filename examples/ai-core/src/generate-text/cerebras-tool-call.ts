@@ -1,5 +1,5 @@
-import { cerebras } from '@ai-sdk/cerebras';
-import { generateText, tool } from 'ai';
+import { cerebras } from '@zenning/cerebras';
+import { generateText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';

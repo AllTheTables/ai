@@ -1,4 +1,4 @@
-import { embed } from 'ai';
+import { embed } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
@@ -9,6 +9,7 @@ async function main() {
 
   console.log('Embedding:', result.embedding);
   console.log('Usage:', result.usage);
+  console.log('Warnings:', result.warnings);
 
   if (result.providerMetadata) {
     console.log('\nProvider Metadata:');

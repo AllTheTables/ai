@@ -1,5 +1,5 @@
-import { EmbeddingModelV3Embedding } from '@ai-sdk/provider';
-import { createTestServer } from '@ai-sdk/test-server/with-vitest';
+import { EmbeddingModelV3Embedding } from '@zenning/provider';
+import { createTestServer } from '@zenning/test-server/with-vitest';
 import { GoogleGenerativeAIEmbeddingModel } from './google-generative-ai-embedding-model';
 import { createGoogleGenerativeAI } from './google-provider';
 import { describe, it, expect, vi } from 'vitest';
@@ -15,7 +15,7 @@ const dummyEmbeddings = [
 const testValues = ['sunny day at the beach', 'rainy day in the city'];
 
 const provider = createGoogleGenerativeAI({ apiKey: 'test-api-key' });
-const model = provider.textEmbeddingModel('gemini-embedding-001');
+const model = provider.embeddingModel('gemini-embedding-001');
 
 const URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:something';
@@ -178,7 +178,7 @@ describe('GoogleGenerativeAIEmbeddingModel', () => {
 
   it('should use the batch embeddings endpoint', async () => {
     prepareBatchJsonResponse();
-    const model = provider.textEmbeddingModel('gemini-embedding-001');
+    const model = provider.embeddingModel('gemini-embedding-001');
     await model.doEmbed({
       values: testValues,
     });
@@ -191,7 +191,7 @@ describe('GoogleGenerativeAIEmbeddingModel', () => {
   it('should use the single embeddings endpoint', async () => {
     prepareSingleJsonResponse();
 
-    const model = provider.textEmbeddingModel('gemini-embedding-001');
+    const model = provider.embeddingModel('gemini-embedding-001');
 
     await model.doEmbed({
       values: [testValues[0]],

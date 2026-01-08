@@ -1,17 +1,17 @@
-import { createAzure } from '@ai-sdk/azure';
-import { generateText } from 'ai';
+import { createAzure } from '@zenning/azure';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 
 // Initialize Azure OpenAI provider
 const azure = createAzure({
+  resourceName: process.env.AZURE_RESOURCE_NAME,
   apiKey: process.env.AZURE_API_KEY,
-  baseURL: process.env.AZURE_BASE_URL,
 });
 
 async function main() {
   // Basic text generation
   const basicResult = await generateText({
-    model: azure.responses('gpt-4o-mini'),
+    model: azure.responses('gpt-4.1-mini'),
     prompt: 'What is quantum computing?',
   });
 

@@ -1,15 +1,16 @@
-import { togetherai } from '@ai-sdk/togetherai';
-import { embed } from 'ai';
+import { togetherai } from '@zenning/togetherai';
+import { embed } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
-  const { embedding, usage } = await embed({
-    model: togetherai.textEmbeddingModel('BAAI/bge-base-en-v1.5'),
+  const { embedding, usage, warnings } = await embed({
+    model: togetherai.embeddingModel('BAAI/bge-base-en-v1.5'),
     value: 'sunny day at the beach',
   });
 
   console.log(embedding);
   console.log(usage);
+  console.log(warnings);
 }
 
 main().catch(console.error);

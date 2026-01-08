@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { generateText, tool } from 'ai';
+import { createOpenAICompatible } from '@zenning/openai-compatible';
+import { generateText, tool } from '@zenning/ai';
 import { z } from 'zod';
 import { weatherTool } from '../tools/weather-tool';
 

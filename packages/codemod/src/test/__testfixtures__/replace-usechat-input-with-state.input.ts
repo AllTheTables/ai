@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useChat } from 'ai/react';
+import { useChat } from '@zenning/ai/react';
 
 export function ChatComponent() {
   const { messages, input, handleInputChange, handleSubmit } = useChat({
@@ -48,7 +48,7 @@ export function OnlyHandleInputChange() {
 }
 
 // Test with new import syntax
-import { useChat as useChatNew } from '@ai-sdk/react';
+import { useChat as useChatNew } from '@zenning/react';
 
 export function WithNewImportSyntax() {
   const { input } = useChatNew();

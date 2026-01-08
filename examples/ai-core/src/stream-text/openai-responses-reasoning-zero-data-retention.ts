@@ -1,5 +1,5 @@
-import { openai, OpenAIResponsesProviderOptions } from '@ai-sdk/openai';
-import { APICallError, streamText, UserModelMessage } from 'ai';
+import { openai, OpenAIResponsesProviderOptions } from '@zenning/openai';
+import { APICallError, streamText, UserModelMessage } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {
@@ -12,7 +12,6 @@ async function main() {
         store: false, // No data retention - makes interaction stateless
         reasoningEffort: 'medium',
         reasoningSummary: 'auto',
-        include: ['reasoning.encrypted_content'], // Hence, we need to retrieve the model's encrypted reasoning to be able to pass it to follow-up requests
       } satisfies OpenAIResponsesProviderOptions,
     },
   });
@@ -54,7 +53,6 @@ async function main() {
         store: false, // No data retention - makes interaction stateless
         reasoningEffort: 'medium',
         reasoningSummary: 'auto',
-        include: ['reasoning.encrypted_content'], // Hence, we need to retrieve the model's encrypted reasoning to be able to pass it to follow-up requests
       } satisfies OpenAIResponsesProviderOptions,
     },
     onError: ({ error }) => {

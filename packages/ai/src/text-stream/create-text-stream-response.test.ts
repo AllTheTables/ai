@@ -1,7 +1,7 @@
 import {
   convertArrayToReadableStream,
   convertReadableStreamToArray,
-} from '@ai-sdk/provider-utils/test';
+} from '@zenning/provider-utils/test';
 import { createTextStreamResponse } from './create-text-stream-response';
 import { describe, it, expect } from 'vitest';
 

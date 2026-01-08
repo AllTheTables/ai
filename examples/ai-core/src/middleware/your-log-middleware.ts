@@ -1,9 +1,10 @@
 import {
   LanguageModelV3Middleware,
   LanguageModelV3StreamPart,
-} from '@ai-sdk/provider';
+} from '@zenning/provider';
 
 export const yourLogMiddleware: LanguageModelV3Middleware = {
+  specificationVersion: 'v3',
   wrapGenerate: async ({ doGenerate, params }) => {
     console.log('doGenerate called');
     console.log(`params: ${JSON.stringify(params, null, 2)}`);

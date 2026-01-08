@@ -1,5 +1,5 @@
-import { vertex } from '@ai-sdk/google-vertex';
-import { streamText } from 'ai';
+import { vertex } from '@zenning/google-vertex';
+import { streamText } from '@zenning/ai';
 
 async function main() {
   const result = streamText({

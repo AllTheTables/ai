@@ -1,13 +1,13 @@
 import { createTransformer } from '../lib/create-transformer';
 
 /**
- * Migrates from ai/react to @ai-sdk/react:
- * - import { useChat } from 'ai/react' → import { useChat } from '@ai-sdk/react'
+ * Migrates from ai/react to @zenning/react:
+ * - import { useChat } from '@zenning/ai/react' → import { useChat } from '@zenning/react'
  */
 export default createTransformer((fileInfo, api, options, context) => {
   const { j, root } = context;
 
-  // Transform imports from 'ai/react' to '@ai-sdk/react'
+  // Transform imports from '@zenning/ai/react' to '@zenning/react'
   root
     .find(j.ImportDeclaration, {
       source: {
@@ -15,7 +15,7 @@ export default createTransformer((fileInfo, api, options, context) => {
       },
     })
     .forEach((path: any) => {
-      path.node.source.value = '@ai-sdk/react';
+      path.node.source.value = '@zenning/react';
       context.hasChanges = true;
     });
 });

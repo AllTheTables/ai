@@ -1,5 +1,5 @@
 // re-exports:
-export { gateway, createGateway } from '@ai-sdk/gateway';
+export { createGateway, gateway, type GatewayModelId } from '@zenning/gateway';
 export {
   asSchema,
   createIdGenerator,
@@ -9,12 +9,17 @@ export {
   parseJsonEventStream,
   tool,
   zodSchema,
+  type FlexibleSchema,
   type IdGenerator,
+  type InferSchema,
   type InferToolInput,
   type InferToolOutput,
   type Schema,
   type Tool,
+  type ToolApprovalRequest,
+  type ToolApprovalResponse,
   type ToolCallOptions,
+  type ToolExecutionOptions,
   type ToolExecuteFunction,
 } from '@zenning/provider-utils';
 
@@ -30,8 +35,8 @@ export * from './logger';
 export * from './middleware';
 export * from './prompt';
 export * from './registry';
+export * from './rerank';
 export * from './text-stream';
-export * from './tool';
 export * from './transcribe';
 export * from './types';
 export * from './ui';

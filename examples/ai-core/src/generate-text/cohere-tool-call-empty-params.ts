@@ -1,5 +1,5 @@
-import { cohere } from '@ai-sdk/cohere';
-import { generateText, tool } from 'ai';
+import { cohere } from '@zenning/cohere';
+import { generateText, tool } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod';
 

@@ -1,5 +1,5 @@
-import type { CompletionRequestOptions, UseCompletionOptions } from 'ai';
-import { callCompletionApi } from 'ai';
+import type { CompletionRequestOptions, UseCompletionOptions } from '@zenning/ai';
+import { callCompletionApi } from '@zenning/ai';
 import swrv from 'swrv';
 import type { Ref } from 'vue';
 import { ref, unref } from 'vue';

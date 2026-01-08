@@ -1,5 +1,5 @@
-import { openai } from '@ai-sdk/openai';
-import { StaticToolCall, StaticToolResult, generateText, tool } from 'ai';
+import { openai } from '@zenning/openai';
+import { StaticToolCall, StaticToolResult, generateText, tool } from '@zenning/ai';
 import { z } from 'zod';
 
 const myToolSet = {

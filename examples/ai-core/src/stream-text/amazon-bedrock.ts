@@ -1,5 +1,5 @@
-import { bedrock } from '@ai-sdk/amazon-bedrock';
-import { streamText } from 'ai';
+import { bedrock } from '@zenning/amazon-bedrock';
+import { streamText } from '@zenning/ai';
 import 'dotenv/config';
 
 async function main() {

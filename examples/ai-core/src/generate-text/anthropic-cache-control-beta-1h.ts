@@ -1,5 +1,5 @@
-import { anthropic, AnthropicProviderOptions } from '@ai-sdk/anthropic';
-import { generateText } from 'ai';
+import { anthropic, AnthropicProviderOptions } from '@zenning/anthropic';
+import { generateText } from '@zenning/ai';
 import 'dotenv/config';
 import fs from 'node:fs';
 

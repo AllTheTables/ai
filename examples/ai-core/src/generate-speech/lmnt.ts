@@ -1,5 +1,5 @@
-import { lmnt } from '@ai-sdk/lmnt';
-import { experimental_generateSpeech as generateSpeech } from 'ai';
+import { lmnt } from '@zenning/lmnt';
+import { experimental_generateSpeech as generateSpeech } from '@zenning/ai';
 import 'dotenv/config';
 import { saveAudioFile } from '../lib/save-audio';
 

@@ -1,5 +1,5 @@
-import { huggingface } from '@ai-sdk/huggingface';
-import { generateObject } from 'ai';
+import { huggingface } from '@zenning/huggingface';
+import { generateObject } from '@zenning/ai';
 import 'dotenv/config';
 import { z } from 'zod/v4';
 

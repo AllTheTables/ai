@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai } from '@zenning/openai';
 import {
   convertToModelMessages,
   dynamicTool,
@@ -9,7 +9,7 @@ import {
   ToolSet,
   UIDataTypes,
   UIMessage,
-} from 'ai';
+} from '@zenning/ai';
 import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai('gpt-4o'),
-    messages: convertToModelMessages(messages),
+    messages: await convertToModelMessages(messages),
     stopWhen: stepCountIs(5), // multi-steps for server-side tools
     tools: {
       ...staticTools,

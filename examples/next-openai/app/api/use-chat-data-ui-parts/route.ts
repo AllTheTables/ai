@@ -1,16 +1,17 @@
-import { openai } from '@ai-sdk/openai';
-import { delay } from '@ai-sdk/provider-utils';
+import { openai } from '@zenning/openai';
+import { delay } from '@zenning/provider-utils';
 import {
   convertToModelMessages,
   createUIMessageStream,
   createUIMessageStreamResponse,
   stepCountIs,
   streamText,
-} from 'ai';
+} from '@zenning/ai';
 import { z } from 'zod';
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
+  const modelMessages = await convertToModelMessages(messages);
 
   const stream = createUIMessageStream({
     execute: ({ writer }) => {
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
             },
           },
         },
-        messages: convertToModelMessages(messages),
+        messages: modelMessages,
       });
 
       writer.merge(result.toUIMessageStream());

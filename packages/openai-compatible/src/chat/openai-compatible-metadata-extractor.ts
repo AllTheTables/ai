@@ -1,4 +1,4 @@
-import { SharedV3ProviderMetadata } from '@ai-sdk/provider';
+import { SharedV3ProviderMetadata } from '@zenning/provider';
 
 /**
 Extracts provider-specific metadata from API responses.
