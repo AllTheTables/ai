@@ -1,5 +1,25 @@
 # @ai-sdk/google-vertex
 
+## 4.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.4
+  - @zenning/provider-utils@4.0.6
+  - @zenning/anthropic@3.0.9
+  - @zenning/google@3.0.6
+
+## 4.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.3
+  - @zenning/provider-utils@4.0.5
+  - @zenning/anthropic@3.0.8
+  - @zenning/google@3.0.5
+
 ## 4.0.7
 
 ### Patch Changes

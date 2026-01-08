@@ -72,6 +72,26 @@ The text content.
 }
 
 /**
+Compaction content part of a prompt. It contains encrypted compacted conversation history.
+Used for managing context window limits by compacting previous messages.
+ */
+export interface LanguageModelV3CompactionPart {
+  type: 'compaction';
+
+  /**
+The encrypted content containing compacted conversation history.
+   */
+  encrypted_content: string;
+
+  /**
+   * Additional provider-specific options. They are passed through
+   * to the provider from the AI SDK and enable provider-specific
+   * functionality that can be fully encapsulated in the provider.
+   */
+  providerOptions?: SharedV3ProviderOptions;
+}
+
+/**
 Reasoning content part of a prompt. It contains a string of reasoning text.
  */
 export interface LanguageModelV3ReasoningPart {

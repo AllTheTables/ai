@@ -1,5 +1,21 @@
 # @ai-sdk/svelte
 
+## 4.0.14
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider-utils@4.0.6
+  - @zenning/ai@6.0.14
+
+## 4.0.13
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider-utils@4.0.5
+  - @zenning/ai@6.0.13
+
 ## 4.0.12
 
 ### Patch Changes

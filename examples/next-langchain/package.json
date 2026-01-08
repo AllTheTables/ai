@@ -1,6 +1,6 @@
 {
   "name": "@example/next-langchain",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "dev": "run-p dev:next dev:langgraph",
@@ -11,8 +11,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@zenning/react": "3.0.12",
-    "@zenning/langchain": "2.0.13",
+    "@zenning/react": "3.0.14",
+    "@zenning/langchain": "2.0.15",
     "@langchain/openai": "^1.2.0",
     "@langchain/core": "^1.1.5",
     "@langchain/langgraph": "^1.0.5",

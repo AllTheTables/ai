@@ -1,4 +1,5 @@
 import {
+  CompactionPart,
   FilePart,
   ImagePart,
   ProviderOptions,
@@ -50,6 +51,15 @@ export const filePartSchema: z.ZodType<FilePart> = z.object({
 export const reasoningPartSchema: z.ZodType<ReasoningPart> = z.object({
   type: z.literal('reasoning'),
   text: z.string(),
+  providerOptions: providerMetadataSchema.optional(),
+});
+
+/**
+@internal
+ */
+export const compactionPartSchema: z.ZodType<CompactionPart> = z.object({
+  type: z.literal('compaction'),
+  encrypted_content: z.string(),
   providerOptions: providerMetadataSchema.optional(),
 });
 

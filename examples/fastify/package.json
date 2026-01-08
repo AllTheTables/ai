@@ -1,9 +1,9 @@
 {
   "name": "@example/fastify",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "private": true,
   "dependencies": {
-    "@zenning/openai": "3.0.5",
+    "@zenning/openai": "3.0.7",
     "@zenning/ai": "workspace:*",
     "dotenv": "16.4.5",
     "fastify": "5.1.0"

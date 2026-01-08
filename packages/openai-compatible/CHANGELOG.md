@@ -1,5 +1,22 @@
 # @ai-sdk/openai-compatible
 
+## 2.0.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.4
+  - @zenning/provider-utils@4.0.6
+
+## 2.0.5
+
+### Patch Changes
+
+- Add support for OpenAI compaction message part type in system messages for managing context window limits
+- Updated dependencies
+  - @zenning/provider@3.0.3
+  - @zenning/provider-utils@4.0.5
+
 ## 2.0.4
 
 ### Patch Changes

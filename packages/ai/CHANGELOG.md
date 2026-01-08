@@ -1,5 +1,25 @@
 # ai
 
+## 6.0.14
+
+### Patch Changes
+
+- Add support for OpenAI Responses API compaction feature via provider options for context window management
+- Updated dependencies
+  - @zenning/provider@3.0.4
+  - @zenning/provider-utils@4.0.6
+  - @zenning/gateway@3.0.11
+
+## 6.0.13
+
+### Patch Changes
+
+- Add support for OpenAI compaction message part type in system messages for managing context window limits
+- Updated dependencies
+  - @zenning/provider@3.0.3
+  - @zenning/provider-utils@4.0.5
+  - @zenning/gateway@3.0.10
+
 ## 6.0.12
 
 ### Patch Changes

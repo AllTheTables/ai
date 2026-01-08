@@ -303,6 +303,20 @@ export const openaiResponsesProviderOptionsSchema = lazySchema(() =>
        * and defaults `systemMessageMode` to `developer` unless overridden.
        */
       forceReasoning: z.boolean().optional(),
+
+      /**
+       * Compaction input items to inject into the request.
+       * These are standalone items from the /responses/compact endpoint that contain
+       * encrypted conversation history for context window management.
+       */
+      compactionInput: z
+        .array(
+          z.object({
+            type: z.literal('compaction'),
+            encrypted_content: z.string(),
+          }),
+        )
+        .optional(),
     }),
   ),
 );

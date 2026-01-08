@@ -1,5 +1,21 @@
 # @ai-sdk/gateway
 
+## 3.0.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.4
+  - @zenning/provider-utils@4.0.6
+
+## 3.0.10
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.3
+  - @zenning/provider-utils@4.0.5
+
 ## 3.0.9
 
 ### Patch Changes

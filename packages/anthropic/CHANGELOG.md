@@ -1,5 +1,21 @@
 # @ai-sdk/anthropic
 
+## 3.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.4
+  - @zenning/provider-utils@4.0.6
+
+## 3.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.3
+  - @zenning/provider-utils@4.0.5
+
 ## 3.0.7
 
 ### Patch Changes

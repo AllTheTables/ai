@@ -1,6 +1,6 @@
 {
   "name": "@zenning/rsc",
-  "version": "2.0.12",
+  "version": "2.0.14",
   "license": "Apache-2.0",
   "sideEffects": false,
   "main": "./dist/rsc-client.mjs",

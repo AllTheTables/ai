@@ -43,6 +43,7 @@ export async function convertToOpenAIResponsesInput({
   hasLocalShellTool = false,
   hasShellTool = false,
   hasApplyPatchTool = false,
+  compactionInput,
 }: {
   prompt: LanguageModelV3Prompt;
   toolNameMapping: ToolNameMapping;
@@ -53,6 +54,7 @@ export async function convertToOpenAIResponsesInput({
   hasLocalShellTool?: boolean;
   hasShellTool?: boolean;
   hasApplyPatchTool?: boolean;
+  compactionInput?: Array<{ type: 'compaction'; encrypted_content: string }>;
 }): Promise<{
   input: OpenAIResponsesInput;
   warnings: Array<SharedV3Warning>;
@@ -60,6 +62,10 @@ export async function convertToOpenAIResponsesInput({
   const input: OpenAIResponsesInput = [];
   const warnings: Array<SharedV3Warning> = [];
   const processedApprovalIds = new Set<string>();
+
+  if (compactionInput && compactionInput.length > 0) {
+    input.push(...compactionInput);
+  }
 
   for (const { role, content } of prompt) {
     switch (role) {

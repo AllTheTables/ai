@@ -1,5 +1,25 @@
 # @ai-sdk/azure
 
+## 3.0.7
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies [10b232c]
+  - @zenning/provider@3.0.4
+  - @zenning/provider-utils@4.0.6
+  - @zenning/openai@3.0.7
+
+## 3.0.6
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies [10b232c]
+  - @zenning/provider@3.0.3
+  - @zenning/provider-utils@4.0.5
+  - @zenning/openai@3.0.6
+
 ## 3.0.5
 
 ### Patch Changes

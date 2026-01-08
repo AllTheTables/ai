@@ -205,6 +205,7 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
         hasLocalShellTool: hasOpenAITool('openai.local_shell'),
         hasShellTool: hasOpenAITool('openai.shell'),
         hasApplyPatchTool: hasOpenAITool('openai.apply_patch'),
+        compactionInput: openaiOptions?.compactionInput,
       });
 
     warnings.push(...inputWarnings);

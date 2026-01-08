@@ -16,9 +16,9 @@
   },
   "type": "module",
   "devDependencies": {
-    "@zenning/openai": "3.0.5",
-    "@zenning/provider-utils": "4.0.4",
-    "@zenning/svelte": "4.0.12",
+    "@zenning/openai": "3.0.7",
+    "@zenning/provider-utils": "4.0.6",
+    "@zenning/svelte": "4.0.14",
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
     "@sveltejs/adapter-vercel": "^5.5.2",

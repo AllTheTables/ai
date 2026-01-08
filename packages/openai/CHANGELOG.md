@@ -1,5 +1,25 @@
 # @ai-sdk/openai
 
+## 3.0.7
+
+### Patch Changes
+
+- Add support for OpenAI Responses API compaction feature via provider options for context window management
+- 10b232c: Fix openai file_search tool to accept optional query param
+- Updated dependencies
+  - @zenning/provider@3.0.4
+  - @zenning/provider-utils@4.0.6
+
+## 3.0.6
+
+### Patch Changes
+
+- Add support for OpenAI compaction message part type in system messages for managing context window limits
+- 10b232c: Fix openai file_search tool to accept optional query param
+- Updated dependencies
+  - @zenning/provider@3.0.3
+  - @zenning/provider-utils@4.0.5
+
 ## 3.0.5
 
 ### Patch Changes

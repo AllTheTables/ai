@@ -69,7 +69,10 @@ export type OpenAIResponsesUserMessage = {
 
 export type OpenAIResponsesAssistantMessage = {
   role: 'assistant';
-  content: Array<{ type: 'output_text'; text: string }>;
+  content: Array<
+    | { type: 'output_text'; text: string }
+    | { type: 'compaction'; encrypted_content: string }
+  >;
   id?: string;
 };
 
