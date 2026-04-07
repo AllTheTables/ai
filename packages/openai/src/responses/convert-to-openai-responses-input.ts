@@ -44,6 +44,9 @@ export async function convertToOpenAIResponsesInput({
   hasShellTool = false,
   hasApplyPatchTool = false,
   compactionInput,
+  previousResponseId,
+  containsApprovalResponses,
+  approvalToolCallIds: approvalToolCallIdsArray,
 }: {
   prompt: LanguageModelV3Prompt;
   toolNameMapping: ToolNameMapping;
@@ -55,6 +58,9 @@ export async function convertToOpenAIResponsesInput({
   hasShellTool?: boolean;
   hasApplyPatchTool?: boolean;
   compactionInput?: Array<{ type: 'compaction'; encrypted_content: string }>;
+  previousResponseId?: string;
+  containsApprovalResponses?: boolean;
+  approvalToolCallIds?: string[];
 }): Promise<{
   input: OpenAIResponsesInput;
   warnings: Array<SharedV3Warning>;
@@ -62,6 +68,7 @@ export async function convertToOpenAIResponsesInput({
   const input: OpenAIResponsesInput = [];
   const warnings: Array<SharedV3Warning> = [];
   const processedApprovalIds = new Set<string>();
+  const approvalToolCallIds = new Set<string>(approvalToolCallIdsArray || []);
 
   if (compactionInput && compactionInput.length > 0) {
     input.push(...compactionInput);
@@ -189,15 +196,23 @@ export async function convertToOpenAIResponsesInput({
                 ).providerMetadata?.[providerOptionsName]?.itemId) as
                 | string
                 | undefined;
+              const toolHadApproval =
+                containsApprovalResponses &&
+                approvalToolCallIds.has(part.toolCallId);
+
               if (part.providerExecuted) {
-                if (store && id != null) {
+                if (store && id != null && !toolHadApproval) {
                   input.push({ type: 'item_reference', id });
                 }
                 break;
               }
 
-              if (store && id != null) {
+              if (store && id != null && !toolHadApproval) {
                 input.push({ type: 'item_reference', id });
+                break;
+              }
+
+              if (store && id != null && toolHadApproval) {
                 break;
               }
 
@@ -273,7 +288,11 @@ export async function convertToOpenAIResponsesInput({
                 break;
               }
 
-              if (store) {
+              const toolResultHadApproval =
+                containsApprovalResponses &&
+                approvalToolCallIds.has(part.toolCallId);
+
+              if (store && !toolResultHadApproval) {
                 const itemId =
                   (
                     part as {
@@ -284,7 +303,7 @@ export async function convertToOpenAIResponsesInput({
                   ).providerMetadata?.[providerOptionsName]?.itemId ??
                   part.toolCallId;
                 input.push({ type: 'item_reference', id: itemId });
-              } else {
+              } else if (!store) {
                 warnings.push({
                   type: 'other',
                   message: `Results for OpenAI tool ${part.toolName} are not sent to the API when store is false`,
@@ -381,13 +400,17 @@ export async function convertToOpenAIResponsesInput({
             }
             processedApprovalIds.add(approvalResponse.approvalId);
 
-            if (store) {
+            // When continuing from a previous response, we still need the approval response
+            // but we should skip item_reference since OpenAI already has it in the stored response
+            if (store && !previousResponseId) {
               input.push({
                 type: 'item_reference',
                 id: approvalResponse.approvalId,
               });
             }
 
+            // Always send the approval response when continuing - OpenAI needs it to resolve
+            // the pending approval from the previous response
             input.push({
               type: 'mcp_approval_response',
               approval_request_id: approvalResponse.approvalId,
@@ -398,13 +421,16 @@ export async function convertToOpenAIResponsesInput({
 
           const output = part.output;
 
-          // Skip execution-denied with approvalId - already handled via tool-approval-response
+          // When continuing from a previous response with approvals, we need to provide
+          // the execution-denied output to satisfy OpenAI's requirement for tool outputs
           if (output.type === 'execution-denied') {
             const approvalId = (
               output.providerOptions?.openai as { approvalId?: string }
             )?.approvalId;
 
-            if (approvalId) {
+            // Only skip execution-denied if it has an approvalId AND we're NOT continuing
+            // from a previous response. When continuing, we need to provide the tool output.
+            if (approvalId && !previousResponseId) {
               continue;
             }
           }

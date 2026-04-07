@@ -1,5 +1,21 @@
 # @ai-sdk/prodia
 
+## 1.0.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.6
+  - @zenning/provider-utils@4.0.8
+
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies [35e1a30]
+  - @zenning/provider@3.0.5
+  - @zenning/provider-utils@4.0.7
+
 ## 1.0.3
 
 ### Patch Changes

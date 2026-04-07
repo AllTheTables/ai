@@ -1106,7 +1106,10 @@ class DefaultStreamTextResult<TOOLS extends ToolSet, OUTPUT extends Output>
         const initialResponseMessages: Array<ResponseMessage> = [];
 
         const { approvedToolApprovals, deniedToolApprovals } =
-          collectToolApprovals<TOOLS>({ messages: initialMessages });
+          collectToolApprovals<TOOLS>({ 
+            messages: initialMessages,
+            allowMissingApprovalContext: !!(providerOptions as any)?.openai?.previousResponseId,
+          });
 
         // initial tool execution step stream
         if (
@@ -1586,6 +1589,11 @@ class DefaultStreamTextResult<TOOLS extends ToolSet, OUTPUT extends Output>
                       if (includeRawChunks) {
                         controller.enqueue(chunk);
                       }
+                      break;
+                    }
+
+                    case 'compaction': {
+                      controller.enqueue(chunk);
                       break;
                     }
 
@@ -2300,6 +2308,15 @@ However, the LLM results are expected to be small enough to not cause issues.
             case 'raw': {
               // Raw chunks are not included in UI message streams
               // as they contain provider-specific data for developer use
+              break;
+            }
+
+            case 'compaction': {
+              controller.enqueue({
+                type: 'compaction',
+                id: part.id,
+                encrypted_content: part.encrypted_content,
+              } as any);
               break;
             }
 

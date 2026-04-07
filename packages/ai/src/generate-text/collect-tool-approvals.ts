@@ -21,8 +21,10 @@ export type CollectedToolApprovals<TOOLS extends ToolSet> = {
  */
 export function collectToolApprovals<TOOLS extends ToolSet>({
   messages,
+  allowMissingApprovalContext = false,
 }: {
   messages: ModelMessage[];
+  allowMissingApprovalContext?: boolean;
 }): {
   approvedToolApprovals: Array<CollectedToolApprovals<TOOLS>>;
   deniedToolApprovals: Array<CollectedToolApprovals<TOOLS>>;
@@ -78,25 +80,44 @@ export function collectToolApprovals<TOOLS extends ToolSet>({
     part => part.type === 'tool-approval-response',
   );
   for (const approvalResponse of approvalResponses) {
-    const approvalRequest =
+    let approvalRequest =
       toolApprovalRequestsByApprovalId[approvalResponse.approvalId];
 
     if (approvalRequest == null) {
-      throw new InvalidToolApprovalError({
-        approvalId: approvalResponse.approvalId,
-      });
+      if (allowMissingApprovalContext) {
+        const toolCallId = (approvalResponse as any).toolCallId ?? approvalResponse.approvalId;
+        approvalRequest = {
+          type: 'tool-approval-request',
+          approvalId: approvalResponse.approvalId,
+          toolCallId: toolCallId,
+        } as ToolApprovalRequest;
+      } else {
+        throw new InvalidToolApprovalError({
+          approvalId: approvalResponse.approvalId,
+        });
+      }
     }
 
     if (toolResults[approvalRequest.toolCallId] != null) {
       continue;
     }
 
-    const toolCall = toolCallsByToolCallId[approvalRequest.toolCallId];
+    let toolCall = toolCallsByToolCallId[approvalRequest.toolCallId];
     if (toolCall == null) {
-      throw new ToolCallNotFoundForApprovalError({
-        toolCallId: approvalRequest.toolCallId,
-        approvalId: approvalRequest.approvalId,
-      });
+      if (allowMissingApprovalContext) {
+        toolCall = {
+          type: 'tool-call',
+          toolCallId: approvalRequest.toolCallId,
+          toolName: 'unknown',
+          input: {},
+          providerExecuted: true,
+        } as TypedToolCall<TOOLS>;
+      } else {
+        throw new ToolCallNotFoundForApprovalError({
+          toolCallId: approvalRequest.toolCallId,
+          approvalId: approvalRequest.approvalId,
+        });
+      }
     }
 
     const approval: CollectedToolApprovals<TOOLS> = {

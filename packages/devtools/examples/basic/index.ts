@@ -1,4 +1,9 @@
-import { gateway, stepCountIs, streamText, wrapLanguageModel } from '@zenning/ai';
+import {
+  gateway,
+  stepCountIs,
+  streamText,
+  wrapLanguageModel,
+} from '@zenning/ai';
 import { tools } from './tools';
 import { devToolsMiddleware } from '../../src';
 import { print } from './utils';

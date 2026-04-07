@@ -1,5 +1,23 @@
 # @ai-sdk/baseten
 
+## 1.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.6
+  - @zenning/openai-compatible@2.0.8
+  - @zenning/provider-utils@4.0.8
+
+## 1.0.8
+
+### Patch Changes
+
+- Updated dependencies [35e1a30]
+  - @zenning/provider@3.0.5
+  - @zenning/provider-utils@4.0.7
+  - @zenning/openai-compatible@2.0.7
+
 ## 1.0.7
 
 ### Patch Changes

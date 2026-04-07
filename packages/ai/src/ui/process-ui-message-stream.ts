@@ -15,6 +15,7 @@ import {
   DataUIPart,
   DynamicToolUIPart,
   getStaticToolName,
+  getToolName,
   InferUIMessageData,
   InferUIMessageMetadata,
   InferUIMessageToolCall,
@@ -316,7 +317,24 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'text-delta': {
-              const textPart = state.activeTextParts[chunk.id];
+              let textPart = state.activeTextParts[chunk.id];
+              if (!textPart) {
+                const existing = state.message.parts.findLast(
+                  (p): p is TextUIPart =>
+                    p.type === 'text' && p.state !== 'done',
+                );
+                if (existing) {
+                  textPart = existing;
+                } else {
+                  textPart = {
+                    type: 'text',
+                    text: '',
+                    state: 'streaming',
+                  };
+                  state.message.parts.push(textPart);
+                }
+                state.activeTextParts[chunk.id] = textPart;
+              }
               textPart.text += chunk.delta;
               textPart.providerMetadata =
                 chunk.providerMetadata ?? textPart.providerMetadata;
@@ -325,10 +343,22 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'text-end': {
-              const textPart = state.activeTextParts[chunk.id];
-              textPart.state = 'done';
-              textPart.providerMetadata =
-                chunk.providerMetadata ?? textPart.providerMetadata;
+              let textPart = state.activeTextParts[chunk.id];
+              if (!textPart) {
+                const existing = state.message.parts.findLast(
+                  (p): p is TextUIPart =>
+                    p.type === 'text' && p.state !== 'done',
+                );
+                if (existing) {
+                  textPart = existing;
+                  state.activeTextParts[chunk.id] = textPart;
+                }
+              }
+              if (textPart) {
+                textPart.state = 'done';
+                textPart.providerMetadata =
+                  chunk.providerMetadata ?? textPart.providerMetadata;
+              }
               delete state.activeTextParts[chunk.id];
               write();
               break;
@@ -348,7 +378,24 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'reasoning-delta': {
-              const reasoningPart = state.activeReasoningParts[chunk.id];
+              let reasoningPart = state.activeReasoningParts[chunk.id];
+              if (!reasoningPart) {
+                const existing = state.message.parts.findLast(
+                  (p): p is ReasoningUIPart =>
+                    p.type === 'reasoning' && p.state !== 'done',
+                );
+                if (existing) {
+                  reasoningPart = existing;
+                } else {
+                  reasoningPart = {
+                    type: 'reasoning',
+                    text: '',
+                    state: 'streaming',
+                  };
+                  state.message.parts.push(reasoningPart);
+                }
+                state.activeReasoningParts[chunk.id] = reasoningPart;
+              }
               reasoningPart.text += chunk.delta;
               reasoningPart.providerMetadata =
                 chunk.providerMetadata ?? reasoningPart.providerMetadata;
@@ -357,10 +404,22 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'reasoning-end': {
-              const reasoningPart = state.activeReasoningParts[chunk.id];
-              reasoningPart.providerMetadata =
-                chunk.providerMetadata ?? reasoningPart.providerMetadata;
-              reasoningPart.state = 'done';
+              let reasoningPart = state.activeReasoningParts[chunk.id];
+              if (!reasoningPart) {
+                const existing = state.message.parts.findLast(
+                  (p): p is ReasoningUIPart =>
+                    p.type === 'reasoning' && p.state !== 'done',
+                );
+                if (existing) {
+                  reasoningPart = existing;
+                  state.activeReasoningParts[chunk.id] = reasoningPart;
+                }
+              }
+              if (reasoningPart) {
+                reasoningPart.providerMetadata =
+                  chunk.providerMetadata ?? reasoningPart.providerMetadata;
+                reasoningPart.state = 'done';
+              }
               delete state.activeReasoningParts[chunk.id];
 
               write();
@@ -443,7 +502,27 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
             }
 
             case 'tool-input-delta': {
-              const partialToolCall = state.partialToolCalls[chunk.toolCallId];
+              let partialToolCall = state.partialToolCalls[chunk.toolCallId];
+              if (!partialToolCall) {
+                const existingPart = state.message.parts.find(
+                  (p): p is ToolUIPart<any> | DynamicToolUIPart =>
+                    isToolUIPart(p) && p.toolCallId === chunk.toolCallId,
+                );
+                if (existingPart) {
+                  const isDynamic = existingPart.type === 'dynamic-tool';
+                  partialToolCall = {
+                    text: '',
+                    toolName: getToolName(existingPart),
+                    index: state.message.parts
+                      .filter(isStaticToolUIPart)
+                      .indexOf(existingPart as any),
+                    dynamic: isDynamic,
+                  };
+                  state.partialToolCalls[chunk.toolCallId] = partialToolCall;
+                } else {
+                  break;
+                }
+              }
 
               partialToolCall.text += chunk.inputTextDelta;
 
@@ -631,17 +710,18 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
               if (chunk.messageId != null) {
                 if (state.isFinalized && state.message.parts.length > 0) {
                   state.messageQueue!.push(state.message);
-                  
+
                   state.message = {
                     id: chunk.messageId,
-                    metadata: chunk.messageMetadata as InferUIMessageMetadata<UI_MESSAGE>,
+                    metadata:
+                      chunk.messageMetadata as InferUIMessageMetadata<UI_MESSAGE>,
                     role: 'assistant',
                     parts: [] as UIMessagePart<
                       InferUIMessageData<UI_MESSAGE>,
                       InferUIMessageTools<UI_MESSAGE>
                     >[],
                   } as UI_MESSAGE;
-                  
+
                   state.activeTextParts = {};
                   state.activeReasoningParts = {};
                   state.partialToolCalls = {};
@@ -682,6 +762,12 @@ export function processUIMessageStream<UI_MESSAGE extends UIMessage>({
 
             case 'error': {
               onError?.(new Error(chunk.errorText));
+              break;
+            }
+
+            case 'compaction': {
+              state.message.parts.push(chunk as any);
+              write();
               break;
             }
 

@@ -357,7 +357,10 @@ A function that attempts to repair a tool call that failed to parse.
         const responseMessages: Array<ResponseMessage> = [];
 
         const { approvedToolApprovals, deniedToolApprovals } =
-          collectToolApprovals<TOOLS>({ messages: initialMessages });
+          collectToolApprovals<TOOLS>({ 
+            messages: initialMessages,
+            allowMissingApprovalContext: !!(providerOptions as any)?.openai?.previousResponseId,
+          });
 
         const localApprovedToolApprovals = approvedToolApprovals.filter(
           toolApproval => !toolApproval.toolCall.providerExecuted,

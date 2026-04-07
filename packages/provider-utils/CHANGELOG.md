@@ -1,5 +1,20 @@
 # @ai-sdk/provider-utils
 
+## 4.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.6
+
+## 4.0.7
+
+### Patch Changes
+
+- 35e1a30: Add support for OpenAI Responses API compaction feature via provider options for context window management
+- Updated dependencies [35e1a30]
+  - @zenning/provider@3.0.5
+
 ## 4.0.6
 
 ### Patch Changes

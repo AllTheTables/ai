@@ -1,6 +1,6 @@
 {
   "name": "@zenning/angular",
-  "version": "2.0.14",
+  "version": "2.0.32",
   "description": "Angular implementation of ai-sdk.",
   "license": "Apache-2.0",
   "main": "dist/index.cjs",

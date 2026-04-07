@@ -103,7 +103,13 @@ export type SingleRequestTextStreamPart<TOOLS extends ToolSet> =
       providerMetadata?: ProviderMetadata;
     }
   | { type: 'error'; error: unknown }
-  | { type: 'raw'; rawValue: unknown };
+  | { type: 'raw'; rawValue: unknown }
+  | {
+      type: 'compaction';
+      id: string;
+      encrypted_content: string;
+      providerMetadata?: ProviderMetadata;
+    };
 
 export function runToolsTransformation<TOOLS extends ToolSet>({
   tools,
@@ -196,7 +202,8 @@ export function runToolsTransformation<TOOLS extends ToolSet>({
         case 'source':
         case 'response-metadata':
         case 'error':
-        case 'raw': {
+        case 'raw':
+        case 'compaction': {
           controller.enqueue(chunk);
           break;
         }

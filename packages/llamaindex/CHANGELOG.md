@@ -1,5 +1,135 @@
 # @ai-sdk/llamaindex
 
+## 2.0.32
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.32
+
+## 2.0.31
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.31
+
+## 2.0.30
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.30
+
+## 2.0.29
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.29
+
+## 2.0.28
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.28
+
+## 2.0.27
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.27
+
+## 2.0.26
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @zenning/ai@6.0.26
+
+## 2.0.25
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.25
+
+## 2.0.24
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.24
+
+## 2.0.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.23
+
+## 2.0.22
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.22
+
+## 2.0.21
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.21
+
+## 2.0.20
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.20
+
+## 2.0.19
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.19
+
+## 2.0.18
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @zenning/ai@6.0.18
+
+## 2.0.17
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.17
+
+## 2.0.16
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.16
+
+## 2.0.15
+
+### Patch Changes
+
+- Updated dependencies [35e1a30]
+- Updated dependencies
+  - @zenning/ai@6.0.15
+
 ## 2.0.14
 
 ### Patch Changes

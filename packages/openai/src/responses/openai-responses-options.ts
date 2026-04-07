@@ -317,6 +317,33 @@ export const openaiResponsesProviderOptionsSchema = lazySchema(() =>
           }),
         )
         .optional(),
+
+      /**
+       * Server-side context management configuration.
+       * When enabled with a compaction threshold, the server automatically compacts
+       * the conversation in-stream when the rendered token count crosses the threshold.
+       * @see https://developers.openai.com/api/docs/guides/compaction
+       */
+      contextManagement: z
+        .array(
+          z.object({
+            type: z.literal('compaction'),
+            compact_threshold: z.number(),
+          }),
+        )
+        .optional(),
+
+      /**
+       * Whether the request contains tool approval responses.
+       * Defaults to `false`.
+       */
+      containsApprovalResponses: z.boolean().optional(),
+
+      /**
+       * Array of tool call IDs that have approval responses (approved or denied).
+       * Used to skip item_reference for tools that had user approval flow.
+       */
+      approvalToolCallIds: z.array(z.string()).optional(),
     }),
   ),
 );

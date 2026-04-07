@@ -449,4 +449,10 @@ export type TextStreamPart<TOOLS extends ToolSet> =
   | {
       type: 'raw';
       rawValue: unknown;
+    }
+  | {
+      type: 'compaction';
+      id: string;
+      encrypted_content: string;
+      providerMetadata?: ProviderMetadata;
     };

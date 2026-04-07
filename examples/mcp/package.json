@@ -1,6 +1,6 @@
 {
   "name": "@example/mcp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "server:sse": "tsx src/sse/server.ts",
@@ -27,7 +27,7 @@
     "type-check": "tsc --build"
   },
   "dependencies": {
-    "@zenning/openai": "3.0.7",
+    "@zenning/openai": "3.0.29",
     "@modelcontextprotocol/sdk": "^1.24.0",
     "@zenning/ai": "workspace:*",
     "dotenv": "16.4.5",

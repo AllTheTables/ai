@@ -1,6 +1,6 @@
 {
   "name": "@example/angular",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "ng": "ng",
     "start": "concurrently 'ng serve --proxy-config proxy.conf.json' 'tsx src/server.ts'",
@@ -12,8 +12,8 @@
   },
   "private": true,
   "dependencies": {
-    "@zenning/angular": "2.0.14",
-    "@zenning/openai": "3.0.7",
+    "@zenning/angular": "2.0.32",
+    "@zenning/openai": "3.0.29",
     "@angular/common": "^20.3.2",
     "@angular/compiler": "^20.3.2",
     "@angular/core": "^20.3.2",

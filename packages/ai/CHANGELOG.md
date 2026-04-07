@@ -1,5 +1,125 @@
 # ai
 
+## 6.0.32
+
+### Patch Changes
+
+- compaction
+
+## 6.0.31
+
+### Patch Changes
+
+- compaction chunks
+- Updated dependencies
+  - @zenning/provider@3.0.6
+  - @zenning/gateway@3.0.13
+  - @zenning/provider-utils@4.0.8
+
+## 6.0.30
+
+### Patch Changes
+
+- active
+
+## 6.0.29
+
+### Patch Changes
+
+- rgr
+
+## 6.0.28
+
+### Patch Changes
+
+- efverv
+
+## 6.0.27
+
+### Patch Changes
+
+- ferr
+
+## 6.0.26
+
+### Patch Changes
+
+- Fix tool approval with previousResponseId. Skip creating item_reference for tool-calls that have approval responses, preventing duplicate item errors when continuing from a previous response.
+- ll
+- Fix tool approval validation error when using previousResponseId. Skip validation of approval-request existence when continuing from a previous response, since the approval-request is in the provider's context rather than the current messages.
+
+## 6.0.25
+
+### Patch Changes
+
+- ret
+
+## 6.0.24
+
+### Patch Changes
+
+- eriuhgb
+
+## 6.0.23
+
+### Patch Changes
+
+- grg
+
+## 6.0.22
+
+### Patch Changes
+
+- reep
+
+## 6.0.21
+
+### Patch Changes
+
+- rp
+
+## 6.0.20
+
+### Patch Changes
+
+- approvals3
+
+## 6.0.19
+
+### Patch Changes
+
+- approvals2
+
+## 6.0.18
+
+### Patch Changes
+
+- Fix tool approval with previousResponseId. Skip creating item_reference for tool-calls that have approval responses, preventing duplicate item errors when continuing from a previous response.
+- aporovals
+
+## 6.0.17
+
+### Patch Changes
+
+- Fix tool approval with previousResponseId. Skip creating item_reference for tool-calls that have approval responses, preventing duplicate item errors when continuing from a previous response.
+
+## 6.0.16
+
+### Patch Changes
+
+- Fix tool approval validation error when using previousResponseId. Skip validation of approval-request existence when continuing from a previous response, since the approval-request is in the provider's context rather than the current messages.
+
+## 6.0.15
+
+### Patch Changes
+
+- 35e1a30: Add support for OpenAI Responses API compaction feature via provider options for context window management
+- Fix tool approval validation error when using previousResponseId. Skip validation of approval-request existence when continuing from a previous response, since the approval-request is in the provider's context rather than the current messages.
+- Updated dependencies [35e1a30]
+  - @zenning/provider@3.0.5
+  - @zenning/provider-utils@4.0.7
+  - @zenning/gateway@3.0.12
+
 ## 6.0.14
 
 ### Patch Changes

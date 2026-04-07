@@ -1,6 +1,6 @@
 {
   "name": "@example/next-openai-telemetry",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@zenning/openai": "3.0.7",
-    "@zenning/react": "3.0.14",
+    "@zenning/openai": "3.0.29",
+    "@zenning/react": "3.0.32",
     "@opentelemetry/api-logs": "0.55.0",
     "@opentelemetry/sdk-logs": "0.55.0",
     "@opentelemetry/instrumentation": "0.52.1",

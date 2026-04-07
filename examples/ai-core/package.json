@@ -1,6 +1,6 @@
 {
   "name": "@example/ai-core",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "private": true,
   "dependencies": {
     "@zenning/black-forest-labs": "workspace:*",
@@ -27,7 +27,7 @@
     "@zenning/hume": "workspace:*",
     "@zenning/mcp": "workspace:*",
     "@zenning/mistral": "workspace:*",
-    "@zenning/openai": "3.0.7",
+    "@zenning/openai": "3.0.29",
     "@zenning/openai-compatible": "workspace:*",
     "@zenning/perplexity": "workspace:*",
     "@zenning/prodia": "workspace:*",

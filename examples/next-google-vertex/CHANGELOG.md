@@ -5,13 +5,12 @@
 ### Patch Changes
 
 - Updated dependencies
-  - @zenning/ai@6.0.14
-  - @zenning/google-vertex@4.0.9
+  - @zenning/ai@6.0.32
 
 ## 0.0.1
 
 ### Patch Changes
 
 - Updated dependencies
-  - @zenning/ai@6.0.13
-  - @zenning/google-vertex@4.0.8
+  - @zenning/ai@6.0.31
+  - @zenning/google-vertex@4.0.11

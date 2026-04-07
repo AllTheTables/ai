@@ -25,9 +25,8 @@ pnpm add @ai-sdk/devtools
 import { wrapLanguageModel } from 'ai';
 import { devToolsMiddleware } from '@ai-sdk/devtools';
 
-const model = wrapLanguageModel({
+const model = globalModelWrapper(yourModel, {
   middleware: devToolsMiddleware,
-  model: yourModel,
 });
 ```
 

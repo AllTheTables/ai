@@ -1,9 +1,9 @@
 {
   "name": "@example/hono",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "dependencies": {
-    "@zenning/openai": "3.0.7",
+    "@zenning/openai": "3.0.29",
     "@hono/node-server": "1.13.7",
     "@zenning/ai": "workspace:*",
     "dotenv": "16.4.5",

@@ -1,5 +1,19 @@
 # @ai-sdk/devtools
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.6
+
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [35e1a30]
+  - @zenning/provider@3.0.5
+
 ## 0.0.6
 
 ### Patch Changes

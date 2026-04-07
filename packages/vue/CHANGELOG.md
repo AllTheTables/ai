@@ -1,5 +1,137 @@
 # @ai-sdk/vue
 
+## 3.0.32
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.32
+
+## 3.0.31
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.31
+  - @zenning/provider-utils@4.0.8
+
+## 3.0.30
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.30
+
+## 3.0.29
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.29
+
+## 3.0.28
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.28
+
+## 3.0.27
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.27
+
+## 3.0.26
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @zenning/ai@6.0.26
+
+## 3.0.25
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.25
+
+## 3.0.24
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.24
+
+## 3.0.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.23
+
+## 3.0.22
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.22
+
+## 3.0.21
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.21
+
+## 3.0.20
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.20
+
+## 3.0.19
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.19
+
+## 3.0.18
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @zenning/ai@6.0.18
+
+## 3.0.17
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.17
+
+## 3.0.16
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.16
+
+## 3.0.15
+
+### Patch Changes
+
+- Updated dependencies [35e1a30]
+- Updated dependencies
+  - @zenning/provider-utils@4.0.7
+  - @zenning/ai@6.0.15
+
 ## 3.0.14
 
 ### Patch Changes

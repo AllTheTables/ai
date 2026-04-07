@@ -10,8 +10,8 @@
     "clean": "del-cli .nuxt"
   },
   "dependencies": {
-    "@zenning/vue": "3.0.14",
-    "@zenning/openai": "3.0.7",
+    "@zenning/vue": "3.0.32",
+    "@zenning/openai": "3.0.29",
     "@zenning/ai": "workspace:*",
     "zod": "3.25.76"
   },
@@ -30,5 +30,5 @@
     "vue": "3.5.13",
     "vue-router": "4.5.0"
   },
-  "version": "0.0.2"
+  "version": "0.0.3"
 }

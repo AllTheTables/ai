@@ -1,5 +1,17 @@
 # @ai-sdk/provider
 
+## 3.0.6
+
+### Patch Changes
+
+- compaction chunks
+
+## 3.0.5
+
+### Patch Changes
+
+- 35e1a30: Add support for OpenAI Responses API compaction feature via provider options for context window management
+
 ## 3.0.4
 
 ### Patch Changes

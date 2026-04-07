@@ -1,5 +1,142 @@
 # @ai-sdk/openai
 
+## 3.0.29
+
+### Patch Changes
+
+- compaction chunks
+- Updated dependencies
+  - @zenning/provider@3.0.6
+  - @zenning/provider-utils@4.0.8
+
+## 3.0.28
+
+### Patch Changes
+
+- text end
+
+## 3.0.26
+
+### Patch Changes
+
+- compact threshold
+
+## 3.0.25
+
+### Patch Changes
+
+- rgr
+
+## 3.0.24
+
+### Patch Changes
+
+- efverv
+
+## 3.0.23
+
+### Patch Changes
+
+- ferr
+
+## 3.0.22
+
+### Patch Changes
+
+- Fix duplicate item_reference for approval responses. Skip creating item_reference for all tool-calls when approval responses are detected in the prompt, preventing duplicate item errors with previousResponseId.
+- Fix tool approval with previousResponseId. Skip creating item_reference for tool-calls that have approval responses, preventing duplicate item errors when continuing from a previous response.
+- ll
+
+## 3.0.21
+
+### Patch Changes
+
+- ret
+
+## 3.0.20
+
+### Patch Changes
+
+- eriuhgb
+
+## 3.0.19
+
+### Patch Changes
+
+- grg
+
+## 3.0.18
+
+### Patch Changes
+
+- reep
+
+## 3.0.17
+
+### Patch Changes
+
+- rp
+
+## 3.0.16
+
+### Patch Changes
+
+- approvals6
+
+## 3.0.15
+
+### Patch Changes
+
+- approvals5
+
+## 3.0.14
+
+### Patch Changes
+
+- Fix duplicate item_reference for approval responses. Skip creating item_reference for all tool-calls when approval responses are detected in the prompt, preventing duplicate item errors with previousResponseId.
+- approvals4
+
+## 3.0.13
+
+### Patch Changes
+
+- Fix duplicate item_reference for approval responses. Skip creating item_reference for all tool-calls when approval responses are detected in the prompt, preventing duplicate item errors with previousResponseId.
+
+## 3.0.12
+
+### Patch Changes
+
+- approvals3
+
+## 3.0.11
+
+### Patch Changes
+
+- approvals2
+
+## 3.0.10
+
+### Patch Changes
+
+- Fix tool approval with previousResponseId. Skip creating item_reference for tool-calls that have approval responses, preventing duplicate item errors when continuing from a previous response.
+- aporovals
+
+## 3.0.9
+
+### Patch Changes
+
+- Fix tool approval with previousResponseId. Skip creating item_reference for tool-calls that have approval responses, preventing duplicate item errors when continuing from a previous response.
+
+## 3.0.8
+
+### Patch Changes
+
+- 35e1a30: Add support for OpenAI Responses API compaction feature via provider options for context window management
+- 10b232c: Fix openai file_search tool to accept optional query param
+- Updated dependencies [35e1a30]
+  - @zenning/provider@3.0.5
+  - @zenning/provider-utils@4.0.7
+
 ## 3.0.7
 
 ### Patch Changes

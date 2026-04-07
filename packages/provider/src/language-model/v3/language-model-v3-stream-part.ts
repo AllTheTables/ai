@@ -99,6 +99,14 @@ export type LanguageModelV3StreamPart =
       rawValue: unknown;
     }
 
+  // compaction item emitted by server-side context compaction
+  | {
+      type: 'compaction';
+      id: string;
+      encrypted_content: string;
+      providerMetadata?: SharedV3ProviderMetadata;
+    }
+
   // error parts are streamed, allowing for multiple errors
   | {
       type: 'error';

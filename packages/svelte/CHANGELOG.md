@@ -1,5 +1,137 @@
 # @ai-sdk/svelte
 
+## 4.0.32
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.32
+
+## 4.0.31
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.31
+  - @zenning/provider-utils@4.0.8
+
+## 4.0.30
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.30
+
+## 4.0.29
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.29
+
+## 4.0.28
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.28
+
+## 4.0.27
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.27
+
+## 4.0.26
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @zenning/ai@6.0.26
+
+## 4.0.25
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.25
+
+## 4.0.24
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.24
+
+## 4.0.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.23
+
+## 4.0.22
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.22
+
+## 4.0.21
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.21
+
+## 4.0.20
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.20
+
+## 4.0.19
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.19
+
+## 4.0.18
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @zenning/ai@6.0.18
+
+## 4.0.17
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.17
+
+## 4.0.16
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/ai@6.0.16
+
+## 4.0.15
+
+### Patch Changes
+
+- Updated dependencies [35e1a30]
+- Updated dependencies
+  - @zenning/provider-utils@4.0.7
+  - @zenning/ai@6.0.15
+
 ## 4.0.14
 
 ### Patch Changes

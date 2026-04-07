@@ -511,7 +511,7 @@ function App() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-[300px] border-r border-border bg-sidebar flex flex-col">
+        <aside className="w-[300px] border-r border-border flex flex-col">
           <div className="px-4 py-3 border-b border-border">
             <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
               Runs

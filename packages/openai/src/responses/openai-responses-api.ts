@@ -682,6 +682,11 @@ export const openaiResponsesChunkSchema = lazySchema(() =>
               commands: z.array(z.string()),
             }),
           }),
+          z.object({
+            type: z.literal('compaction'),
+            id: z.string(),
+            encrypted_content: z.string(),
+          }),
         ]),
       }),
       z.object({
@@ -771,6 +776,13 @@ export const openaiResponsesChunkSchema = lazySchema(() =>
         item_id: z.string(),
         output_index: z.number(),
         diff: z.string(),
+      }),
+      z.object({
+        type: z.literal('response.output_text.done'),
+        item_id: z.string(),
+        output_index: z.number(),
+        content_index: z.number(),
+        text: z.string(),
       }),
       z.object({
         type: z.literal('error'),

@@ -206,6 +206,9 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
         hasShellTool: hasOpenAITool('openai.shell'),
         hasApplyPatchTool: hasOpenAITool('openai.apply_patch'),
         compactionInput: openaiOptions?.compactionInput,
+        previousResponseId: openaiOptions?.previousResponseId ?? undefined,
+        containsApprovalResponses: openaiOptions?.containsApprovalResponses ?? false,
+        approvalToolCallIds: openaiOptions?.approvalToolCallIds ?? undefined,
       });
 
     warnings.push(...inputWarnings);
@@ -309,6 +312,7 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
       safety_identifier: openaiOptions?.safetyIdentifier,
       top_logprobs: topLogprobs,
       truncation: openaiOptions?.truncation,
+      context_management: openaiOptions?.contextManagement,
 
       // model-specific settings:
       ...(isReasoningModel &&
@@ -979,6 +983,9 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
 
     let serviceTier: string | undefined;
 
+    const textEndEmitted = new Set<string>();
+    let finishEmitted = false;
+
     return {
       stream: response.pipeThrough(
         new TransformStream<
@@ -1185,20 +1192,36 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                   },
                 });
               }
+            } else if (isOutputTextDoneChunk(value)) {
+              textEndEmitted.add(value.item_id);
+              controller.enqueue({
+                type: 'text-end',
+                id: value.item_id,
+                providerMetadata: {
+                  [providerOptionsName]: {
+                    itemId: value.item_id,
+                    ...(ongoingAnnotations.length > 0 && {
+                      annotations: ongoingAnnotations,
+                    }),
+                  },
+                },
+              });
             } else if (isResponseOutputItemDoneChunk(value)) {
               if (value.item.type === 'message') {
-                controller.enqueue({
-                  type: 'text-end',
-                  id: value.item.id,
-                  providerMetadata: {
-                    [providerOptionsName]: {
-                      itemId: value.item.id,
-                      ...(ongoingAnnotations.length > 0 && {
-                        annotations: ongoingAnnotations,
-                      }),
+                if (!textEndEmitted.has(value.item.id)) {
+                  controller.enqueue({
+                    type: 'text-end',
+                    id: value.item.id,
+                    providerMetadata: {
+                      [providerOptionsName]: {
+                        itemId: value.item.id,
+                        ...(ongoingAnnotations.length > 0 && {
+                          annotations: ongoingAnnotations,
+                        }),
+                      },
                     },
-                  },
-                });
+                  });
+                }
               } else if (value.item.type === 'function_call') {
                 ongoingToolCalls[value.output_index] = undefined;
                 hasFunctionCall = true;
@@ -1495,6 +1518,15 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
                 }
 
                 delete activeReasoning[value.item.id];
+              } else if (value.item.type === 'compaction') {
+                controller.enqueue({
+                  type: 'compaction',
+                  id: value.item.id,
+                  encrypted_content: value.item.encrypted_content,
+                  providerMetadata: {
+                    [providerOptionsName]: { itemId: value.item.id },
+                  },
+                });
               }
             } else if (isResponseFunctionCallArgumentsDeltaChunk(value)) {
               const toolCall = ongoingToolCalls[value.output_index];
@@ -1701,6 +1733,24 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
               if (typeof value.response.service_tier === 'string') {
                 serviceTier = value.response.service_tier;
               }
+              if (!finishEmitted) {
+                finishEmitted = true;
+                const providerMetadata: SharedV3ProviderMetadata = {
+                  [providerOptionsName]: {
+                    responseId,
+                    ...(serviceTier !== undefined && { serviceTier }),
+                  },
+                };
+                if (logprobs.length > 0) {
+                  providerMetadata[providerOptionsName].logprobs = logprobs;
+                }
+                controller.enqueue({
+                  type: 'finish',
+                  finishReason,
+                  usage: convertOpenAIResponsesUsage(usage),
+                  providerMetadata,
+                });
+              }
             } else if (isResponseAnnotationAddedChunk(value)) {
               ongoingAnnotations.push(value.annotation);
               if (value.annotation.type === 'url_citation') {
@@ -1779,6 +1829,9 @@ export class OpenAIResponsesLanguageModel implements LanguageModelV3 {
           },
 
           flush(controller) {
+            if (finishEmitted) {
+              return;
+            }
             const providerMetadata: SharedV3ProviderMetadata = {
               [providerOptionsName]: {
                 responseId,
@@ -1812,6 +1865,15 @@ function isTextDeltaChunk(
   chunk: OpenAIResponsesChunk,
 ): chunk is OpenAIResponsesChunk & { type: 'response.output_text.delta' } {
   return chunk.type === 'response.output_text.delta';
+}
+
+function isOutputTextDoneChunk(
+  chunk: OpenAIResponsesChunk,
+): chunk is OpenAIResponsesChunk & {
+  type: 'response.output_text.done';
+  item_id: string;
+} {
+  return chunk.type === 'response.output_text.done';
 }
 
 function isResponseOutputItemDoneChunk(

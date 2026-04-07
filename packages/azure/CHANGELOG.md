@@ -1,5 +1,161 @@
 # @ai-sdk/azure
 
+## 3.0.28
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/provider@3.0.6
+  - @zenning/openai@3.0.29
+  - @zenning/provider-utils@4.0.8
+
+## 3.0.27
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.28
+
+## 3.0.26
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.26
+
+## 3.0.25
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.25
+
+## 3.0.24
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.24
+
+## 3.0.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.23
+
+## 3.0.22
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @zenning/openai@3.0.22
+
+## 3.0.21
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.21
+
+## 3.0.20
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.20
+
+## 3.0.19
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.19
+
+## 3.0.18
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.18
+
+## 3.0.17
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.17
+
+## 3.0.16
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.16
+
+## 3.0.15
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.15
+
+## 3.0.14
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @zenning/openai@3.0.14
+
+## 3.0.13
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.13
+
+## 3.0.12
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.12
+
+## 3.0.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.11
+
+## 3.0.10
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @zenning/openai@3.0.10
+
+## 3.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @zenning/openai@3.0.9
+
+## 3.0.8
+
+### Patch Changes
+
+- Updated dependencies [35e1a30]
+- Updated dependencies [10b232c]
+  - @zenning/provider@3.0.5
+  - @zenning/provider-utils@4.0.7
+  - @zenning/openai@3.0.8
+
 ## 3.0.7
 
 ### Patch Changes
