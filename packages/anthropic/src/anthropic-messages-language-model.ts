@@ -1969,25 +1969,25 @@ function getModelCapabilities(modelId: string): {
     modelId.includes('claude-fable-5') ||
     modelId.includes('claude-mythos-5') ||
     modelId.includes('claude-opus-5') ||
-    modelId.includes('claude-sonnet-5')
-  ) {
-    // Claude 5 family: 1M context, 128K max output, structured outputs GA.
-    return {
-      maxOutputTokens: 128000,
-      supportsStructuredOutput: true,
-      isKnownModel: true,
-    };
-  } else if (
+    modelId.includes('claude-sonnet-5') ||
     modelId.includes('claude-opus-4-8') ||
     modelId.includes('claude-opus-4-7') ||
     modelId.includes('claude-opus-4-6') ||
     modelId.includes('claude-sonnet-4-6')
   ) {
-    // 4.6-4.8 generation: 128K max output; output_config.format supported.
-    // These MUST match before the generic 'claude-opus-4-' branch below.
+    // Claude 5 family and the 4.6-4.8 generation: 128K max output. The
+    // 4.x ids MUST match before the generic 'claude-opus-4-' branch below.
+    //
+    // supportsStructuredOutput stays false even though these models support
+    // output_config.format: flipping it switches every default-mode
+    // generateObject call site from the json-tool path to native structured
+    // outputs (different wire format, server-side schema compilation that
+    // rejects constructs the tool path tolerates). All three consumers run
+    // these models through the tool path in production today; enable the
+    // native path per model tier as its own change, with schema audits.
     return {
       maxOutputTokens: 128000,
-      supportsStructuredOutput: true,
+      supportsStructuredOutput: false,
       isKnownModel: true,
     };
   } else if (

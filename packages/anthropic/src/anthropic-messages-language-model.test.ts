@@ -1234,6 +1234,35 @@ describe('AnthropicMessagesLanguageModel', () => {
       expect(warnings).toStrictEqual([]);
     });
 
+    it('should keep the json-tool path (not native structured outputs) for Claude 5 / 4.6+ models', async () => {
+      // Deliberate: these models support output_config.format, but flipping
+      // supportsStructuredOutput switches every default-mode generateObject
+      // caller to a new wire format. Keep the tool path until the native
+      // path is enabled as its own change.
+      prepareJsonResponse({});
+
+      await provider('claude-sonnet-5').doGenerate({
+        prompt: TEST_PROMPT,
+        responseFormat: {
+          type: 'json',
+          schema: {
+            type: 'object',
+            properties: { name: { type: 'string' } },
+            required: ['name'],
+            additionalProperties: false,
+          },
+        },
+      });
+
+      const requestBody = await server.calls[0].requestBodyJson;
+      expect(requestBody.output_config).toBeUndefined();
+      expect(requestBody.tools?.[0]?.name).toBe('json');
+      expect(requestBody.tool_choice).toStrictEqual({
+        type: 'any',
+        disable_parallel_tool_use: true,
+      });
+    });
+
     it('should warn when an unknown model relies on the default max_tokens', async () => {
       prepareJsonResponse({});
 
