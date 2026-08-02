@@ -1197,6 +1197,63 @@ describe('AnthropicMessagesLanguageModel', () => {
       expect(warnings).toMatchInlineSnapshot(`[]`);
     });
 
+    it.each([
+      'claude-sonnet-5',
+      'claude-opus-5',
+      'claude-fable-5',
+      'claude-mythos-5',
+      'claude-opus-4-8',
+      'claude-opus-4-7',
+      'claude-opus-4-6',
+      'claude-sonnet-4-6',
+    ])(
+      'should default max_tokens to the model max (128000) for %s',
+      async modelId => {
+        prepareJsonResponse({});
+
+        const { warnings } = await provider(modelId).doGenerate({
+          prompt: TEST_PROMPT,
+        });
+
+        const requestBody = await server.calls[0].requestBodyJson;
+        expect(requestBody.max_tokens).toBe(128000);
+        expect(warnings).toStrictEqual([]);
+      },
+    );
+
+    it('should keep an explicit maxOutputTokens under the model max without warning', async () => {
+      prepareJsonResponse({});
+
+      const { warnings } = await provider('claude-sonnet-5').doGenerate({
+        prompt: TEST_PROMPT,
+        maxOutputTokens: 32000,
+      });
+
+      const requestBody = await server.calls[0].requestBodyJson;
+      expect(requestBody.max_tokens).toBe(32000);
+      expect(warnings).toStrictEqual([]);
+    });
+
+    it('should warn when an unknown model relies on the default max_tokens', async () => {
+      prepareJsonResponse({});
+
+      const { warnings } = await provider('future-model').doGenerate({
+        prompt: TEST_PROMPT,
+      });
+
+      const requestBody = await server.calls[0].requestBodyJson;
+      expect(requestBody.max_tokens).toBe(4096);
+      expect(warnings).toStrictEqual([
+        {
+          type: 'other',
+          message:
+            'Model future-model is not in the capability table; ' +
+            'defaulting max_tokens to 4096. ' +
+            'Pass maxOutputTokens explicitly or add the model to getModelCapabilities.',
+        },
+      ]);
+    });
+
     it('should use default thinking budget when it is not set', async () => {
       prepareJsonResponse({});
 
