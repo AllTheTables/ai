@@ -276,6 +276,21 @@ export class AnthropicMessagesLanguageModel implements LanguageModelV3 {
 
     const maxTokens = maxOutputTokens ?? maxOutputTokensForModel;
 
+    if (maxOutputTokens == null && !isKnownModel) {
+      // An unknown model silently falling back to 4096 max_tokens truncates
+      // large tool calls mid-JSON with finishReason 'length' and no error —
+      // exactly how the missing Claude 5 entries broke callers that relied
+      // on the default. Surface it so the next model family can't regress
+      // the same way.
+      warnings.push({
+        type: 'other',
+        message:
+          `Model ${this.modelId} is not in the capability table; ` +
+          `defaulting max_tokens to ${maxOutputTokensForModel}. ` +
+          `Pass maxOutputTokens explicitly or add the model to getModelCapabilities.`,
+      });
+    }
+
     const baseArgs = {
       // model id:
       model: this.modelId,
@@ -1951,6 +1966,31 @@ function getModelCapabilities(modelId: string): {
   isKnownModel: boolean;
 } {
   if (
+    modelId.includes('claude-fable-5') ||
+    modelId.includes('claude-mythos-5') ||
+    modelId.includes('claude-opus-5') ||
+    modelId.includes('claude-sonnet-5') ||
+    modelId.includes('claude-opus-4-8') ||
+    modelId.includes('claude-opus-4-7') ||
+    modelId.includes('claude-opus-4-6') ||
+    modelId.includes('claude-sonnet-4-6')
+  ) {
+    // Claude 5 family and the 4.6-4.8 generation: 128K max output. The
+    // 4.x ids MUST match before the generic 'claude-opus-4-' branch below.
+    //
+    // supportsStructuredOutput stays false even though these models support
+    // output_config.format: flipping it switches every default-mode
+    // generateObject call site from the json-tool path to native structured
+    // outputs (different wire format, server-side schema compilation that
+    // rejects constructs the tool path tolerates). All three consumers run
+    // these models through the tool path in production today; enable the
+    // native path per model tier as its own change, with schema audits.
+    return {
+      maxOutputTokens: 128000,
+      supportsStructuredOutput: false,
+      isKnownModel: true,
+    };
+  } else if (
     modelId.includes('claude-sonnet-4-5') ||
     modelId.includes('claude-opus-4-5')
   ) {

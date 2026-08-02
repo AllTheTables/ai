@@ -162,7 +162,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/mistral
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/openai-compatible':
         specifier: workspace:*
@@ -259,10 +259,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/angular':
-        specifier: 2.0.12
+        specifier: 2.0.14
         version: link:../../packages/angular
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       dotenv:
         specifier: 16.4.5
@@ -314,7 +314,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       dotenv:
         specifier: 16.4.5
@@ -342,7 +342,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       dotenv:
         specifier: 16.4.5
@@ -370,7 +370,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       dotenv:
         specifier: 16.4.5
@@ -398,7 +398,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       dotenv:
         specifier: 16.4.5
@@ -441,7 +441,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       reflect-metadata:
         specifier: ^0.2.0
@@ -523,11 +523,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -584,14 +584,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -642,14 +642,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       geist:
         specifier: ^1.3.1
         version: 1.3.1(next@15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0))
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -694,14 +694,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/google-vertex':
-        specifier: 4.0.7
+        specifier: 4.0.9
         version: link:../../packages/google-vertex
       geist:
         specifier: ^1.3.1
         version: 1.3.1(next@15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0))
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -749,10 +749,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/langchain':
-        specifier: 2.0.13
+        specifier: 2.0.15
         version: link:../../packages/langchain
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       langchain:
         specifier: ^1.2.0
@@ -762,7 +762,7 @@ importers:
         version: 0.561.0(react@18.3.1)
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -828,58 +828,58 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/amazon-bedrock':
-        specifier: 4.0.9
+        specifier: 4.0.11
         version: link:../../packages/amazon-bedrock
       '@zenning/anthropic':
-        specifier: 3.0.7
+        specifier: 3.0.9
         version: link:../../packages/anthropic
       '@zenning/azure':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/azure
       '@zenning/cohere':
-        specifier: 3.0.4
+        specifier: 3.0.6
         version: link:../../packages/cohere
       '@zenning/deepseek':
-        specifier: 2.0.4
+        specifier: 2.0.6
         version: link:../../packages/deepseek
       '@zenning/fireworks':
-        specifier: 2.0.4
+        specifier: 2.0.6
         version: link:../../packages/fireworks
       '@zenning/google':
-        specifier: 3.0.4
+        specifier: 3.0.6
         version: link:../../packages/google
       '@zenning/google-vertex':
-        specifier: 4.0.7
+        specifier: 4.0.9
         version: link:../../packages/google-vertex
       '@zenning/groq':
-        specifier: 3.0.4
+        specifier: 3.0.6
         version: link:../../packages/groq
       '@zenning/mcp':
-        specifier: 1.0.4
+        specifier: 1.0.6
         version: link:../../packages/mcp
       '@zenning/mistral':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/mistral
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/perplexity':
-        specifier: 3.0.4
+        specifier: 3.0.6
         version: link:../../packages/perplexity
       '@zenning/provider-utils':
-        specifier: 4.0.4
+        specifier: 4.0.6
         version: link:../../packages/provider-utils
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       '@zenning/rsc':
-        specifier: 2.0.12
+        specifier: 2.0.14
         version: link:../../packages/rsc
       '@zenning/valibot':
-        specifier: 2.0.4
+        specifier: 2.0.6
         version: link:../../packages/valibot
       '@zenning/xai':
-        specifier: 3.0.9
+        specifier: 3.0.11
         version: link:../../packages/xai
       class-variance-authority:
         specifier: ^0.7.1
@@ -892,7 +892,7 @@ importers:
         version: 0.545.0(react@18.3.1)
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -961,14 +961,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -1013,14 +1013,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -1077,14 +1077,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -1136,7 +1136,7 @@ importers:
         version: 0.55.0(@opentelemetry/api@1.9.0)
       '@sentry/nextjs':
         specifier: ^10.17.0
-        version: 10.17.0(@opentelemetry/context-async-hooks@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))(encoding@0.1.13)(next@15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0))(react@18.3.1)(webpack@5.101.2)
+        version: 10.17.0(@opentelemetry/context-async-hooks@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))(encoding@0.1.13)(next@15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0))(react@18.3.1)(webpack@5.101.2)
       '@sentry/opentelemetry':
         specifier: 8.22.0
         version: 8.22.0(@opentelemetry/api@1.9.0)(@opentelemetry/core@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/instrumentation@0.52.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.37.0)
@@ -1147,14 +1147,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -1205,14 +1205,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/react':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/react
       next:
         specifier: ^15.5.9
-        version: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+        version: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       react:
         specifier: ^18
         version: 18.3.1
@@ -1257,7 +1257,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       dotenv:
         specifier: 16.4.5
@@ -1282,10 +1282,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/vue':
-        specifier: 3.0.12
+        specifier: 3.0.14
         version: link:../../packages/vue
       zod:
         specifier: 3.25.76
@@ -1352,13 +1352,13 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ai
       '@zenning/openai':
-        specifier: 3.0.5
+        specifier: 3.0.7
         version: link:../../packages/openai
       '@zenning/provider-utils':
-        specifier: 4.0.4
+        specifier: 4.0.6
         version: link:../../packages/provider-utils
       '@zenning/svelte':
-        specifier: 4.0.12
+        specifier: 4.0.14
         version: link:../../packages/svelte
       autoprefixer:
         specifier: ^10.4.20
@@ -26925,7 +26925,7 @@ snapshots:
       '@sentry/types': 8.22.0
       '@sentry/utils': 8.22.0
 
-  '@sentry/nextjs@10.17.0(@opentelemetry/context-async-hooks@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))(encoding@0.1.13)(next@15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0))(react@18.3.1)(webpack@5.101.2)':
+  '@sentry/nextjs@10.17.0(@opentelemetry/context-async-hooks@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.1.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.1.0(@opentelemetry/api@1.9.0))(encoding@0.1.13)(next@15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0))(react@18.3.1)(webpack@5.101.2)':
     dependencies:
       '@opentelemetry/api': 1.9.0
       '@opentelemetry/semantic-conventions': 1.37.0
@@ -26939,7 +26939,7 @@ snapshots:
       '@sentry/vercel-edge': 10.17.0
       '@sentry/webpack-plugin': 4.3.0(encoding@0.1.13)(webpack@5.101.2)
       chalk: 3.0.0
-      next: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+      next: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
       resolve: 1.22.8
       rollup: 4.52.3
       stacktrace-parser: 0.1.10
@@ -31494,7 +31494,7 @@ snapshots:
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.9.0(eslint@8.57.1)
       eslint-plugin-react: 7.34.1(eslint@8.57.1)
       eslint-plugin-react-hooks: 4.6.2(eslint@8.57.1)
@@ -31582,8 +31582,8 @@ snapshots:
       debug: 4.4.3(supports-color@9.4.0)
       enhanced-resolve: 5.17.1
       eslint: 8.57.1
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1)
       fast-glob: 3.3.3
       get-tsconfig: 4.8.1
       is-core-module: 2.16.1
@@ -31633,7 +31633,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -31709,7 +31709,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlastindex: 1.2.5
@@ -31719,7 +31719,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@7.2.0(eslint@8.57.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.1)(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -32684,7 +32684,7 @@ snapshots:
 
   geist@1.3.1(next@15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)):
     dependencies:
-      next: 15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
+      next: 15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0)
 
   generic-names@4.0.0:
     dependencies:
@@ -35653,7 +35653,7 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@15.5.9(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0):
+  next@15.5.9(@babel/core@7.28.3)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.90.0):
     dependencies:
       '@next/env': 15.5.9
       '@swc/helpers': 0.5.15
@@ -35661,7 +35661,7 @@ snapshots:
       postcss: 8.4.31
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      styled-jsx: 5.1.6(react@18.3.1)
+      styled-jsx: 5.1.6(@babel/core@7.28.3)(react@18.3.1)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.7
       '@next/swc-darwin-x64': 15.5.7
@@ -38403,10 +38403,12 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.4
 
-  styled-jsx@5.1.6(react@18.3.1):
+  styled-jsx@5.1.6(@babel/core@7.28.3)(react@18.3.1):
     dependencies:
       client-only: 0.0.1
       react: 18.3.1
+    optionalDependencies:
+      '@babel/core': 7.28.3
 
   styled-jsx@5.1.6(react@19.0.0-rc-cc1ec60d0d-20240607):
     dependencies:
