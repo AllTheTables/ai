@@ -1,5 +1,11 @@
 # @ai-sdk/anthropic
 
+## 3.0.12
+
+### Patch Changes
+
+- Add the Claude 5 family (claude-sonnet-5, claude-opus-5, claude-fable-5, claude-mythos-5) and the 4.6-4.8 generation to getModelCapabilities (128K max output). Previously these fell through to the unknown-model default of 4,096 max_tokens, silently truncating large tool calls on any request that omitted maxOutputTokens. Unknown models relying on the default now emit a warning. supportsStructuredOutput deliberately stays false for the new entries so default-mode generateObject callers keep the json-tool wire format. (3.0.10 and 3.0.11 were published from earlier out-of-band builds; this release supersedes them.)
+
 ## 3.0.9
 
 ### Patch Changes
